@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "hive-metastore.fullname" . }}
+  labels:
+    {{- include "hive-metastore.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "hive-metastore.selectorLabels" . | nindent 6 }}
+  serviceName: {{ template "hive-metastore.name" . }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "hive-metastore.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.name }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+          - name: METASTORE_SCHEMA_INIT
+            value:  "{{ .Values.schemainit }}"
+          - name: METASTORE_DB_HOSTNAME
+            value:  {{ template "common.names.fullname" (dict "Values" $.Values.postgresql "Chart" (dict "Name" "postgresql") "Release" $.Release) }}
+          ports:
+            - name: metastore
+              containerPort: 9083
+              protocol: TCP
+          livenessProbe:
+            initialDelaySeconds: 40
+            tcpSocket:
+              port: 9083
+          readinessProbe:
+            initialDelaySeconds: 40
+            tcpSocket:
+              port: 9083
+          volumeMounts:
+            - name: metastore-site
+              mountPath: /opt/metastore/conf/metastore-site.xml
+              subPath: metastore-site.xml
+            - name: warehouse
+              mountPath: /home/hive/warehouse
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      volumes:
+        - name: metastore-site
+        {{- if eq .Values.hiveConfigAsSecret false }}
+          configMap:
+            name: {{ template "hive-metastore.name" . }}-site
+        {{- else }}
+          secret:
+            secretName: {{ template "hive-metastore.name" . }}-site
+        {{- end }}
+            defaultMode: 0555
+        - name: warehouse
+          emptyDir: {}

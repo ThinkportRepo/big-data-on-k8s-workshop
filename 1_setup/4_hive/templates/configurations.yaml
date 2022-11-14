@@ -1,0 +1,185 @@
+{{ $password := ""}}
+{{- if eq .Values.deployPostgresql.enabled true }}
+{{- if .Values.postgresql.postgresqlPassword }}
+{{ $password = .Values.postgresql.postgresqlPassword }}
+{{- else -}}
+{{ $password = randAlphaNum 25 }}
+{{- end -}}
+{{- else -}}
+{{- if .Values.postgresql.existingSecret -}}
+{{- $password = include "hive-metastore.getValueFromSecret" (dict "Namespace" ( .Release.Namespace ) "Name" .Values.postgresql.existingSecret "Key" "postgresql-postgres-password")  -}}
+{{- else -}}
+{{ $password = .Values.postgresql.postgresqlPassword }}
+{{- end -}}
+{{- end -}}
+
+{{- if eq .Values.hiveConfigAsSecret false }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "hive-metastore.name" . }}-site
+  labels:
+    {{- include "hive-metastore.labels" $ | trim | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+#    helm.sh/hook: pre-install
+data:
+   metastore-site.xml: >
+       <configuration>
+         <property>
+           <name>metastore.thrift.uris</name>
+           <value>thrift://{{ printf "%s.%s.svc.%s:%g" ( include "hive-metastore.fullname" . ) .Release.Namespace .Values.clusterDomain .Values.service.port }}</value>
+           <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
+         </property>
+         <property>
+           <name>metastore.task.threads.always</name>
+           <value>org.apache.hadoop.hive.metastore.events.EventCleanerTask</value>
+         </property>
+         <property>
+           <name>metastore.expression.proxy</name>
+           <value>org.apache.hadoop.hive.metastore.DefaultPartitionExpressionProxy</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionURL</name>
+           <value>jdbc:postgresql://{{ include "hive-metastore.postgres.endpoint" . }}/{{- include "hive-metastore.postgres.database" . -}}?createDatabaseIfNotExist=true</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionDriverName</name>
+           <value>org.postgresql.Driver</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionUserName</name>
+           <value>{{- include "hive-metastore.postgres.username" . -}}</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionPassword</name>
+           <value>{{- $password -}}</value>
+         </property>
+         <property>
+             <name>hive.metastore.event.db.notification.api.auth</name>
+             <value>false</value>
+         </property>
+         <property>
+           <name>fs.s3a.access.key</name>
+           <value>{{- include "hive-metastore.s3config.accessKey" . -}}</value>
+         </property>
+         <property>
+           <name>fs.s3a.secret.key</name>
+           <value>{{- include "hive-metastore.s3config.secretKey" . -}}</value>
+         </property>
+         <property>
+           <name>fs.s3a.connection.ssl.enabled</name>
+           <value>{{- .Values.s3.sslEnabled -}}</value>
+         </property>
+         <property>
+           <name>fs.s3a.path.style.access</name>
+           <value>true</value>
+         </property>
+         <property>
+             <name>fs.s3a.impl</name>
+             <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+         </property>
+         <property>
+           <name>fs.s3a.endpoint</name>
+           <value>{{- include "hive-metastore.s3config.endpoint" . -}}</value>
+         </property>
+         <property>
+             <name>metastore.warehouse.dir</name>
+             <value>/home/hive/warehouse</value>
+         </property>
+       </configuration>
+{{ end }}
+{{- if eq .Values.hiveConfigAsSecret true }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "hive-metastore.name" . }}-site
+  labels:
+    {{- include "hive-metastore.labels" $ | trim | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
+  annotations: {}
+type: Opaque
+stringData:
+   metastore-site.xml: >
+       <configuration>
+         <property>
+           <name>metastore.thrift.uris</name>
+           <value>thrift://{{ printf "%s.%s.svc.%s:%g" ( include "hive-metastore.fullname" . ) .Release.Namespace .Values.clusterDomain .Values.service.port }}</value>
+           <description>Thrift URI for the remote metastore. Used by metastore client to connect to remote metastore.</description>
+         </property>
+         <property>
+           <name>metastore.task.threads.always</name>
+           <value>org.apache.hadoop.hive.metastore.events.EventCleanerTask</value>
+         </property>
+         <property>
+           <name>metastore.expression.proxy</name>
+           <value>org.apache.hadoop.hive.metastore.DefaultPartitionExpressionProxy</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionURL</name>
+           <value>jdbc:postgresql://{{ include "hive-metastore.postgres.endpoint" . }}/{{- include "hive-metastore.postgres.database" . -}}?createDatabaseIfNotExist=true</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionDriverName</name>
+           <value>org.postgresql.Driver</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionUserName</name>
+           <value>{{- include "hive-metastore.postgres.username" . -}}</value>
+         </property>
+         <property>
+           <name>javax.jdo.option.ConnectionPassword</name>
+           <value>{{- $password -}}</value>
+         </property>
+         <property>
+             <name>hive.metastore.event.db.notification.api.auth</name>
+             <value>false</value>
+         </property>
+         <property>
+           <name>fs.s3a.access.key</name>
+           <value>{{- include "hive-metastore.s3config.accessKey" . -}}</value>
+         </property>
+         <property>
+           <name>fs.s3a.secret.key</name>
+           <value>{{- include "hive-metastore.s3config.secretKey" . -}}</value>
+         </property>
+         <property>
+           <name>fs.s3a.connection.ssl.enabled</name>
+           <value>{{- .Values.s3.sslEnabled -}}</value>
+         </property>
+         <property>
+           <name>fs.s3a.path.style.access</name>
+           <value>true</value>
+         </property>
+         <property>
+             <name>fs.s3a.impl</name>
+             <value>org.apache.hadoop.fs.s3a.S3AFileSystem</value>
+         </property>
+         <property>
+           <name>fs.s3a.endpoint</name>
+           <value>{{- include "hive-metastore.s3config.endpoint" . -}}</value>
+         </property>
+         <property>
+             <name>metastore.warehouse.dir</name>
+             <value>/home/hive/warehouse</value>
+         </property>
+       </configuration>
+{{ end }}
+{{- if eq .Values.deployPostgresql.createSecret true -}}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.postgresql.existingSecret }}
+  labels:
+    {{- include "hive-metastore.labels" $ | trim | nindent 4 }}
+  annotations:
+#    helm.sh/hook: pre-install
+  namespace: {{ .Release.Namespace }}
+type: Opaque
+data:
+  postgresql-postgres-password: {{ randAlphaNum 25 | b64enc | quote }}
+  postgresql-password: {{ $password | b64enc | quote }}
+{{- end -}}

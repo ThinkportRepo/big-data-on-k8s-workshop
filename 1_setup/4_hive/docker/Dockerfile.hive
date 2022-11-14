@@ -1,0 +1,39 @@
+# We build the Docker image from scratch to understand every step and use the latest versions
+#
+# Author: Alex Ortner
+# Date: 20. Junly 2022
+#
+# inspired from https://techjogging.com/standalone-hive-metastore-presto-docker.html
+ARG java_image_tag=11-jre-slim
+FROM openjdk:${java_image_tag}
+# install dependencies
+RUN set -ex && \
+    sed -i 's/http:\/\/deb.\(.*\)/https:\/\/deb.\1/g' /etc/apt/sources.list && \
+    apt-get update && \
+    apt-get install -y curl wget netcat net-tools iputils-ping
+# download hive standalone metastore and unpack into /opt/metastore
+RUN wget https://repo1.maven.org/maven2/org/apache/hive/hive-standalone-metastore/3.1.2/hive-standalone-metastore-3.1.2-bin.tar.gz  && \
+    tar -xvf hive-standalone-metastore-3.1.2-bin.tar.gz && \
+    rm -f hive-standalone-metastore-3.1.2-bin.tar.gz && \
+    mv apache-hive-metastore-3.1.2-bin/ /opt/metastore
+# download hadoop and unpack into /opt/hadoop
+RUN wget https://downloads.apache.org/hadoop/common/hadoop-3.3.1/hadoop-3.3.1.tar.gz && \
+    tar -xvf hadoop-3.3.1.tar.gz && \
+    rm  hadoop-3.3.1.tar.gz && \
+    mv hadoop-3.3.1 /opt/hadoop-3.3.1
+# environment variables requested by Hive metastore
+ENV HADOOP_HOME=/opt/hadoop-3.3.1
+# download postgres driver
+RUN wget https://repo1.maven.org/maven2/org/postgresql/postgresql/42.3.1/postgresql-42.3.1.jar  && \
+    mv postgresql-42.3.1.jar /opt/metastore/lib
+# the metastore and hadoop have to use the same versions of jars
+# in particular one need the exact same version of the aws-s3 jars
+# therefore we copy the jars from the hadoop lib folders into the metastore lib folders
+RUN rm -f /opt/metastore/lib/guava-19.0.jar \
+  && cp ${HADOOP_HOME}/share/hadoop/common/lib/guava-27.0-jre.jar /opt/metastore/lib \
+  && cp ${HADOOP_HOME}/share/hadoop/tools/lib/hadoop-aws-3.3.1.jar /opt/metastore/lib \
+  && cp ${HADOOP_HOME}/share/hadoop/tools/lib/aws-java-sdk-bundle-1.11.901.jar /opt/metastore/lib
+# the entrypoint script checks that the postgres database is up and running, creates an initial database for the metastore and starts the metastore
+COPY entrypoint_hive.sh /opt/entrypoint.sh
+WORKDIR /opt/metastore
+ENTRYPOINT ["sh","/opt/entrypoint.sh"]

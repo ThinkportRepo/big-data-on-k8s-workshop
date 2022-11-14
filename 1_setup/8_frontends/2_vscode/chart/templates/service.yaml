@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: vscode
+  namespace: {{ .Values.namespace }}
+spec:
+  selector:
+    app: vscode
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: vscode
+      name: vscode

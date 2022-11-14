@@ -12,6 +12,10 @@ This repo contains all the setup for the workshop lab as wall as the tasks and s
 |-- Azure
 |---- Teraform
 
+1_setup
+|-- Ingres
+|---- Nginx
+
 |-- s3 Minio
 |---- Chart + Readme
 

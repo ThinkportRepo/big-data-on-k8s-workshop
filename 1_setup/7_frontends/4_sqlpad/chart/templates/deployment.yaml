@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sqlpad
+  namespace: {{.Values.namespace}}
+  labels:
+    app: sqlpad
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sqlpad
+  template:
+    metadata:
+      labels:
+        app: sqlpad
+    spec:
+      containers:
+        - name: sqlpad
+          image: {{.Values.image}}
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: 1
+            requests:
+              memory: 256Mi
+              cpu: "0.5"
+          env:
+            - name: SQLPAD_ADMIN
+              value: {{.Values.user}}
+            - name: SQLPAD_ADMIN_PASSWORD
+              value: {{.Values.password}}
+            - name: SQLPAD_PORT
+              value: "3000"
+            - name: SQLPAD_APP_LOG_LEVEL
+              value: "debug"
+            - name: SQLPAD_WEB_LOG_LEVEL
+              value: "warn"
+            - name: SQLPAD_CONNECTIONS__hive__name
+              value: "MetastoreDB"
+            - name: SQLPAD_CONNECTIONS__hive__driver
+              value: "postgres"
+            - name: SQLPAD_CONNECTIONS__hive__host
+              value: "hive-metastore-postgresql.hive.svc.cluster.local"
+            - name: SQLPAD_CONNECTIONS__hive__database
+              value: "metastore"
+            - name: SQLPAD_CONNECTIONS__hive__username
+              value: "trainadm"
+            - name: SQLPAD_CONNECTIONS__hive__password
+              value: "train@thinkport"
+            - name: SQLPAD_CONNECTIONS__hive__multiStatementTransactionEnabled
+              value: "true"
+            - name: SQLPAD_CONNECTIONS__hive__idleTimeoutSeconds
+              value: "86400"

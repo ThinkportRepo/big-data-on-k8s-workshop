@@ -12,37 +12,32 @@ This repo contains all the setup for the workshop lab as wall as the tasks and s
 |-- Azure
 |---- Teraform
 
-1_setup
-|-- Ingres
-|---- Nginx
-
-|-- s3 Minio
+|-- 2_minio (s3 object store)
 |---- Chart + Readme
 
-|-- Hive Metastore
+|-- 3_hive (metastore)
 |---- Dockerfile + Readme
 |---- Chart + Configmaps + Readme
 
-|-- Kafka
+|-- 4_kafka (streaming)
 |---- Dockerfile + Readme
 |---- Chart + Readme
 
-|-- Spark
+|-- 4_spark (batch)
 |---- Dockerfiles + Readme
 |------ Spark Base
 |------ Spark App
 |------ Spark Jupyter
 
-|-- Trino
+|-- 5_trino (SQL Engine)
 |---- Dockerfile + Readme
 |---- Chart + Configmaps + Readme
 
 |-- Frontends
 |---- Dashboard
 |---- Jupyter
-|---- SQL Browser
-|---- BI Tool
-|---- App with all Links
+|---- SQLPad
+|---- Metabase
 
 2_lab
 

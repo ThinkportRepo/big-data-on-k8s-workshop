@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sqlpad
+  namespace: {{.Values.namespace}}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: {{.Values.host}}
+      http:
+        paths:
+          - backend:
+              service:
+                name: sqlpad
+                port:
+                  number: 3000
+            path: /
+            pathType: Prefix

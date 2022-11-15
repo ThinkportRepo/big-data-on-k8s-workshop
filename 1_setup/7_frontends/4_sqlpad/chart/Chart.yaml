@@ -1,0 +1,9 @@
+apiVersion: v1
+name: sqlpad
+description: A Web SQL Browser for Kubernetes
+version: 0.1.0
+kubeVersion: ">=1.17.0"
+keyword:
+  - sqlpad
+maitainers:
+  - name: thinkport

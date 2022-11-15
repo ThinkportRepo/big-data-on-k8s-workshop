@@ -1,0 +1,15 @@
+# Default Values
+
+# Kubernetes namespace
+namespace: "frontend"
+
+# Image
+image: "sqlpad/sqlpad:6"
+
+# Basic Authentication Username
+user: "trainadm"
+# Basic Authentication Password
+password: "train@thinkport"
+
+# Ingress Hostname
+host: sqlpad.a14e3323952046c3bc3f.eastus.aksapp.io

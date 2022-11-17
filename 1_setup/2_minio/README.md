@@ -6,7 +6,7 @@ Official Repository: https://github.com/minio/minio/tree/master/helm/minio
 
 # Installation Steps
 
-Download values yaml file from Chart Repo
+Download values yaml file from Chart Repo to modify
 
 ```
 curl https://raw.githubusercontent.com/minio/minio/master/helm/minio/values.yaml -O
@@ -17,6 +17,10 @@ change values accordingly to the requirements. Important settings
 - set rootUser and rootPassword
 - set memory request correctly to the node size
 - set replicas correctly to the node size
+- set k8s host
+- set ingress route for console service
+- set user
+- set buckets
 
 Create Namespace
 
@@ -31,6 +35,8 @@ helm repo add minio https://charts.min.io/
 helm repo update
 
 helm upgrade --install -f values.yaml minio minio/minio -n minio
+
+helm uninstall minio -n minio
 ```
 
 Installation should finish with
@@ -54,5 +60,4 @@ You can now access MinIO server on http://localhost:9000. Follow the below steps
   2. export MC_HOST_minio-local=http://$(kubectl get secret --namespace minio minio -o jsonpath="{.data.rootUser}" | base64 --decode):$(kubectl get secret --namespace minio minio -o jsonpath="{.data.rootPassword}" | base64 --decode)@localhost:9000
 
   3. mc ls minio-local
-
 ```

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{.Values.name}}
+  namespace: {{.Values.namespace}}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: {{.Values.host}}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{.Values.name}}
+                port:
+                  number: 8081
+            path: /
+            pathType: Prefix

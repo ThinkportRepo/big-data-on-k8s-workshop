@@ -1,4 +1,4 @@
-# Hive Metastore standalone with postgresql backend
+# Hive Metastore standalone with Postgresql backend
 
 This chart will install a standalone hive metastore backed by a postgresql
 database (bitnami chart).
@@ -6,15 +6,38 @@ The configuration includes the drivers to connect to s3 storage. This means
 you can use this hive metastore for example in combination with trino to
 access data stored on s3 buckets.
 
-## Check and set values
+#### Steps to do
 
-edit the `values.yaml` file and set the values in particular for
+1. Build and Push Docker Image
+2. Configure and Install Helm Chart
 
-- s3
-- image
-- user and pwd for postgres
+## Docker Image
 
-## Install Chart
+The Hive standalone Metastore image (`docker/Dockerfile.hive`) is completely selfe made and needs to be build and pushed to a repository that can be refered from Kubernetes.
+
+to build the image run one of the following commands
+
+```
+# regular build & push
+docker build -t thinkportgmbh/workshops:hive-metastore -f Dockerfile.hive .
+docker push  thinkportgmbh/workshops:hive-metastore
+
+
+# crossbuild on Mac Book with M1 Chip
+docker buildx build --push --platform linux/amd64,linux/arm64 --tag thinkportgmbh/workshops:hive-metastore  -f Dockerfile.hive .
+```
+
+## Helm Chart
+
+### Set values
+
+first edit the `values.yaml` file and set the values accordingly for
+
+- s3 (endpoint and secrets)
+- hive image
+- user and pwd for postgres backend
+
+### Install Chart
 
 first create a new namespace
 
@@ -31,7 +54,9 @@ helm upgrade --install -f values.yaml  hive-metastore -n hive .
 
 ```
 
-## Uninstall Chart
+Deploy additional Ingress
+
+### Uninstall Chart
 
 in case of issues uninstall the chart and the create pvc for the database
 
@@ -42,12 +67,12 @@ helm delete hive-metastore -n hive
 kubectl delete pvc data-hive-metastore-postgresql-0
 ```
 
-## Configuration
+### Configuration
 
 The values.yaml of this chart is sectioned in different topics. You can
 also use the command line to set the parameters (take a look on the [helm readme](https://helm.sh/docs/intro/using_helm/)).
 
-# S3 Configuration
+#### S3 Configuration
 
 | Parameter                   | Default value | Description                                                                                                                                                |
 | --------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -61,7 +86,7 @@ also use the command line to set the parameters (take a look on the [helm readme
 | s3.secretKeyNames.secretKey | Not used      | Name of the key that has a value for the secret key.                                                                                                       |
 | s3.secretKeyNames.endpoint  | Not used      | Name of the key that has a value for the server url.                                                                                                       |
 
-# Postgresql Configuration
+#### Postgresql Configuration
 
 | Parameter                     | Default value      | Description                                                                                                                                                                                                                                                         |
 | ----------------------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -74,7 +99,7 @@ also use the command line to set the parameters (take a look on the [helm readme
 | postgresql.exisitingInstance  | Not used           | This is not an official bitnami postgres parameter. It is only used when deployPostgresql.enabled is set to false.                                                                                                                                                  |
 | Any other bitnami parameter.  | -                  | You can use any of the bitnami postgresql parameters. But please not that this is not tested or supported and can lead to unpredictable results.                                                                                                                    |
 
-### Default Parameters
+##### Default Parameters
 
 | Parameter          | Default value | Description                                                                                       |
 | ------------------ | ------------- | ------------------------------------------------------------------------------------------------- |
@@ -85,19 +110,13 @@ values.yaml), it is only recommended for good reasons. Be sure that
 you know what you are doing and that you are able to debug unexpected
 behaviour.
 
-### Secrets
+#### Secrets
 
 The following secrets can be used / are generated:
 
 - postgresql database credentials (existing/generated)
 - s3 server credentials (exisiting)
 - hive metastore configuration (metastore-site.xml) (generated)
-
-## Usage
-
-```console
-helm install --create-namespace my-metastore -n hive-helm .
-```
 
 ## More Info
 

@@ -1,19 +1,17 @@
 # Build Hive Metastore Image
 
-to build run
+The Hive standalone Metastore image (`docker/Dockerfile.hive`) is completely selfe made and needs to be build and pushed to a repository that can be refered from Kubernetes.
+
+to build the image run one of the following commands
 
 ```
+# regular build & push
 docker build -t thinkportgmbh/workshops:hive-metastore -f Dockerfile.hive .
-```
-
-to push run
-
-```
 docker push  thinkportgmbh/workshops:hive-metastore
-```
 
-to build and push the arm64 image on a Mac Book with m1 chip (arm64) build the image via crossbuild
 
-```
+# crossbuild on Mac Book with M1 Chip
 docker buildx build --push --platform linux/amd64,linux/arm64 --tag thinkportgmbh/workshops:hive-metastore  -f Dockerfile.hive .
 ```
+
+The Dockerimager is inspired from # inspired from https://techjogging.com/standalone-hive-metastore-presto-docker.html

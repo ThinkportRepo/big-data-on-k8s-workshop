@@ -16,10 +16,11 @@ hiveConfigAsSecret: false
 #e.g it is possible to retrive just the secretkey from a secret, but
 #putting the accesskey in plain text here.
 s3:
-  accessKey: "95JR8A8M73NTVMN2R2JM"
-  secretKey: "2Ft7TszVmk739iNuPtngpNablGv5PvO1pKdjxqdJ"
-  endpoint: "svr-ceph-node02.local.parcit:6669"
-  sslEnabled: true
+  accessKey: "trainadm"
+  secretKey: "train@thinkport"
+  endpoint: "minio.minio.svc.cluster.local:9000"
+  #
+  sslEnabled: false
   #existingSecret: secretname
   #existingSecretNamespace: namespace
   #secretKeyNames:
@@ -54,12 +55,14 @@ postgresql:
 
 # flag to indicate if a new schema has to bin initiated on the metastore database or if the database is already ready
 # this flag runs an extra command in the entrypoint script before starting the metastore
-schemainit: true
+schemainit: false
 ###############################################################################
 ########################Default Configuratio###################################
 ###############################################################################
 
 image:
+  #tingelbuxe/hive-metastore-standalone:3.1.2
+  #thinkportgmbh/workshops:hive-metastore
   name: thinkportgmbh/workshops
   tag: hive-metastore
   pullPolicy: Always

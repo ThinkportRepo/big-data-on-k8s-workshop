@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{template "trino.fullname" .}}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: {{.Values.host}}
+      http:
+        paths:
+          - backend:
+              service:
+                name: {{template "trino.fullname" .}}
+                port:
+                  number: {{.Values.service.port}}
+            pathType: ImplementationSpecific

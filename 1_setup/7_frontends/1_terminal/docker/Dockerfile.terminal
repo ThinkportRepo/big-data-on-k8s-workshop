@@ -1,0 +1,55 @@
+FROM prairielearn/workspace-xtermjs:latest
+
+
+
+# Reset to root to run installation tasks
+USER 0
+
+# copy script that should be submitted into work-dir src, no need when mounting nfs
+# COPY spark/jobs ${SPARK_HOME}/work-dir/jobs
+
+RUN apt-get update -y && \ 
+    apt-get install -y procps zip dnsutils python-setuptools curl nano ca-certificates bash-completion kubectx
+
+## User account
+RUN adduser --disabled-password --gecos '' coder && \
+    adduser coder sudo && \
+    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers;
+
+RUN chmod g+rw /home && \
+    mkdir -p /home/coder/workspace && \
+    mkdir -p /home/coder/downloads && \
+    chown -R coder:coder /home/coder && \
+    chown -R coder:coder /home/coder/workspace && \ 
+    chown -R coder:coder /home/coder/downloads;
+
+WORKDIR /home/coder/downloads
+
+RUN wget https://sourceforge.net/projects/s3tools/files/s3cmd/2.2.0/s3cmd-2.2.0.tar.gz
+RUN tar xzf s3cmd-2.2.0.tar.gz && rm s3cmd-2.2.0.tar.gz
+RUN cd s3cmd-2.2.0  && python setup.py install
+
+
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+RUN curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+RUN echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+
+
+COPY entrypoint.sh /entrypoint.sh
+COPY s3cfg /home/coder/.s3cfg
+RUN chmod +x /entrypoint.sh
+
+USER coder
+WORKDIR /home/coder
+RUN echo 'source <(kubectl completion bash)' >>~/.bashrc
+RUN echo 'alias k=kubectl' >>~/.bashrc
+RUN echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
+RUN echo 'alias s3=s3cmd' >>~/.bashrc
+RUN echo 'alias kn=kubens' >>~/.bashrc
+
+
+#WORKDIR /xterm
+
+ENTRYPOINT ["/entrypoint.sh"]

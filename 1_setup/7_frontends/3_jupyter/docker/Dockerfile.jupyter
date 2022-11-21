@@ -21,3 +21,4 @@ WORKDIR ${WORKDIR}
 # start jupyter or jupyter lab
 CMD jupyter notebook --no-browser --ip=0.0.0.0 --allow-root
 # CMD jupyterlab --no-browser --ip=0.0.0.0 --allow-root
+# ENTRYPOINT bash jupyter notebook --no-browser --ip=0.0.0.0 --allow-root

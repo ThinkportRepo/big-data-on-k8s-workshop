@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: clone-git
+  namespace: frontend
+spec:
+  containers:
+    - name: git
+      image: alpine/git:latest
+      args:
+        - clone
+        - https://github.com/ThinkportRepo/big-data-on-k8s-workshop.git
+        - /workshop/git
+      volumeMounts:
+        - mountPath: /workshop
+          name: workshop
+  volumes:
+    - name: workshop
+      persistentVolumeClaim:
+        claimName: workshop

@@ -77,7 +77,7 @@
             </v-list-item>
             <v-list-item
               class="pl-5 ml-5"
-              href="http://jupyter.REPLACE_K8S_HOST"
+              href="http://jupyter.REPLACE_K8S_HOST/jupyter/tree"
               target="_blank"
             >
               <v-list-item-avatar tile size="30">

@@ -20,7 +20,7 @@ configMap:
 jupyter:
   # jupyter.image is the Docker image used to create a Jupyter Notebook pod
   # image: "tingelbuxe/jupyterlab:spark-3.0.1-bin-hadoop3.2"
-  image: "thinkportgmbh/workshops:spark-3.3.1"
+  image: "thinkportgmbh/workshops:jupyter"
   # image: "svr-nexus01.local.parcit:8124/repository/dm-docker/spark-poc/spark-py:jupyterlab"
   # always pull in order to have latest changes
   pullPolicy: "Always"

@@ -49,7 +49,13 @@ export default {
   },
   computed: {
     getUrl() {
-      return "http://" + this.subdomain + "." + this.k8s_host;
+      if (this.subdomain == "jupyter") {
+        return (
+          "http://" + this.subdomain + "." + this.k8s_host + "/jupyter/tree"
+        );
+      } else {
+        return "http://" + this.subdomain + "." + this.k8s_host;
+      }
     },
   },
 };

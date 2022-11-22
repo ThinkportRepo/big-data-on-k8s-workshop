@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vscode
+  namespace: "{{ .Values.namespace }}"
+spec:
+  selector:
+    matchLabels:
+      app: vscode
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: vscode
+    spec:
+      serviceAccountName: kubectl
+      automountServiceAccountToken: true
+      securityContext:
+        runAsUser: 1000
+        fsGroup: 1000
+      containers:
+        - name: vscode
+          image: "{{ .Values.image }}"
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: vscode
+          securityContext:
+            privileged: true
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: vscode
+                  key: password
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              memory: 1Gi
+          volumeMounts:
+            - name: workshop
+              mountPath: /home/coder/
+      volumes:
+        - name: workshop
+          persistentVolumeClaim:
+            claimName: workshop

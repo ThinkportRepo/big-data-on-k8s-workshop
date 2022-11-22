@@ -1,0 +1,12 @@
+# Default Values
+
+# Kubernetes namespace
+name: "terminal"
+# Kubernetes namespace
+namespace: "frontend"
+
+# Image
+image: "thinkportgmbh/workshops:terminal"
+
+# Ingress Hostname
+host: terminal.4c13e49defa742168ff1.northeurope.aksapp.io

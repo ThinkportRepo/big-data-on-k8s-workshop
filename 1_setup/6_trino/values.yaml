@@ -1,7 +1,7 @@
 # Default values for trino.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-host: trino.a14e3323952046c3bc3f.eastus.aksapp.io
+host: trino.4c13e49defa742168ff1.northeurope.aksapp.io
 
 image:
   repository: trinodb/trino

@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{.Values.name}}
+  namespace: {{.Values.namespace}}
+  labels:
+    app: {{.Values.name}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{.Values.name}}
+  template:
+    metadata:
+      labels:
+        app: {{.Values.name}}
+    spec:
+      serviceAccountName: kubectl
+      securityContext:
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+        - name: {{.Values.name}}
+          image: {{.Values.image}}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+          securityContext:
+            privileged: true
+          env:
+            - name: K8S_HOST
+              value: {{.Values.host}}
+          volumeMounts:
+            - name: workshop
+              mountPath: /home/coder/
+      volumes:
+        - name: workshop
+          persistentVolumeClaim:
+            claimName: workshop

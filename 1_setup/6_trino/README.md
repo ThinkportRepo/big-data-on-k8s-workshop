@@ -18,7 +18,7 @@ first edit the `values.yaml` file and set the values accordingly for
 first create a new namespace
 
 ```consol
-create namespace trino
+kubectl create namespace trino
 
 ```
 

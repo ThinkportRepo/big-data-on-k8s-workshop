@@ -38,6 +38,7 @@ spec:
               value: "debug"
             - name: SQLPAD_WEB_LOG_LEVEL
               value: "warn"
+            # Hive Metastore Connection
             - name: SQLPAD_CONNECTIONS__hive__name
               value: "MetastoreDB"
             - name: SQLPAD_CONNECTIONS__hive__driver
@@ -54,3 +55,18 @@ spec:
               value: "true"
             - name: SQLPAD_CONNECTIONS__hive__idleTimeoutSeconds
               value: "86400"
+            # Trino Delta Connection
+            # - name: SQLPAD_CONNECTIONS__trino__name
+            #   value: "Trino"
+            # - name: SQLPAD_CONNECTIONS__trino__driver
+            #   value: "trino"
+            # - name: SQLPAD_CONNECTIONS__trino__host
+            #   value: "trino.trino.svc.cluster.local"
+            # - name: SQLPAD_CONNECTIONS__trino__port
+            #   value: "8080"
+            # - name: SQLPAD_CONNECTIONS__trino_username
+            #   value: "trino"
+            # - name: SQLPAD_CONNECTIONS__trino_catalog
+            #   value: "delta"
+            # - name: SQLPAD_CONNECTIONS__trino_schema
+            #   value: "test"

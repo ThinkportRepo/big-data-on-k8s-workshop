@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init
+  namespace: frontend
+spec:
+  serviceAccountName: kubectl
+  restartPolicy: Never
+  containers:
+    - name: main
+      image: alpine:3.17
+      command:
+        - sh
+        - "-c"
+        - |
+          apk add --no-cache curl;
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl";
+          install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          echo "################## Init Summary ############";
+          echo Github User: $GITHUB_USER;
+          echo Github User: $GITHUB_REPOSITORY;
+          echo ls /workshop/git:;
+          ls /workshop/git
+          echo kubectl get po:;
+          kubectl get po;
+          echo "############################################";
+      env:
+        - name: GITHUB_REPOSITORY
+          value: "ThinkportRepo/big-data-on-k8s-workshop.git"
+        - name: GITHUB_USER
+          valueFrom:
+            secretKeyRef:
+              name: github
+              key: git_user
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github
+              key: git_token
+      volumeMounts:
+        - mountPath: /workshop
+          name: workshop
+  initContainers:
+    - name: git
+      image: alpine:3.17
+      env:
+        - name: GITHUB_REPOSITORY
+          value: "ThinkportRepo/big-data-on-k8s-workshop.git"
+        - name: GITHUB_USER
+          valueFrom:
+            secretKeyRef:
+              name: github
+              key: git_user
+        - name: GITHUB_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: github
+              key: git_token
+      command:
+        - "sh"
+        - "-c"
+        - |
+          apk add --no-cache git;
+          echo "### Environment Variables"
+          echo $GITHUB_USER
+          echo $GITHUB_TOKEN
+          echo $GITHUB_REPOSITORY
+          git clone https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY /workshop/git
+      volumeMounts:
+        - mountPath: /workshop
+          name: workshop
+  volumes:
+    - name: workshop
+      persistentVolumeClaim:
+        claimName: workshop

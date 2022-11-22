@@ -34,7 +34,7 @@ helm upgrade spark spark-operator/spark-operator \
   --set sparkJobNamespace=spark \
   --set image.tag=v1beta2-1.3.3-3.1.1 \
   --set serviceAccounts.spark.name=spark \
-  --set ingress-url-format="\{\{$appName\}\}.a14e3323952046c3bc3f.eastus.aksapp.io"
+  --set ingress-url-format="\{\{$appName\}\}.4c13e49defa742168ff1.northeurope.aksapp.io"
 ```
 
 ### Test the Spark Operator

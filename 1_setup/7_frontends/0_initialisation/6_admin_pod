@@ -5,7 +5,6 @@ metadata:
   namespace: frontend
 spec:
   serviceAccountName: kubectl
-  restartPolicy: Never
   containers:
     - name: main
       image: alpine:3.17

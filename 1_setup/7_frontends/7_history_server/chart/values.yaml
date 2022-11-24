@@ -1,0 +1,29 @@
+# Default values for spark-history-server.
+namespace: "spark"
+replicaCount: 1
+
+nameOverride: "spark-history-server"
+fullnameOverride: "spark-history-server"
+
+deployment:
+  enable: true
+  name: "spark-history-server"
+  image: "thinkportgmbh/workshops:spark-history"
+  pullPolicy: Always
+
+service:
+  enabled: true
+  name: "spark-history-server"
+
+ingress:
+  enabled: true
+  name: "spark-history-server"
+  host: "spark.4c13e49defa742168ff1.northeurope.aksapp.io"
+
+resources:
+  limits:
+    cpu: 2
+    memory: 10Gi
+  requests:
+    cpu: 100m
+    memory: 1Gi

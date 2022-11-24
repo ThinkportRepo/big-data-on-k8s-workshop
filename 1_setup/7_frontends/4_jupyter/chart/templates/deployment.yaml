@@ -32,10 +32,16 @@ spec:
           volumeMounts:
             - name: {{ .Release.Name }}-config-volume
               mountPath: {{ .Values.jupyter.configDir }}
-            - name: {{ .Release.Name }}-notebooks
-              mountPath: /jupyter/notebooks
             - name: workshop
               mountPath: /jupyter
+            - name: s3cmd
+              mountPath: /jupyter/.s3cfg
+              subPath: .s3cfg
+            - name: bashrc
+              mountPath: /jupyter/.bashrc
+              subPath: .bashrc
+            #- name: {{ .Release.Name }}-notebooks
+            #  mountPath: /jupyter/notebooks
       serviceAccountName: {{ template "pyspark-notebook.serviceAccountName" . }}
       volumes:
         - name: {{ .Release.Name }}-config-volume
@@ -44,8 +50,14 @@ spec:
         - name: workshop
           persistentVolumeClaim:
             claimName: workshop
-        - name: {{ .Release.Name }}-notebooks
-          {{- if .Values.jupyter.persistence.enabled }}
-          persistentVolumeClaim:
-            claimName: {{ template "pyspark-notebook.jupyter.pvc.name" . }}
-          {{- end }}
+        - name: s3cmd
+          configMap:
+            name: s3cmd
+        - name: bashrc
+          configMap:
+            name: bashrc
+      #- name: {{ .Release.Name }}-notebooks
+      #  {{- if .Values.jupyter.persistence.enabled }}
+      #  persistentVolumeClaim:
+      #    claimName: {{ template "pyspark-notebook.jupyter.pvc.name" . }}
+      #  {{- end }}

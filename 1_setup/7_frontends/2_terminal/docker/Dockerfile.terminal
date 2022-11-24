@@ -38,7 +38,6 @@ RUN install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
 
 
 COPY entrypoint.sh /entrypoint.sh
-COPY s3cfg /home/coder/.s3cfg
 RUN chmod +x /entrypoint.sh
 
 USER coder

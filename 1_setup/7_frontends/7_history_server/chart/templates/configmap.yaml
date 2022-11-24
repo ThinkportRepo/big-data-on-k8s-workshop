@@ -1,0 +1,14 @@
+kind: ConfigMap
+apiVersion: v1
+metadata: 
+  name: {{ .Values.deployment.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "spark-history-server.labels" . | nindent 4 }}
+    app: spark-history-server
+data:
+  spark-defaults.conf: |-
+    spark.history.fs.cleaner.enabled=true
+    spark.history.fs.cleaner.interval=1d
+    spark.history.fs.cleaner.maxAge=7d
+    spark.history.fs.cleaner.maxNum=40

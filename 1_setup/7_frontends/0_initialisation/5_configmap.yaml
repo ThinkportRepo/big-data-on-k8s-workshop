@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bashrc
+  namespace: frontend
+data:
+  .bashrc: |
+    source <(kubectl completion bash)
+    alias k=kubectl
+    complete -o default -F __start_kubectl k
+    alias s3=s3cmd
+    alias kn=kubens

@@ -41,7 +41,19 @@ spec:
           volumeMounts:
             - name: workshop
               mountPath: /home/coder/
+            - name: s3cmd
+              mountPath: /home/coder/.s3cfg
+              subPath: .s3cfg
+            - name: bashrc
+              mountPath: /home/coder/.bashrc
+              subPath: .bashrc
       volumes:
         - name: workshop
           persistentVolumeClaim:
             claimName: workshop
+        - name: s3cmd
+          configMap:
+            name: s3cmd
+        - name: bashrc
+          configMap:
+            name: bashrc

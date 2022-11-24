@@ -79,6 +79,7 @@
           image="trino2_logo.png"
         ></Card
       ></v-col>
+      <!--
       <v-col cols="mb-4">
         <Card
           title="Kafka UI"
@@ -108,7 +109,7 @@
           subdomain="grafana"
           image="grafana_logo.jpeg"
         ></Card
-      ></v-col>
+      ></v-col>-->
       <v-col cols="mb-4">
         <Card
           title="Minio UI"

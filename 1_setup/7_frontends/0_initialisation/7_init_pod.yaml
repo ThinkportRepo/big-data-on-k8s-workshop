@@ -66,11 +66,13 @@ spec:
           echo $GITHUB_TOKEN
           echo $GITHUB_REPOSITORY
           rm -rf /workshop/git
+          rm -rf /workshop/exercises
+          rm -rf /workshop/solutions
           git clone https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY /workshop/git
           mkdir /workshop/exercises
           mkdir /workshop/solutions
-          cp /workshop/git/2_lab/exercises /workshop/exercises
-          cp /workshop/git/2_lab/solutions /workshop/solutions
+          cp -r /workshop/git/2_lab/exercises/ /workshop/
+          cp -r /workshop/git/2_lab/solutions/ /workshop/
       volumeMounts:
         - mountPath: /workshop
           name: workshop

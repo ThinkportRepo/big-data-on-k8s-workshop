@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+  name: kafka
+  namespace: kafka
+spec:
+  rules:
+    - host: kafka.4c13e49defa742168ff1.northeurope.aksapp.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: kafka-cp-control-center
+                port:
+                  number: 9021
+            path: /
+            pathType: Prefix

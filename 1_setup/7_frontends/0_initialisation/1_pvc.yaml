@@ -1,3 +1,4 @@
+# PVC for all Frontend apps to share code base
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -10,3 +11,17 @@ spec:
   resources:
     requests:
       storage: 20Gi
+---
+# PVC for Spark applications and Spark History Server
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: spark-history-server
+  namespace: spark
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: azurefile
+  resources:
+    requests:
+      storage: 10Gi

@@ -1,0 +1,11 @@
+FROM apache/spark-py:3.3.1
+WORKDIR /
+
+# Reset to root to run installation tasks
+USER root
+
+RUN groupadd -g 185 spark && \
+    useradd -u 185 -g 185 spark
+
+USER 185
+ENTRYPOINT bash /opt/spark/sbin/spark-daemon.sh start org.apache.spark.deploy.history.HistoryServer 1

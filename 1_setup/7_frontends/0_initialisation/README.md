@@ -5,6 +5,9 @@
 ```
 kubectl create secret generic github --from-file=git_token -n frontend --from-file=git_user -n frontend
 
+kubectl create configmap s3cmd --from-file=s3cfg -n frontend
+
+
 or
 
 source 2_secret.sh

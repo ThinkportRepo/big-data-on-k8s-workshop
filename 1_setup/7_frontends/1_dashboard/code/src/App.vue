@@ -33,7 +33,22 @@
             </v-list-item-content>
           </v-list-item>
         </template>
+        <v-list>
+          <v-list-group no-action prepend-icon="mdi-account">
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>Credentials</v-list-item-title>
+              </v-list-item-content>
+            </template>
 
+            <v-list-item-subtitle class="pl-5 ml-5"
+              ><b>User:</b> trainadm</v-list-item-subtitle
+            >
+            <v-list-item-subtitle class="pl-5 ml-5"
+              ><b>Password:</b> train@thinkport</v-list-item-subtitle
+            >
+          </v-list-group>
+        </v-list>
         <v-divider></v-divider>
         <v-list>
           <v-list-group no-action prepend-icon="mdi-view-dashboard">
@@ -89,6 +104,7 @@
                 <v-list-item-subtitle>Notebook for Python</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+            <!--
             <v-list-item
               class="pl-5 ml-5"
               href="http://zeppelin.REPLACE_K8S_HOST"
@@ -105,6 +121,7 @@
                 >
               </v-list-item-content>
             </v-list-item>
+            -->
             <v-divider></v-divider>
             <v-list-item
               class="pl-5 ml-5"
@@ -184,6 +201,7 @@
                 >
               </v-list-item-content>
             </v-list-item>
+            <!--
             <v-list-item
               class="pl-5 ml-5"
               href="http://k8s.REPLACE_K8S_HOST"
@@ -215,7 +233,7 @@
                   >Monitoring Dashboards</v-list-item-subtitle
                 >
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item>-->
             <v-list-item
               class="pl-5 ml-5"
               href="http://minio.REPLACE_K8S_HOST"
@@ -230,6 +248,36 @@
                 <v-list-item-subtitle>S3 Object Store</v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
+          </v-list-group>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-group no-action prepend-icon="mdi-checkbox-blank-outline">
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>Exercises</v-list-item-title>
+              </v-list-item-content>
+            </template>
+
+            <v-list-item class="pl-5 ml-5">1. Kubernetes</v-list-item>
+            <v-list-item class="pl-5 ml-5">2. Kafka</v-list-item>
+            <v-list-item class="pl-5 ml-5">3. Spark Streaming</v-list-item>
+            <v-list-item class="pl-5 ml-5">4. Spark</v-list-item>
+            <v-list-item class="pl-5 ml-5">5. Trino</v-list-item>
+            <v-list-item class="pl-5 ml-5">6. Metabase</v-list-item>
+          </v-list-group>
+        </v-list>
+        <v-divider></v-divider>
+        <v-list>
+          <v-list-group no-action prepend-icon="mdi-checkbox-marked-outline">
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>Solutions</v-list-item-title>
+              </v-list-item-content>
+            </template>
+
+            <v-list-item class="pl-5 ml-5">BLABLA</v-list-item>
+            <v-list-item class="pl-5 ml-5">BLABLA</v-list-item>
           </v-list-group>
         </v-list>
 

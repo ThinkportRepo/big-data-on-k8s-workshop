@@ -23,7 +23,6 @@ helm repo add confluentinc https://confluentinc.github.io/cp-helm-charts/
 helm repo update    #(2)
 
 helm upgrade --install kafka -f values.yaml  -n kafka confluentinc/cp-helm-charts
-
 ```
 
 #### Helm output
@@ -109,3 +108,8 @@ To connect from a client pod:
   # Consume a test message from the topic
   kafka-console-consumer --bootstrap-server kafka-cp-kafka-headless:9092 --topic alex --from-beginning --timeout-ms 2000 --max-messages 1 | grep "$MESSAGE"
 ```
+
+https://github.com/confluentinc/cp-helm-charts/blob/master/charts/cp-kafka-connect/values.yaml
+Andere Lösung.
+Python Programm das in Pod läuft
+https://sites.google.com/a/ku.th/big-data/pyspart

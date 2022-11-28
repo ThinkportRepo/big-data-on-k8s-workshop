@@ -29,8 +29,9 @@
         ></Card
       ></v-col>
     </v-row>
-    <v-row><v-divider></v-divider> </v-row>
+
     <v-row>
+      <!--
       <v-col cols="mb-4">
         <Card
           title="Zeppelin"
@@ -40,6 +41,7 @@
           image="zeppelin_logo.png"
         ></Card
       ></v-col>
+      -->
       <v-col cols="mb-4">
         <Card
           title="SQL Pad"
@@ -58,8 +60,16 @@
           image="metabase_logo.png"
         ></Card
       ></v-col>
+      <v-col cols="mb-4">
+        <Card
+          title="Minio UI"
+          text="s3 compatiple object storage"
+          url_label="Open Minio"
+          subdomain="minio"
+          image="minio_logo.png"
+        ></Card
+      ></v-col>
     </v-row>
-    <v-row><v-divider></v-divider> </v-row>
     <v-row>
       <v-col cols="mb-4">
         <Card
@@ -79,17 +89,19 @@
           image="trino2_logo.png"
         ></Card
       ></v-col>
-      <!--
+
       <v-col cols="mb-4">
         <Card
           title="Kafka UI"
           text="UI for managing Kafka topics"
-          url_label="Open Zeppelin"
-          subdomain="https://github.com/provectus/kafka-ui/blob/master/charts/kafka-ui/README.md"
+          url_label="Open Kafka UI"
+          subdomain="kafka"
           image="kafka_logo.png"
         ></Card
       ></v-col>
+      <!--
     </v-row>
+    
     <v-row><v-divider></v-divider> </v-row>
     <v-row>
       <v-col cols="mb-4">
@@ -110,15 +122,6 @@
           image="grafana_logo.jpeg"
         ></Card
       ></v-col>-->
-      <v-col cols="mb-4">
-        <Card
-          title="Minio UI"
-          text="s3 compatiple object storage"
-          url_label="Open Minio"
-          subdomain="minio"
-          image="minio_logo.png"
-        ></Card
-      ></v-col>
     </v-row>
   </v-container>
 </template>

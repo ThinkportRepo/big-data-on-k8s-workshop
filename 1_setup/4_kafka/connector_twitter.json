@@ -1,0 +1,13 @@
+{
+  "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
+  "tasks.max": "1",
+  "topics": "bigdata",
+  "twitter.oauth.accessTokenSecret": "vEXmxJV4j50xKFip849RdEsBR4NsGyVWfoqOIZclSnYOC",
+  "process.deletes": "true",
+  "filter.keywords": "BigData",
+  "kafka.status.topic": "bigdata",
+  "kafka.delete.topic": "bigdata-deletions",
+  "twitter.oauth.consumerSecret": "hNJwdLCBHVSUVQE4DfCywdzQIXtTlSVM0B50BSzqA2NbhsgDIQ",
+  "twitter.oauth.accessToken": "892314144589963264-1oV0FZuDCrPqYrt8Q0Xgl8GescppWtM",
+  "twitter.oauth.consumerKey": "6Mt4KvnyJheQSkWBgssvx3I5X"
+}

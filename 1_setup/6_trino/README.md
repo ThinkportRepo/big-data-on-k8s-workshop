@@ -127,14 +127,14 @@ show catalogs;
 show schemas from <catalog>;
 
 # don't miss the slash at the end
-create schema delta.test WITH (location='s3a://test/');
+create schema delta.data WITH (location='s3a://data/');
 
 
-CREATE TABLE delta.test.city (
+CREATE TABLE delta.data.city (
   dummy bigint
 )
 WITH (
-  location = 's3a://test/s3data'
+  location = 's3a://data/city'
 );
 
 

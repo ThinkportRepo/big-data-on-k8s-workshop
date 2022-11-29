@@ -117,3 +117,131 @@ https://sites.google.com/a/ku.th/big-data/pyspart
 https://strimzi.io/documentation/
 
 kafka-topics --zookeeper kafka-cp-zookeeper.kafka.svc.cluster.local:2181 --alter --topic twitter_raw --config retention.bytes=10000000
+
+## Connector configuration
+```
+
+Prerequisites:
+  running Kafka-cluster with 1 zookeeper, 3 Kafka-broker, 1 connect, and 1 schema-registry (our setup)
+  check if the TwitterSourceConnector is in one of the folders documented in the plugin paths (describe pod)
+
+  kubectl exec pod <podname> -n <namespace> -- bash
+
+  then look into the plugin path to see if jcustenborder exists if yes - top that's how it should be
+```
+
+### Configuration
+
+#### Control-Center
+```
+
+  Step 1: Open the control center: http://kafka.4c13e49defa742168ff1.northeurope.aksapp.io/clusters 
+
+  Step 2: Navigate to the right place:
+    Click on the wanted cluster (controlcenter.cluster)
+    go to Connect
+    then connect-default
+    then add-connector
+
+  Step 3:
+    Either choose TwitterSourceConnect and manually add a connector by filling in the data/arguments needed
+    or upload a config file
+
+  Step 4: launch the connector
+  Congratulations! Now look into topics and click on the topic name *** in messages should be arriving tweets
+```
+
+### Terminal
+
+```
+  Step 1: Open terminal 
+
+
+
+  Step 2 create JSON file (e.g. in vscode or vim)
+
+  {
+    "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
+    "tasks.max": "1",
+    
+    "log.cleanup.policy": "delete", 
+    "log.retention.hours": "24",
+    "log.retention.bytes": "10000000",
+
+    "topic.creation.default.replication.factor": 1,  
+    "topic.creation.default.partitions": 2,  
+    "topic.creation.default.cleanup.policy": "delete",  
+    "topic.creation.default.retention.ms": "86400000",
+    "topic.creation.default.retention.bytes": "10000000",
+
+    "topics": "twitter-json",    
+    "process.deletes": "true",
+    "filter.keywords": "BigData",
+    "kafka.status.topic": "twitter-json",
+    "kafka.delete.topic": "twitter-json-deletions",
+    "twitter.oauth.accessTokenSecret": "iN98gtMncFZ81r2BbQchNK59cynUBKiQjV3BNrzKUXAMX",
+    "twitter.oauth.consumerSecret": "pszPFw8GmKLAhBObEWKXokT4Rwkr1o2UgjVd8Pq6XXuTrkW6Cr",
+    "twitter.oauth.accessToken": "892314144589963264-spfqOaqpzc04JfX128XPB4GzZIczM2A",
+    "twitter.oauth.consumerKey": "LaNg9Dqdvjq7tRUIyX6vqbr4R",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
+  }
+
+
+
+  Step 3: check if you can get information from the Kafka-connect service
+    curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
+    should be empty if no connector is configurated
+
+  Step 4:
+    curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-source-connector/config -d @<filename>.json
+
+    check if it was created:
+    curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
+    curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/config
+    you can check the logs in the Kafka-connect pod
+
+    kubectl logs <pod-name> -n kafka -f
+```
+
+### S3 Sink connector to minIO
+```
+
+  Step 1: Create the following JSON file
+
+  {
+      "connector.class": "io.confluent.connect.s3.S3SinkConnector",
+      "tasks.max": "1",
+      "topics": "twitter-table",
+      "s3.bucket.name": "kafka-bucket",
+      "s3.part.size": 5242880,
+      "flush.size": 1,
+      "storage.class": "io.confluent.connect.s3.storage.S3Storage",
+      "format.class": "io.confluent.connect.s3.format.json.JsonFormat",
+      "schema.generator.class": "io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator",
+      "schemas.enable": false,
+      "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
+      "schema.compatibility": "NONE",
+      "aws.secret.access.key": "train@thinkport",
+      "aws.access.key.id": "trainadm",
+      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+      "key.converter.schemas.enable": false,
+      "value.converter.schemas.enable": false,
+      "store.url":"http://minio.minio.svc.cluster.local:9000"
+    }
+
+  Step 2: Check if all values fit your implemented system (e.g. topics, bucket names)
+    !!IMPORTANT: The bucket and topic have to be created before configuring.!!
+
+  Step 3:
+    curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/minio-dump/config -d @<filename>.json
+
+  Step 4:
+    check if everything works:
+    kubectl logs <pod-name> -n kafka -f
+
+    logs should look somewhat like this:
+    INFO Starting commit and rotation for topic partition twitter-table-0 with start offset {partition=0=681} (io.confluent.connect.s3.TopicPartitionWriter)
+    INFO Files committed to S3. Target commit offset for twitter-table-0 is 682 (io.confluent.connect.s3.TopicPartitionWriter)
+    ```

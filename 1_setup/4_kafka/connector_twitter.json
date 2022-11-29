@@ -1,13 +1,26 @@
 {
   "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
   "tasks.max": "1",
-  "topics": "bigdata",
-  "twitter.oauth.accessTokenSecret": "vEXmxJV4j50xKFip849RdEsBR4NsGyVWfoqOIZclSnYOC",
+  
+  "log.cleanup.policy": "delete", 
+  "log.retention.hours": "24",
+  "log.retention.bytes": "10000000",
+
+  "topic.creation.default.replication.factor": 1,  
+  "topic.creation.default.partitions": 2,  
+  "topic.creation.default.cleanup.policy": "delete",  
+  "topic.creation.default.retention.ms": "86400000",
+  "topic.creation.default.retention.bytes": "10000000",
+
+  "topics": "twitter-json",    
   "process.deletes": "true",
   "filter.keywords": "BigData",
-  "kafka.status.topic": "bigdata",
-  "kafka.delete.topic": "bigdata-deletions",
-  "twitter.oauth.consumerSecret": "hNJwdLCBHVSUVQE4DfCywdzQIXtTlSVM0B50BSzqA2NbhsgDIQ",
-  "twitter.oauth.accessToken": "892314144589963264-1oV0FZuDCrPqYrt8Q0Xgl8GescppWtM",
-  "twitter.oauth.consumerKey": "6Mt4KvnyJheQSkWBgssvx3I5X"
+  "kafka.status.topic": "twitter-json",
+  "kafka.delete.topic": "twitter-json-deletions",
+  "twitter.oauth.accessTokenSecret": "iN98gtMncFZ81r2BbQchNK59cynUBKiQjV3BNrzKUXAMX",
+  "twitter.oauth.consumerSecret": "pszPFw8GmKLAhBObEWKXokT4Rwkr1o2UgjVd8Pq6XXuTrkW6Cr",
+  "twitter.oauth.accessToken": "892314144589963264-spfqOaqpzc04JfX128XPB4GzZIczM2A",
+  "twitter.oauth.consumerKey": "LaNg9Dqdvjq7tRUIyX6vqbr4R",
+  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+  "value.converter": "org.apache.kafka.connect.json.JsonConverter"
 }

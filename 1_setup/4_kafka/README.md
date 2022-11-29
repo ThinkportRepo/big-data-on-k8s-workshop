@@ -113,3 +113,7 @@ https://github.com/confluentinc/cp-helm-charts/blob/master/charts/cp-kafka-conne
 Andere Lösung.
 Python Programm das in Pod läuft
 https://sites.google.com/a/ku.th/big-data/pyspart
+
+https://strimzi.io/documentation/
+
+kafka-topics --zookeeper kafka-cp-zookeeper.kafka.svc.cluster.local:2181 --alter --topic twitter_raw --config retention.bytes=10000000

@@ -80,6 +80,18 @@ connectors
   </dependency>
 ```
 
+### Kafka connector
+
+In order to connect to Spark we need to to add the Kafka dependencies
+
+```
+ <dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-sql-kafka-0-10_2.12</artifactId>
+    <version>3.3.1</version>
+</dependency>
+```
+
 ### Download Jars
 
 Put all dependencies together and use the online tool https://jar-download.com/online-maven-download-tool.php
@@ -102,4 +114,9 @@ to download a zip that can be moved into the docker image.
     <version>3.3.1</version>
     <scope>provided</scope>
   </dependency>
+  <dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-sql-kafka-0-10_2.12</artifactId>
+    <version>3.3.1</version>
+</dependency>
 ```

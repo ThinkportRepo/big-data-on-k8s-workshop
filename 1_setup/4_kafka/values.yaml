@@ -58,7 +58,7 @@ cp-kafka:
   persistence:
     enabled: true
     # storageClass: ""
-    size: 5Gi
+    size: 50Gi
     disksPerBroker: 1
   resources: {}
   ## If you do want to specify resources, uncomment the following lines, adjust them as necessary,
@@ -138,6 +138,7 @@ cp-kafka-connect:
   #imageTag: 6.1.0
   image: thinkportgmbh/workshops
   imageTag: kafka-connect
+  imagePullPolicy: Always
   ## Optionally specify an array of imagePullSecrets. Secrets must be manually created in the namespace.
   ## https://kubernetes.io/docs/concepts/containers/images/#specifying-imagepullsecrets-on-a-pod
   imagePullSecrets:

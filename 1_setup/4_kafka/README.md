@@ -119,6 +119,7 @@ https://strimzi.io/documentation/
 kafka-topics --zookeeper kafka-cp-zookeeper.kafka.svc.cluster.local:2181 --alter --topic twitter_raw --config retention.bytes=10000000
 
 ## Connector configuration
+
 ```
 
 Prerequisites:
@@ -133,9 +134,10 @@ Prerequisites:
 ### Configuration
 
 #### Control-Center
+
 ```
 
-  Step 1: Open the control center: http://kafka.4c13e49defa742168ff1.northeurope.aksapp.io/clusters 
+  Step 1: Open the control center: http://kafka.4c13e49defa742168ff1.northeurope.aksapp.io/clusters
 
   Step 2: Navigate to the right place:
     Click on the wanted cluster (controlcenter.cluster)
@@ -154,7 +156,7 @@ Prerequisites:
 ### Terminal
 
 ```
-  Step 1: Open terminal 
+  Step 1: Open terminal
 
 
 
@@ -163,8 +165,8 @@ Prerequisites:
   {
     "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
     "tasks.max": "1",
-    
-    "log.cleanup.policy": "delete", 
+   
+    "log.cleanup.policy": "delete",
     "log.retention.hours": "24",
     "log.retention.bytes": "10000000",
 
@@ -205,7 +207,8 @@ Prerequisites:
 ```
 
 ### S3 Sink connector to minIO
-```
+
+````
 
   Step 1: Create the following JSON file
 
@@ -245,3 +248,15 @@ Prerequisites:
     INFO Starting commit and rotation for topic partition twitter-table-0 with start offset {partition=0=681} (io.confluent.connect.s3.TopicPartitionWriter)
     INFO Files committed to S3. Target commit offset for twitter-table-0 is 682 (io.confluent.connect.s3.TopicPartitionWriter)
     ```
+
+
+  ## Streamingkette die Funktioniert
+
+  Daten aus dem Twitter Connector der
+  --> Topic: twitter-json
+  --> Schema aus: dump dieses Topics nach s3 und wieder einlesen mit Spark
+  --> Einlesen mit to_json und konvertieren
+  --> Schreiben als JSON nach Kafka --> spark-target-schema3
+  --> Sink schreibt nach S3 Bucket --> spark-target-schema3
+  --> Spark kann wieder alles von s3 einlesen
+````

@@ -1,0 +1,163 @@
+# Kubernetes Excercices
+
+## Explore Kubernetes Setup
+
+In this exercise we explore the setup of our Big Data Plattform on Kubernetes.
+
+Open the web Terminal and run the following commands to solve the tasks-
+
+### Nodes
+
+Tasks 
+
+   a) How many nodes do your cluster have? <br>
+   b) Which OS runs on the nodes?<br>
+   c) How much memory (RAM) do the nodes have?<br>
+
+
+<details>
+<summary>HINT</summary>
+<p>
+a) 
+
+```
+kubectl get nodes 
+```
+
+   <br>
+b) get more information about the nodes
+
+```
+kubectl get nodes -o wide
+```
+
+   <br>
+c) details about one node
+
+```
+kubectl describe node <node-name>
+```
+
+   <br>
+</p>
+</details>
+
+### Namespaces
+
+<Bild Technisches Setup> !!!!!!!!! <br>
+
+a) Check which namespaces exits and whats in there. How many services has the kafka namespaces?
+
+<details>
+<summary>HINT</summary>
+<p>
+a) 
+
+```
+$ kubectl get namespaces
+
+# look into the resources of one namespace
+kubectl get services --namespace <namespace>
+
+# or
+kubectl get all -n <namespace>
+```
+
+   <br>
+
+</p>
+</details>
+
+### Ingress Routes
+
+a) Check the ingress routes that map to a public dns name. <br>
+b) Test that the urls can be reached.
+
+<details>
+<summary>HINT</summary>
+<p>
+a)
+
+```
+# show ingress in all namespaces
+kubectl get ingress --all-namespaces
+
+# or short
+kubectl get ingress -A
+
+# -A  is short for --all-namespaces
+```
+
+b) Copy an url into your browser.
+
+</p>
+</details>
+
+### Shared Volumes
+
+a) Show which persistent volume claims exist and where they are mounted.
+
+<details>
+<summary>HINT</summary>
+<p>
+
+```
+kubectl get pvc -n frontend
+```
+
+The pvc `workshop` is sharing code between all pods
+Check via
+
+```
+# get pod names
+kubectl get pod -n frontend
+
+# show pod definiton
+kubectl get pod <terminal-pod/vscode-pod/juypter-pod> -o yaml -n frontend
+
+# or filter out for one pod with jsonpath for the first pod
+kubectl get pod -o jsonpath='{.items[0].spec.containers[0].volumeMounts[0]}'
+
+# or for all pods
+kubectl get pod -o jsonpath='{.items[*].spec.containers[0].volumeMounts[0]}'
+
+# or with
+kubectl get pod  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[0].name,MOUNTPATH:spec.containers[*].volumeMounts[0].mountPath
+
+# or all volumes per pod
+kubectl get pod  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[*].name,MOUNTPATH:spec.containers[*].volumeMounts[*].mountPath
+```
+
+</p>
+</details>
+
+
+### Share a file
+
+Open the VSCode UI and create a new file in the folder `/exercices`. <br>
+Open the Terminal or Jupyter UI and see if the file did arrive there.
+
+
+### Tunnel into Pod
+
+Find the pod which shares the same mounted volume with vscode pod and exec into the pod. Check if you can find the file in the mounted volume.
+
+<details>
+<summary>HINT</summary>
+<p>
+
+```
+
+kubectl get pod  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[0].name,MOUNTPATH:spec.containers[*].volumeMounts[0].mountPath
+
+# the terminal pod and vscode pod share the same mounted volume: /home/coder
+
+kubectl get pod -n frontend
+
+kubectl exec -it <terminal-XXX> -- sh 
+
+ls exercises
+```
+
+</p>
+</details>

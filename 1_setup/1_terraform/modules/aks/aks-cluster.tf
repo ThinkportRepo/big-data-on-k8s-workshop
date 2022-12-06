@@ -1,4 +1,4 @@
-resource "random_pet" "prefix" {}
+#resource "random_pet" "prefix" {}
 
 #resource "azurerm_resource_group" "default" {
 #  name     = "${random_pet.prefix.id}-rg"
@@ -8,13 +8,12 @@ resource "random_pet" "prefix" {}
 #    environment = "Demo"
 #  }
 #}
-# ${format("%02d", var.ClusterNumber)}  
-# ${format("%02d",module.aks[count.index])}  
+
 resource "azurerm_kubernetes_cluster" "aks"{
-  name                = "${var.SharedPrefix}-student-${var.ClusterNumber}"
+  name                = "${var.SharedPrefix}-${var.UniquePrefix}-aks"
   location            = var.Location
   resource_group_name = var.ResourceGroupName
-  dns_prefix          = "student-${var.ClusterNumber}"
+  dns_prefix          = "${var.UniquePrefix}"
   http_application_routing_enabled = var.HttpApplicationRouting
   network_profile {
     network_plugin = var.NetworkPlugin

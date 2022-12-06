@@ -1,18 +1,17 @@
-variable NumberOfClusters {
-    description = "The desired number of clusters that should be deployed"
-    type = number
+variable UniquePrefix {
+    description = "A prefix that identifies this aks cluster"
+    type = string
 }
 variable SharedPrefix {
-    description = "A prefix that is shared among all clusters"
+    description = "A user defined prefix of this cluster"
     type = string
 }
 variable ResourceGroupName {
-    description = "The resource group to deploy the clusters"
+    description = "The resource group to deploy the cluster"
     type = string
-    default = "tp"
 }
 variable Location {
-    description = "The location to deploy the clusters"
+    description = "The location to deploy the cluster"
     type = string
     default = "GermanyWestCentral"
 }

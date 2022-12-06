@@ -1,0 +1,6 @@
+# Certifiactes
+**/*.key
+**/*.pem
+# TF Log and Plan
+**/*.log
+**/*.plan

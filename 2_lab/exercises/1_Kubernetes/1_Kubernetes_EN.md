@@ -8,12 +8,11 @@ Open the web Terminal and run the following commands to solve the tasks
 
 ### Nodes
 
-- Tasks \*
-  a) how much nodes to your cluster have?
-  b) which OS run on the nodes?
-  c) how much memory (RAM) do the nodes have?
+** Tasks **
 
-- Commands \*
+1. how much nodes to your cluster have?
+2. which OS run on the nodes?
+3. how much memory (RAM) do the nodes have?
 
 ```
 kubectl get nodes
@@ -27,8 +26,7 @@ kubectl describe node <node-name>
 
 ### Namespaces
 
-<Bild Technisches Setup>
-a) check which namespaces exits and whats in there
+check which namespaces exits and whats in there
 
 ```
 kubectl get namespaces
@@ -42,8 +40,8 @@ kubectl get all -n <namespace>
 
 ### Ingress Routes
 
-a) check the ingress routes that map to a public dns name
-b) test that the urls can be reached
+1. check the ingress routes that map to a public dns name
+2. test that the urls can be reached
 
 ```
 # show ingress in all namespaces
@@ -54,16 +52,27 @@ kubectl get ingress -A
 # -A  is short for --all-namespaces
 ```
 
-### Shared Volumes
-
-show which persisten volume clais exists and where they are mounted
+### Further Investigations of Resources
 
 ```
+# Services (eindeutige dns Name innerhalb des Clusters)
+kubectl get services -n frontend
+
+# Storage (Persistent Volume Claims, Reservierter Festplattenspeicher
+# der in einen Pod gemounted werden kann)
 kubectl get pvc -n frontend
+
+# Deployments (Definieren Replicas von Pods)
+kubectl get deploy -n frontend
+
+# Configurationen (Zentral abgelegte Configurationen, die von jedem Pod geladen werden können)
+kubectl get configmaps -n frontend
+
+# Secrets (Zentral abgelegte Secrets/Passwörter/Certificate, die von jedem Pod geladen werden können)
+kubectl get secret -n hive
 ```
 
-The pvc `workshop` is sharing code between all pods
-Check via
+### Deep Dive into Pods
 
 ```
 # get pod names

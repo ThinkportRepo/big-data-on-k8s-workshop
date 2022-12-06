@@ -141,6 +141,14 @@ additionalCatalogs:
     connection-user=root
     connection-password=secret
 
+  cassandra: |
+    connector.name=cassandra
+    cassandra.contact-points=cassandra.nosql.svc.cluster.local
+    cassandra.load-policy.dc-aware.local-dc=datacenter1
+    cassandra.allow-drop-table=true
+    cassandra.username=trainadm
+    cassandra.password=train@thinkport
+
 # Array of EnvVar (https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#envvar-v1-core)
 env: []
 

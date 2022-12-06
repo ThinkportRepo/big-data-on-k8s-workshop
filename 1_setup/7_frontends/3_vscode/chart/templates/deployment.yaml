@@ -13,7 +13,7 @@ spec:
       labels:
         app: vscode
     spec:
-      serviceAccountName: kubectl
+      serviceAccountName: vscode
       automountServiceAccountToken: true
       securityContext:
         runAsUser: 1000
@@ -47,6 +47,8 @@ spec:
             - name: bashrc
               mountPath: /home/coder/.bashrc
               subPath: .bashrc
+            - name: kube-config
+              mountPath: /home/coder/.kube
       volumes:
         - name: workshop
           persistentVolumeClaim:
@@ -57,3 +59,7 @@ spec:
         - name: bashrc
           configMap:
             name: bashrc
+        - name: kube-config
+          secret:
+            secretName: kube-config
+            defaultMode: 0600

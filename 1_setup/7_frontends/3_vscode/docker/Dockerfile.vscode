@@ -1,4 +1,5 @@
-FROM ubuntu:18.04
+#FROM ubuntu:18.04
+FROM openjdk:slim-buster
 
 RUN apt-get update && apt-get install -y \
     openssl \
@@ -11,11 +12,14 @@ RUN apt-get update && apt-get install -y \
     curl \
     wget \
     bash-completion \
-    python-setuptools
+    python-setuptools \
+    procps \
+    locales
 
 RUN chsh -s /bin/bash
 ENV SHELL=/bin/bash
 
+# install vscode
 RUN ARCH=amd64 && \
     curl -sSL "https://github.com/boxboat/fixuid/releases/download/v0.4.1/fixuid-0.4.1-linux-$ARCH.tar.gz" | tar -C /usr/local/bin -xzf - && \
     chown root:root /usr/local/bin/fixuid && \
@@ -27,12 +31,12 @@ RUN CODE_SERVER_VERSION=3.3.1 && \
     curl -sSOL https://github.com/cdr/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server_${CODE_SERVER_VERSION}_amd64.deb && \
     sudo dpkg -i code-server_${CODE_SERVER_VERSION}_amd64.deb
 
-## kubectl
+## install kubectl
 RUN curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl
 
-## helm
+## install helm
 RUN HELM_VERSION=v3.0.0 && \
     mkdir /tmp/helm && \
     curl -L https://get.helm.sh/helm-${HELM_VERSION}-linux-amd64.tar.gz -o /tmp/helm/helm.tar.gz && \
@@ -41,17 +45,37 @@ RUN HELM_VERSION=v3.0.0 && \
     sudo -S mv /tmp/helm/linux-amd64/helm /usr/local/bin/helm && \
     rm -r /tmp/helm
 
-# kubectx/kubens/fzf
+# install kubectx/kubens/fzf
 RUN git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
     ln -s /opt/kubectx/kubectx /usr/local/bin/kubectx && \
     ln -s /opt/kubectx/kubens /usr/local/bin/kubens && \
     git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && \
     ~/.fzf/install
 
+# install spark client
+RUN curl -L https://dlcdn.apache.org/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz -o spark-3.3.1-bin-hadoop3.tgz && \
+    tar -xvf spark-3.3.1-bin-hadoop3.tgz && \
+    rm -f spark-3.3.1-bin-hadoop3.tgz && \
+    mv spark-3.3.1-bin-hadoop3 /opt/spark
+ENV SPARK_HOME=/opt/spark
+ENV PATH="${PATH}:/opt/spark/bin"
+
+# install kafka client
+RUN curl -L https://downloads.apache.org/kafka/3.3.1/kafka_2.12-3.3.1.tgz -o kafka_2.12-3.3.1.tgz && \
+    tar -xvf kafka_2.12-3.3.1.tgz && \
+    rm -f kafka_2.12-3.3.1.tgz && \
+    mv kafka_2.12-3.3.1 /opt/kafka
+ENV KAFKA_HOME=/opt/kafka
+ENV PATH="${PATH}:/opt/kafka/bin"
+
+
+
+
 RUN locale-gen en_US.UTF-8
 # We unfortunately cannot use update-locale because docker will not use the env variables
 # configured in /etc/default/locale so we need to set it manually.
-ENV LC_ALL=en_US.UTF-8
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8  
 
 ## User account
 RUN adduser --disabled-password --gecos '' coder && \

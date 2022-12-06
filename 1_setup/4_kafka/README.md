@@ -97,7 +97,7 @@ To connect from a client pod:
 3. Explore with kafka commands:
 
   # Create the topic
-  kafka-topics --zookeeper kafka-cp-zookeeper-headless:2181 --topic kafka-topic --create --partitions 1 --replication-factor 1 --if-not-exists
+  kafka-topics --zookeeper kafka-cp-zookeeper-headless:2181 --topic bernd --create --partitions 1 --replication-factor 1 --if-not-exists
 
   # Create a message
   MESSAGE="`date -u`"

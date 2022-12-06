@@ -34,6 +34,10 @@ cd chart
 helm upgrade --install -f values.yaml  vscode -n frontend .
 ```
 
+### Add Secrets and Configmaps
+
+kubectl create secret generic kube-config --from-file=config -n frontend
+
 ### local test on amd64 linux
 
 This script pulls the image and runs Theia IDE on https://localhost:8443 with the current directory as a workspace.

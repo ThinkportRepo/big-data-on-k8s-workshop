@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydeploy
+  namespace: default
+  labels:
+    app: mydeploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mydeploy
+  template:
+    metadata:
+      labels:
+        app: mydeploy
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: linux
+          image: alpine:3.17
+          command:
+            - sh
+            - "-c"
+            - |
+              apk add --no-cache curl;
+              echo "Schaun wir mal ob wir den Service auf die Dashboard Website erreichen?";
+              echo "##############################################";
+              curl http://dashboard.frontend.svc.cluster.local:8081;
+              echo "";
+              echo "##############################################";
+              echo "The End";
+              sleep 3000;

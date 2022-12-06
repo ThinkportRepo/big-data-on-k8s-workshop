@@ -1,0 +1,6 @@
+{"commitInfo":{"timestamp":1670244534847,"operation":"WRITE","operationParameters":{"mode":"Overwrite","partitionBy":"[]"},"isBlindAppend":false,"operationMetrics":{"numFiles":"3","numOutputBytes":"3527","numOutputRows":"4"}}}
+{"protocol":{"minReaderVersion":1,"minWriterVersion":2}}
+{"metaData":{"id":"a777f03f-509b-4e27-bc3f-e8db34a2b6f1","format":{"provider":"parquet","options":{}},"schemaString":"{\"type\":\"struct\",\"fields\":[{\"name\":\"id\",\"type\":\"long\",\"nullable\":true,\"metadata\":{}},{\"name\":\"account\",\"type\":\"string\",\"nullable\":true,\"metadata\":{}},{\"name\":\"dt_transaction\",\"type\":\"date\",\"nullable\":true,\"metadata\":{}},{\"name\":\"balance\",\"type\":\"long\",\"nullable\":true,\"metadata\":{}}]}","partitionColumns":[],"configuration":{},"createdTime":1670244533731}}
+{"add":{"path":"part-00000-a325641b-77e1-43f3-8191-c8d764222dff-c000.snappy.parquet","partitionValues":{},"size":1202,"modificationTime":1670244534000,"dataChange":true}}
+{"add":{"path":"part-00001-7ad8b7b3-2eba-44c5-be4c-1e2c092fa377-c000.snappy.parquet","partitionValues":{},"size":1157,"modificationTime":1670244534000,"dataChange":true}}
+{"add":{"path":"part-00002-b4f3556f-9e96-43d6-822a-fec214cd474c-c000.snappy.parquet","partitionValues":{},"size":1168,"modificationTime":1670244534000,"dataChange":true}}

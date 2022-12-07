@@ -59,7 +59,7 @@ kubectl get services -n kafka
 kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
 ```
 <details>
-<summary>HINT</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
@@ -77,7 +77,7 @@ kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.clus
 ```
 
 <details>
-<summary>HINT</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
@@ -107,7 +107,7 @@ kafka-topics.sh --create --bootstrap-server <service-name>.<namespace>.svc.clust
 
 
 <details>
-<summary>HINT</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
@@ -128,7 +128,7 @@ kafka-topics.sh --describe --bootstrap-server <service-name>.<namespace>.svc.clu
 ```
 
 <details>
-<summary>HINT</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
@@ -163,7 +163,7 @@ kubectl logs <pod-name> -n <namespace> -f
 ```
 
 <details>
-<summary>HINT</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
@@ -185,7 +185,7 @@ kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.clus
 ```
 
 <details>
-<summary>HINT</summary>
+<summary>Lösung</summary>
 <p>
 
 ```

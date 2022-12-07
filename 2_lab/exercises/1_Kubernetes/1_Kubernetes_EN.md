@@ -10,17 +10,17 @@ Open the web Terminal and run the following commands to solve the tasks
 
 ** Tasks **
 
-1. how much nodes to your cluster have?
-2. which OS run on the nodes?
-3. how much memory (RAM) do the nodes have?
+1. How much nodes to your cluster have?
+2. Which OS run on the nodes?
+3. How much memory (RAM) do the nodes have?
 
 ```
 kubectl get nodes
 
-# get more information about the noes
+# get more information about the nodes
 kubectl get nodes -o wide
 
-# details about on enode
+# details about one node
 kubectl describe node <node-name>
 ```
 
@@ -88,9 +88,9 @@ kubectl get pods -o jsonpath='{.items[0].spec.containers[0].volumeMounts[0]}'
 kubectl get pods -o jsonpath='{.items[*].spec.containers[0].volumeMounts[0]}'
 
 # or with
-k get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[0].name,MOUNTPATH:spec.containers[*].volumeMounts[0].mountPath
+kubectl get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[0].name,MOUNTPATH:spec.containers[*].volumeMounts[0].mountPath
 # or all volumes per pod
-k get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[*].name,MOUNTPATH:spec.containers[*].volumeMounts[*].mountPath
+kubectl get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[*].name,MOUNTPATH:spec.containers[*].volumeMounts[*].mountPath
 ```
 
 ### Share a file
@@ -103,7 +103,7 @@ Open the Terminal or Jupyter UI and see if the file did arrive there
 Exec into the `admin` Pod and check if you find the file in the mouted volume
 
 ```
-k exec -it admin -- sh
+kubectl exec -it admin -- sh
 
 # and
 ls /workshop/exercises

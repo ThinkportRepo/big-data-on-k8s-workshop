@@ -5,7 +5,7 @@ from pyspark.sql.types import *
 import pyspark.sql.functions as f
 
 import json
-
+import os
 
 
 # get application name from environment variables

@@ -53,12 +53,14 @@ postgresql:
   storageClass: ""
   #exisingInstance: mypostgres.db.svc.cluster.local
 
-# flag to indicate if a new schema has to bin initiated on the metastore database or if the database is already ready
-# this flag runs an extra command in the entrypoint script before starting the metastore
-schemainit: false
+
 ###############################################################################
 ########################Default Configuratio###################################
 ###############################################################################
+
+# flag to indicate if a new schema has to be initialized on the metastore database
+# this flag runs an extra command in the entrypoint script before starting the metastore
+schemainit: false
 
 image:
   #tingelbuxe/hive-metastore-standalone:3.1.2

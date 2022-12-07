@@ -121,8 +121,10 @@ additionalCatalogs:
     hive.s3.ssl.enabled=false
     hive.allow-drop-table=true
     hive.recursive-directories=true
-    hive.compression-codec=SNAPPY
     hive.metastore-timeout=128s
+    hive.non-managed-table-writes-enabled=true
+    hive.non-managed-table-creates-enabled=true
+    hive.collect-column-statistics-on-write=true
 
   delta: |
     connector.name=delta-lake

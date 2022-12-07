@@ -37,7 +37,7 @@ for message in consumer:
         "user_friends_count": int(message.value["payload"]["User"]["FriendsCount"]),
         "retweet_count": int(message.value["payload"]["RetweetCount"]),
         "language": message.value["payload"]["Lang"],
-        "hashtag": [hashtag["Text"] for hashtag in message.value["payload"]["HashtagEntities"]]
+        "hashtags": [hashtag["Text"] for hashtag in message.value["payload"]["HashtagEntities"]]
     }
     print("++ total: " + str(counter)+ "+++++++++++++++++++++++++++++++++++++++++++")
     print(json.dumps(result))

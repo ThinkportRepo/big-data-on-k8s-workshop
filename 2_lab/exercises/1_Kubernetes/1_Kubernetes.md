@@ -37,7 +37,7 @@ kubectl get all -n <namespace>
 ```
 
 ## 3. Ingress Routes
-Erkunde die DNS Adressen die auf die verschiedenen Service und Pods mappen. <br>
+Erkunde die DNS Adressen, die auf die verschiedenen Service und Pods mappen. <br>
 Verschaffe dir mit folgenden Befehlen einen Überblick über die Routen im Namespace frontend.
 
 ```
@@ -93,7 +93,7 @@ kubectl get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*]
 ```
 
 ## 6. Erstellen eines Pods
-Ein Pods entspricht einer Anwendungen die auf Kubernetes läuft. <br>
+Ein Pod entspricht einer Anwendungen die auf Kubernetes läuft. <br>
 Pods können entweder direkt oder über Deployments erstellt werden. <br>
 Deployments managen Replikationen und Ausfallsicherheit. Erstelle hierzu eine neue Datei mypod.yaml in VSCode mit folgendem Inhalt.
 
@@ -112,7 +112,7 @@ spec:
         - "-c"
         - |
           apk add --no-cache curl;
-          echo "Schaun wir mal ob wir den Service auf die Dashboard Website erreichen?";
+          echo "Schauen wir mal ob wir den Service auf die Dashboard Website erreichen?";
           echo "##############################################";
           curl http://dashboard.frontend.svc.cluster.local:8081;
           echo "";
@@ -121,7 +121,7 @@ spec:
 
 ```
 
-Anschließend diesen Pod erstellen und die Logs ansehen. <br>
+Anschließend können wir diesen Pod erstellen und die Logs ansehen. <br>
 
 ```
 # Pod erstellen (im default namespace)

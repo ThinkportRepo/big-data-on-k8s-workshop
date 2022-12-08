@@ -1,8 +1,10 @@
 # Kubernetes Aufgaben
+
 In diesem Lab erkunden wird den Kubernetes Cluster und seine Ressourcen.
 Öffne die App VSCode und dort das Terminal für die folgenden Aufgaben.
 
 ## 1. Nodes
+
 Beantworte mit den unten genannten kubectl-Befehlen folgende Fragen:
 
 - Wieviele Nodes (Knoten) hat der Cluster? <br>
@@ -19,11 +21,21 @@ kubectl get nodes -o wide
 # Details der Nodes herausfinden
 kubectl describe node <node-name>
 ```
------------------------------
-## 2. Namespaces
-Die Anwendungen in diesem Lab sind in verschiedenen Namespaces gruppiert.<br>
-Verschaffe dir mit folgenden Befehlen einen Überblick über die Namespaces und welche Pods darin laufen. 
 
+---
+
+## 2. Namespaces
+
+Die Anwendungen in diesem Lab sind in verschiedenen Namespaces gruppiert.<br>
+Verschaffe dir mit folgenden Befehlen einen Überblick über die Namespaces und welche Pods darin laufen.
+Insbesondere über die Namespaces:
+
+- mino
+- kafka
+- spark
+- hive
+- trino
+- frontend
 
 ```
 # alle Namespaces anzeigen
@@ -35,8 +47,11 @@ kubectl get pod --namespace <namespace>
 # oder alles Ressourcen in einem Namespace anzeigen (-n ist die abgekürzte Version für --namespace)
 kubectl get all -n <namespace>
 ```
---------------------------------
+
+---
+
 ## 3. Ingress Routes
+
 Erkunde die DNS Adressen, die auf die verschiedenen Service und Pods mappen. <br>
 Verschaffe dir mit folgenden Befehlen einen Überblick über die Routen im Namespace frontend.
 
@@ -47,8 +62,11 @@ kubectl get ingress --all-namespaces
 # kurz (-A ist die Abkürzung für --all-namespaces)
 kubectl get ingress -A
 ```
--------------------------------
+
+---
+
 ## 4. Weitere Ressourcen
+
 Erkunde mit dem gleichen Prinzip weitere Resourcen im Namespace frontend. <br>
 
 ```
@@ -68,8 +86,11 @@ kubectl get cm -n frontend
 # Secrets (Zentral abgelegte Secrets/Passwörter/Zertifikate, die von jedem Pod geladen werden können)
 kubectl get secret -n hive
 ```
---------------------------------
+
+---
+
 ## 5. Detailbetrachtung eines Pods
+
 Ein paar Befehle um die Kubernetes Ressourcen detailierter zu analysieren.
 
 ```
@@ -91,8 +112,11 @@ kubectl get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*]
 # oder alle Volumes pro Pod
 kubectl get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*].volumeMounts[*].name,MOUNTPATH:spec.containers[*].volumeMounts[*].mountPath
 ```
----------------------------------
+
+---
+
 ## 6. Erstellen eines Pods
+
 Ein Pod entspricht einer Anwendungen die auf Kubernetes läuft. <br>
 Pods können entweder direkt oder über Deployments erstellt werden. <br>
 Deployments managen Replikationen und Ausfallsicherheit. Erstelle hierzu eine neue Datei mypod.yaml in VSCode mit folgendem Inhalt.
@@ -102,8 +126,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: mypod
-  namespace: frontend
+  namespace: default
 spec:
+  restartPolicy: Never
   containers:
     - name: linux
       image: alpine:3.17
@@ -125,19 +150,22 @@ Anschließend können wir diesen Pod erstellen und die Logs ansehen. <br>
 
 ```
 # Pod erstellen (im default namespace)
-kubectl create -f mypod.yaml 
+kubectl create -f mypod.yaml
 
 # Schauen ob der Pod läuft
 kubectl get pod
 
-# Pod Logs checken 
-kubectl logs mypod 
+# Pod Logs checken
+kubectl logs mypod
 
 # Am Ende Pod wieder löschen
 kubectl delete pod mypod
 ```
---------------------------------
+
+---
+
 ## 7. Deployment erstellen und skalieren
+
 Um einen Pod zu replizieren und immer eine vorgegebene Anzahl von Pods am laufen zu haben wird die Resource Deployment erstellt. <br>
 Im folgenden erstellen wir ein Deployment und skalieren dies. <br>
 Erstelle hierzu eine neue Datei mydeploy.yaml in VSCode mit folgendem Inhalt.
@@ -181,13 +209,13 @@ Anschließend folgendes Deployment erstellen und mit den Befehlen spielen. <br>
 
 ```
 # Deployment erstellen (im default namespace)
-kubectl create -f mydeploy.yaml 
+kubectl create -f mydeploy.yaml
 
 # Schauen ob das Deployment und der Pod laufen
 kubectl get deploy
 kubectl get pod
 
-# Pod Logs checken 
+# Pod Logs checken
 kubectl logs <mypod-xxxx>
 
 # Deployment neu skallieren

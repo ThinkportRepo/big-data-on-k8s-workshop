@@ -10,7 +10,7 @@ spec:
   image: "thinkportgmbh/workshops:spark-3.3.1"
   imagePullPolicy: IfNotPresent # or Always
   # Python Script/Java Jar that should be submitted
-  mainApplicationFile: s3a://scripts/spark-simple-app.py
+  mainApplicationFile: "s3a://scripts/pyspark-app.py"
   sparkVersion: "3.3.1"
   # extra Spark configurations
   sparkConf:

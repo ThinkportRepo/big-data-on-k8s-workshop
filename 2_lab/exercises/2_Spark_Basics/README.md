@@ -9,7 +9,7 @@ zu starten und verteilen.
 ---------------------------
 ## Interaktives Spark
 
-Für eine Interactive Spark Session wird eine Spark Session geöffnet in der all Commands nacheinander abgesetzt werden können
+Für eine Interactive Spark Session wird eine Spark Session geöffnet in der alle Commands nacheinander abgesetzt werden können
 
 ### Spark-Shell (Scala)
 
@@ -54,7 +54,7 @@ Schau dir insbesondere an wie die Sparkapp am Anfang konfiguriert wird.
 ---------------------------
 ## Spark-Submit
 
-Mit dem dem Spark-Submit Programm kann ein Spark Job von einem Client an eine Spark Cluster zur Ausführung übermittelt werden.<br>
+Mit dem Spark-Submit Programm kann ein Spark Job von einem Client an eine Spark Cluster zur Ausführung übermittelt werden.<br>
 Wir verwenden Kubernetes als Cluster Manager und der Spark Job muss damit an den Kubernetes Cluster geschickt werden.<br>
 Die Spark Anwendung ist typischerweise komplett fertig als ein (Docker) Image gebaut oder der auszuführende Code wird dynamisch von s3 gelesen. <br> 
 Für diese Aufgabe starten wir eine App die bereits auf dem Image vorhanden.<br>
@@ -170,7 +170,7 @@ Der Service heißt `minio`.
 #### 5. Starte die Anwendung und prüfe ob sie mit zwei Executoren läuft und ob die Ergebnisse richtig sind.
 
 ```
-#  verwenden der manifest yaml (im ordner wo die Datei liegt)
+#  verwenden der manifest yaml (im Ordner in dem die Datei liegt)
 kubectl apply -f spark-pi-app.yaml
 
 # spark app anzeigen

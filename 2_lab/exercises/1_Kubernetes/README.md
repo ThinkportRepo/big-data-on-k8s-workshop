@@ -7,7 +7,7 @@ Beantworte mit den unten genannten kubectl-Befehlen folgende Fragen:
 
 - Wieviele Nodes (Knoten) hat der Cluster? <br>
 - Welches Betriebssystem läuft auf den Nodes?<br>
-- Wieviele Arbeitsspeicher hat jeder Node?<br>
+- Wieviel Arbeitsspeicher hat jeder Node?<br>
 
 ```
 # Nodes anzeigen
@@ -52,7 +52,7 @@ kubectl get ingress -A
 Erkunde mit dem gleichen Prinzip weitere Resourcen im Namespace frontend. <br>
 
 ```
-# Services (eindeutige dns Name innerhalb des Clusters | svc ist die Abkürzung von services)
+# Services (eindeutige dns Namen innerhalb des Clusters | svc ist die Abkürzung von services)
 kubectl get svc -n frontend
 kubectl get services -n frontend
 

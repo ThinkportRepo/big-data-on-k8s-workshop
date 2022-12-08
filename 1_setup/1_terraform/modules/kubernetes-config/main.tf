@@ -407,7 +407,7 @@ resource "kubernetes_config_map" "s3cmd" {
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   data = {
-    "s3cfg" = "${file("../7_frontends/0_initialisation/.s3cfg")}"
+    ".s3cfg" = "${file("../7_frontends/0_initialisation/.s3cfg")}"
   }
   
 }

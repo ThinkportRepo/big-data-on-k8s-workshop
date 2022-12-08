@@ -26,7 +26,7 @@ Um Zeilen in das Terminal einzufügen muss immer `Strg+Shift+v` gedrückt werden
 
 Es gibt in vielen Übungen Tipps und Lösungen die ausklappbar sind. Falls du nicht weiter weiß, versuche es bitte erstmal mit dem Tipp. Benutze bitte nur in Situationen wo du wirklich nicht mehr weiter kommst oder deine Lösungen überprüfen willst die ausklappbare Lösung.
 
-### Wenn du Hilfe oder Fehler in den Aufgaben bemerkst brauchst melde dich einfach.
+### Wenn du Hilfe brauchst oder Fehler in den Aufgaben bemerkst melde dich einfach.
 
 ## Viel Spaß!
 

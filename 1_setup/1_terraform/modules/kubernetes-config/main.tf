@@ -33,6 +33,18 @@ resource "kubernetes_secret" "dockerhub" {
   }
 }
 
+resource "kubernetes_secret" "kubeconfig" {
+  metadata{
+    name = "kubeconfig"
+    namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+  }  
+  
+  data = {
+    "kubeconfig" = var.kubeconfig
+  }
+
+}
+
 #This secret can be used to access GitHubs Container Registry
 # resource "kubernetes_secret" "github" {
 #   for_each = toset([ "default", "tools", "ingress" ])
@@ -385,6 +397,7 @@ resource "kubernetes_config_map" "bashrc" {
     complete -o default -F __start_kubectl k
     alias s3=s3cmd
     alias kn=kubens
+    export KUBECONFIG=/home/coder/kubeconfig
     EOT
   }
 }
@@ -493,7 +506,8 @@ resource "kubernetes_job" "gitcloner" {
 resource "kubernetes_job" "init" {
   depends_on = [
     kubernetes_secret.github,
-    kubernetes_job.gitcloner
+    kubernetes_job.gitcloner,
+    kubernetes_secret.kubeconfig
   ]
   metadata {
       name = "init"
@@ -514,6 +528,8 @@ resource "kubernetes_job" "init" {
               join("\n", ["apk add --no-cache curl;",
                 "curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\";",
                 "install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl",
+                "echo \"cp /config/kubeconfig /workshop/kubeconfig\"",
+                "cp /config/kubeconfig /workshop/kubeconfig",
                 "echo \"################## Init Summary ############\";",
                 "echo Github User: $GITHUB_USER;",
                 "echo Github User: $GITHUB_REPOSITORY;",
@@ -555,12 +571,23 @@ resource "kubernetes_job" "init" {
                 mount_path = "/workshop"
                 name = "workshop"
               }
+              volume_mount {
+                mount_path = "/config/"
+                name = "kubeconfig"
+              }
         }
         volume {
           name = "workshop"
           persistent_volume_claim {
             claim_name = "workshop"
           } 
+        }
+        volume {
+          name = "kubeconfig"
+          secret {
+            secret_name = kubernetes_secret.kubeconfig.metadata.0.name
+            optional = false
+          }
         }
       }
     }

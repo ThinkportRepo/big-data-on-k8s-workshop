@@ -23,7 +23,9 @@ resource "azurerm_kubernetes_cluster" "aks"{
     name            = "default"
     node_count      = var.NodeCount
     vm_size         = var.NodeSize
-    os_disk_size_gb = 30
+    os_disk_size_gb = var.NodeDiskSize
+    os_disk_type = "Managed"
+    kubelet_disk_type = "OS"
     os_sku = "Ubuntu"
   }
 

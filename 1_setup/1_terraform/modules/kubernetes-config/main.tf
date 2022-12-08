@@ -1,16 +1,21 @@
+############################
+####Namespaces & Secrets####
+############################
 locals {
   namespaces = toset([ "default", "minio", "hive", "kafka", "spark", "trino", "frontend" ])
 }
+resource "kubernetes_namespace" "ns" {
+  for_each = setsubtract(local.namespaces, ["default"])
+  metadata {
+    name = each.value
+  }
+}
 #Image Pull Secrets 
 resource "kubernetes_secret" "dockerhub" {
-  for_each = local.namespaces #Add more namespaces by extending the list
- #   depends_on = [ # and adding them to the dependencies here
- #   kubernetes_namespace.tools,
- #   kubernetes_namespace.ingress,
- # ]
+  for_each = local.namespaces 
   metadata {
     name = "dockerhub-cfg"
-    namespace = each.value
+    namespace = each.key != "default" ? kubernetes_namespace.ns[each.value].metadata.0.name : "default"
   }
 
   type = "kubernetes.io/dockerconfigjson"
@@ -57,12 +62,6 @@ resource "kubernetes_secret" "dockerhub" {
 
 
 #Namespaces #Examples for defining namespaces
-resource "kubernetes_namespace" "ns" {
-  for_each = setsubtract(local.namespaces, ["default"])
-  metadata {
-    name = each.value
-  }
-}
 # resource "kubernetes_namespace" "ingress" {
 #       metadata {
 #         name = "ingress"
@@ -194,8 +193,14 @@ resource "kubernetes_default_service_account" "default" {
 #     value = "sync"
 #   }
 # }
+##################
+####Basic Setup###
+##################
 
 resource "helm_release" "minio" {
+  depends_on = [
+    kubernetes_default_service_account.default["minio"]
+  ]
   name = "minio"
   repository = "https://charts.min.io/"
   chart = "minio"
@@ -207,6 +212,7 @@ resource "helm_release" "minio" {
     name = "consoleIngress.hosts[0]"
     value = "minio.${var.ClusterDNS}"
   }
+  timeout = 600
 }
 
 resource "helm_release" "hive" {
@@ -223,7 +229,7 @@ resource "helm_release" "hive" {
     name = "schemainit"
     value = true
   }
-
+    timeout = 600
 }
 
 resource "helm_release" "kafka" {
@@ -237,7 +243,7 @@ resource "helm_release" "kafka" {
   values = [
     "${file("../4_kafka/values.yaml")}"
   ]
-  timeout = 720
+  timeout = 900
   
 }
 
@@ -293,6 +299,7 @@ resource "helm_release" "trino" {
   values = [
     "${file("../6_trino/values.yaml")}"
   ]
+  timeout = 600
 }
 
 ##################
@@ -580,11 +587,14 @@ resource "helm_release" "dashboard" {
     name = "k8shost"
     value = var.ClusterDNS
   }
+  timeout = 600
 }
 
 resource "helm_release" "terminal" {
   depends_on = [
-    kubernetes_job.init
+    kubernetes_job.init,
+    kubernetes_config_map.bashrc,
+    kubernetes_service_account.kubectl
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   chart = "../7_frontends/2_terminal/chart"
@@ -596,12 +606,15 @@ resource "helm_release" "terminal" {
     name = "host"
     value = "terminal.${var.ClusterDNS}"
   }
+  timeout = 600
 }
 
 resource "helm_release" "vscode" {
   depends_on = [
-    kubernetes_job.init
-  ]
+    kubernetes_job.init,
+    kubernetes_config_map.bashrc,
+    kubernetes_service_account.kubectl
+    ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   chart = "../7_frontends/3_vscode/chart"
   name = "vscode"
@@ -612,6 +625,7 @@ resource "helm_release" "vscode" {
     name = "host"
     value = "vscode.${var.ClusterDNS}"
   }
+  timeout = 600
 }
 
 resource "helm_release" "jupyter" {
@@ -629,6 +643,11 @@ resource "helm_release" "jupyter" {
     name = "host"
     value = "jupyter.${var.ClusterDNS}"
   }
+  set {
+    name = "jupyter.persistence.enabled"
+    value = false
+  }
+  timeout = 600
 }
 
 resource "helm_release" "sqlpad" {
@@ -647,6 +666,7 @@ resource "helm_release" "sqlpad" {
     name = "host"
     value = "sqlpad.${var.ClusterDNS}"
   }
+  timeout = 600
 }
 
 resource "helm_release" "metabase" {
@@ -665,6 +685,7 @@ resource "helm_release" "metabase" {
     name = "ingress.host"
     value = "metabase.${var.ClusterDNS}"
   }
+  timeout = 600
 }
 
 resource "helm_release" "history" {
@@ -683,6 +704,7 @@ resource "helm_release" "history" {
     name = "ingress.host"
     value = "spark.${var.ClusterDNS}"
   }
+  timeout = 600
 }
 
 resource "helm_release" "k8sdashboard" {
@@ -697,148 +719,5 @@ resource "helm_release" "k8sdashboard" {
     name = "hosts[0]"
     value = "kube.${var.ClusterDNS}"
   }
+  timeout = 600
 }
-
-# resource "kubernetes_pod" "init" {
-#   depends_on = [
-    
-#   ]
-#   metadata {
-#     name = "init"
-#     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-#   }  
-#   spec {
-#     service_account_name = kubernetes_service_account.kubectl.metadata.0.name
-#     restart_policy = "Never"
-#     container {
-#       name = "main"
-#       image = "alpine:3.17"
-#       command = ["sh", "-c", 
-#          join("\n", ["apk add --no-cache curl;",
-#           "curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\";",
-#           "install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl",
-#           "echo \"################## Init Summary ############\";",
-#           "echo Github User: $GITHUB_USER;",
-#           "echo Github User: $GITHUB_REPOSITORY;",
-#           "echo ls /workshop/git;",
-#           "ls /workshop/git;",
-#           "echo kubectl get po;",
-#           "kubectl get po;",
-#           "echo \"############################################\""
-#           ])
-#           ]
-#           env {
-#             name = "GITHUB_REPOSITORY"
-#             value = "ThinkportRepo/big-data-on-k8s-workshop.git"
-#           }
-#           env {
-#             name = "GITHUB_TOKEN"
-#             value_from {
-#               secret_key_ref {
-#                 name = kubernetes_secret.github.metadata.0.name
-#                 key = "git_token"
-#               } 
-#             }
-#           }
-#           env {
-#             name = "GITHUB_USER"
-#             value_from {
-#               secret_key_ref {
-#                 name = kubernetes_secret.github.metadata.0.name
-#                 key = "git_user"
-#               } 
-#             }
-#           }
-#           volume_mount {
-#             mount_path = "/workshop"
-#             name = "workshop"
-#           }
-#       }
-#       init_container {
-#         name = "git"
-#         image = "alpine:3.17" 
-#         command = ["sh", "-c", 
-#           join("\n", ["apk add --no-cache git;",
-#           "echo \"### Environment Variables\";",
-#           "echo $GITHUB_USER;",
-#           "echo $GITHUB_TOKEN;",
-#           "echo $GITHUB_REPOSITORY;",
-#           "rm -rf /workshop/git;",
-#           "rm -rf /workshop/exercises;",
-#           "rm -rf /workshop/solutions;",
-#           "git clone https://$${GITHUB_USER}:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
-#           "mkdir /workshop/exercises;",
-#           "mkdir /workshop/solutions;",
-#           "cp -r /workshop/git/2_lab/exercises/ /workshop/;",
-#           "cp -r /workshop/git/2_lab/solutions/ /workshop/"
-#           ])
-#         ]
-#           env {
-#             name = "GITHUB_REPOSITORY"
-#             #value = "ThinkportRepo/big-data-on-k8s-workshop.git"
-#             value = "ThinkportRepo/k8s-lab.git"
-#           }
-#           env {
-#             name = "GITHUB_TOKEN"
-#             value_from {
-#               secret_key_ref {
-#                 name = kubernetes_secret.github.metadata.0.name
-#                 key = "git_token"
-#               } 
-#             }
-#           }
-#           env {
-#             name = "GITHUB_USER"
-#             value_from {
-#               secret_key_ref {
-#                 name = kubernetes_secret.github.metadata.0.name
-#                 key = "git_user"
-#               } 
-#             }
-#           }
-#           volume_mount {
-#             mount_path = "/workshop"
-#             name = "workshop"
-#           }
-#       }
-#       volume {
-#         name = "workshop"
-#         persistent_volume_claim {
-#           claim_name = "workshop"
-#         } 
-#       }
-#   }
-# }
-
-
-
-# resource "helm_release" "vscode" {
-#     depends_on = [
-#       kubernetes_namespace.tools,
-#       kubernetes_persistent_volume_claim.workshop
-#     ]
-#     name = "vscode"
-#     chart = "../7_frontends/3_vscode/chart"
-#     namespace = "tools"
-
-#     set {
-#         name = "host" 
-#         value = "vscode.${var.ClusterDNS}"
-#     }
-#     set {
-#         name = "ghtoken"
-#         value = var.GitHubRepoToken
-#     }
-#     set {
-#         name = "ghuser"
-#         value = var.GitHubUsername
-#     }
-# #    set {
-# #      name = "serviceAccount.imagePullSecrets[0]"
-# #      value = "ghcr-cfg"
-# #    }
-#     set {
-#       name = "serviceAccount.imagePullSecrets[0]"
-#       value = "dockerhub-cfg"
-#     }
-# }

@@ -35,6 +35,11 @@ variable NodeCount {
     type = number
     default = 1
 }
+variable "NodeDiskSize" {
+  description = "The size of the OS disk of the node in Gibibytes."
+  type = number
+  default = 30
+}
 variable HttpApplicationRouting {
     description = "Should the http application routing be enabled for demonstration purposes?"
     type = bool

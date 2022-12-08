@@ -245,6 +245,7 @@
           </v-list-item>
         </v-list-group>
       </v-list>
+      <!--
       <v-divider></v-divider>
       <v-list>
         <v-list-group no-action prepend-icon="mdi-checkbox-blank-outline">
@@ -287,6 +288,7 @@
           <v-list-item class="pl-5 ml-5">BLABLA</v-list-item>
         </v-list-group>
       </v-list>
+      -->
 
       <v-divider></v-divider>
     </v-navigation-drawer>
@@ -310,7 +312,7 @@ export default {
     show_metabase: true,
     show_spark: true,
     show_trino: true,
-    show_kafka: true,
+    show_kafka: false,
     show_minio: true,
     show_kubernetes: false,
     show_grafana: false,

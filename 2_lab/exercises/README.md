@@ -2,9 +2,12 @@
 
 Hier siehst du unseren Plan für die nächsten zwei Workshoptage. Ziel ist es ein Business Case und Dataflow für eine Big-Dataanalyse mit Kubernetes, Spark, Kafka und Trino zu erstellen.
 
-![Business Case und Dataflow](/2_lab/solutions/images/Big-Data-Workshop.png)
-<br>
+<div style="background-color:white";>
 
+![Business Case und Dataflow](/2_lab/solutions/images/Big-Data-Workshop.png)
+
+</div>
+<br>
 
 
 Für jede Teilaufgabe gibt es ein Ordner mit je einer README.md, die die zulösenden Aufgaben enthält.

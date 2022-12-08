@@ -1,3 +1,5 @@
+# Note
+All those steps are done automatically when using the terraform deployment. 
 # Create PVC clone git Repo and upload data to s3
 
 1. Create Secret with git token and git user

@@ -311,6 +311,10 @@ resource "helm_release" "trino" {
   values = [
     "${file("../6_trino/values.yaml")}"
   ]
+  set {
+    name = "host"
+    value = "trino.${var.ClusterDNS}"
+  }
   timeout = 600
 }
 
@@ -453,11 +457,11 @@ resource "kubernetes_job" "gitcloner" {
               "rm -rf /workshop/git;",
               "rm -rf /workshop/exercises;",
               "rm -rf /workshop/solutions;",
-              "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /tmp/git;",
+              "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
               "mkdir /workshop/exercises;",
               "mkdir /workshop/solutions;",
-              "cp -r /tmp/git/2_lab/exercises/ /workshop/;",
-              "cp -r /tmp/git/2_lab/solutions/ /workshop/"
+              "cp -r /workshop/git/2_lab/exercises/ /workshop/;",
+              "cp -r /workshop/git/2_lab/solutions/ /workshop/"
               ])
             ]
               env {

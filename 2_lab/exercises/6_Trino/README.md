@@ -44,6 +44,8 @@ show tables from delta.data;
 
 ## 2. Aufgabe: Schema für das Bucket anlegen
 
+> Funktioniert nur wenn Schritt 1 durchgeführt werden.
+
 Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein.
 
 Erstelle ein Schema für den Delta Connector auf das Bucket `twitter` mit folgendem Query.
@@ -116,7 +118,7 @@ hashtags: array(varchar)
 </p>
 
 ### 2. Tweets
-Schau dir mal 1-2 Tweets und die dazugehörigen Hashtags an.
+Schau dir mal **1-2 Tweets** und die dazugehörigen **Hashtags** an.
 
 
 <details>
@@ -126,7 +128,7 @@ Schau dir mal 1-2 Tweets und die dazugehörigen Hashtags an.
 ```
 select
   <tweet-message>,
-  <hashtag-array>
+  <hashtags-array>
 from
   <dataset>
 limit
@@ -154,8 +156,7 @@ limit
 </p>
 
 ### 3. Tweets pro Stunde
-Schreibe eine Abfrage, die die **Tweets pro Stunde** zählt.
-
+Schreibe eine Abfrage, die die **Anzahl** der **Tweets pro Stunde** zählt.
 
 <details>
 <summary>Tipp</summary>
@@ -241,10 +242,48 @@ limit
 
 ### 5. Unnest
 Für die folgenden Aufgaben wird die `unnest` Funktion benötigt. Schreibe eine Abfrage die das Hashtag-array mit `unnest` teilt.
-
+Gebe dabei die Spalten *user_name*, *tweet_id* und die unnested *hashtags*-Spalte mit einem Limit von **20** Zeilen aus.
 
 ### 6. Top 5 Hashtags der Top 10 User
 Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt. 
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+select
+  <user>,
+  <tweet>,
+  tags
+from
+  <dataset>
+  cross join unnest(<hashtags-array>) AS t (tags)
+limit
+  20;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  user_name,
+  tweet_id,
+  tags
+from
+  twitter
+  cross join unnest(hashtags) AS t (tags)
+limit
+  20;
+```
+
+</details>
+</p>
 
 <details>
 <summary>Tipp</summary>
@@ -364,8 +403,40 @@ limit
 </details>
 </p>
 
-### 8. Influencer vs. User
-!!!!!!!!!TODO!!!!!!!!!!
+### 8. Anzahl der Tweets der Top 10 Influencer
+Schreibe eine Abfrage, die **Top 10 Influencer** und die **Anzahl ihrer Tweets** ausgibt. 
+
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+SELECT
+  <user>,
+  max(<follower>) AS number_of_followers,
+  max(numberOfTweets) AS number_of_Tweets
+FROM
+  twitter
+  LEFT JOIN (
+    select
+      <user> AS user,
+      count(<tweet>) as numberOfTweets
+    from
+      <dataset>
+    group by
+      <user>
+  ) ON user = <user>
+GROUP BY
+  <user>
+ORDER BY
+  max(<follower>) DESC
+LIMIT
+  <number>;
+```
+
+</details>
+</p>
 
 
 <details>
@@ -373,7 +444,27 @@ limit
 <p>
 
 ```
-
+SELECT
+  user_name,
+  max(user_follower_count) AS number_of_followers,
+  max(numberOfTweets) AS number_of_Tweets
+FROM
+  twitter
+  LEFT JOIN (
+    select
+      user_name AS user,
+      count(tweet_id) as numberOfTweets
+    from
+      twitter
+    group by
+      user_name
+  ) ON user = user_name
+GROUP BY
+  user_name
+ORDER BY
+  max(user_follower_count) DESC
+LIMIT
+  10;
 ```
 
 </details>
@@ -386,14 +477,14 @@ Ziel ist, wir schreiben ein Aggregat als csv Datei nach s3.
 
 Dafür: <br>
 
-#### 1. Schema in hive auf dem gleichen Bucket aber hive connector erstellen.
+### 1. Schema in hive auf dem gleichen Bucket aber hive connector erstellen.
 
 ```
 CREATE SCHEMA hive.export
 WITH (location = 's3a://twitter/')
 ```
 
-#### 2. Tabelle aus dem Ergebniss einer Abfrage auf bucket erstellen
+### 2. Tabelle aus dem Ergebniss einer Abfrage auf bucket erstellen
 
 ```
 CREATE TABLE hive.export.csv

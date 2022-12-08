@@ -44,7 +44,7 @@ curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect
 # Check the config des existierenden Connectoren 
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config
 ```
-
+---------------------------
 ## 2.  Kafka Topics anschauen
 
 Im Terminal von VS Code mit folgendem Befehl prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde.
@@ -84,11 +84,10 @@ kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.clus
 kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning --max-messages 5
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
+</details>
+</p>
 
-
+-------------------------
 ## 3. Mikroservice App zur Reduzierung der Twitter Rohdaten starten
 
 Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folgenden Konfugurationen:

@@ -10,7 +10,7 @@ spec:
   image: "thinkportgmbh/workshops:spark-3.3.1"
   imagePullPolicy: IfNotPresent # or Always
   # Python Script/Java Jar that should be submitted
-  mainApplicationFile:
+  mainApplicationFile: s3a://scripts/spark_stream_to_s3.py
   sparkVersion: "3.3.1"
   # extra Spark configurations
   sparkConf:
@@ -38,8 +38,8 @@ spec:
           fieldRef:
             fieldPath: metadata.name
   # executor pod configuration
-  executor: 
-    cores: 
+  executor:
+    cores: 2
     instances: 1
     memory: "512m"
     labels:

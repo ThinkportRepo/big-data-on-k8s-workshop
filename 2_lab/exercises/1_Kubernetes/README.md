@@ -48,7 +48,7 @@ kubectl get ingress --all-namespaces
 kubectl get ingress -A
 ```
 
-## 4. Weitere Resourcen
+## 4. Weitere Ressourcen
 Erkunde mit dem gleichen Prinzip weitere Resourcen im Namespace frontend. <br>
 
 ```

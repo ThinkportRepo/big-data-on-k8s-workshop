@@ -84,9 +84,10 @@ kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.clus
 kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning --max-messages 5
 ```
 
-</p>
-</details>
-<br>
+<details>
+<summary>Lösung</summary>
+<p>
+
 
 ## 3. Mikroservice App zur Reduzierung der Twitter Rohdaten starten
 

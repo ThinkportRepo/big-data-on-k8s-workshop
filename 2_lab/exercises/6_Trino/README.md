@@ -1,18 +1,21 @@
 # Aufgaben zu Trino
 
+
 Trino kann über Connectoren auf eine Vielzahl von Datenquellen zugreifen.
-Für dieses Lab ist ein Connector für Delta Files auf s3 eingerichtet.
+Für dieses Lab ist ein Connector für Delta Files auf s3 eingerichtet.<br>
 
 In einem s3 Bucket können verschiedene Tabellen abgelegt werden.
-Eine Sammlung von Tabellen entspricht einem Schema
+Eine Sammlung von Tabellen entspricht einem Schema.
 
-Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`
-also im Bucket `twitter` unter dem Prefix `delta`
+Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`, also im Bucket `twitter` unter dem Prefix `delta`.
+
+-------------------------
 
 ## 1. Connection zu Trino anlegen
 
-Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein und gehe oben Links auf das Dropdown "New connection"
+Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein und gehe oben Links auf das Dropdown "New connection".
 
+```
 Eine neue Connection mit
 Name: Delta
 Driver: Trino
@@ -22,32 +25,34 @@ Catalog: delta
 Schema: data
 erstellen.
 Connection zuerst mit dem Button Test prüfen und dann speichern
+``` 
 
-Eventuell tauchen links noch keine Schema auf,
-über folgende Befehle schauen was bei Trino verfügbar ist
+Eventuell tauchen links noch keine Schema auf. Schau mit folgenden Befehlen was bei Trino verfügbar ist. <br>
 
 ```
 # connectoren=cataloge anzeigen
 show catalogs;
-# schemas in catalog anzeigen;
+
+# Schemas in catalog anzeigen;
 show schemas from delta;
 
-# tabellen in schema anzeigen;
+# Tabellen in schema anzeigen;
 show tables from delta.data;
 ```
 
+--------------------------
+
 ## 2. Aufgabe: Schema für das Bucket anlegen
 
-(geht nur wenn die Connection schon existiert, bin ich mir gerade nicht sicher ob die korrekt erzeugt wird)
-Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein
+Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein.
 
-Erstelle ein Schema für den Delta Connector auf das Bucket `twitter` mit folgendem Query
+Erstelle ein Schema für den Delta Connector auf das Bucket `twitter` mit folgendem Query.
 
 ```
 CREATE SCHEMA IF NOT EXISTS delta.data WITH (location='s3a://twitter/');
 ```
 
-Als nächstes erzeugen wir eine Tabelle die auf das Prefix (den Unterordner) zeigt.
+Als nächstes erzeugen wir eine Tabelle, die auf das Prefix (den Unterordner) zeigt.
 Hier muss kein Schema definiert werden, da sich der Connector das Schema aus dem Schema der Delta Datei zieht.
 
 ```
@@ -59,7 +64,7 @@ WITH (
 );
 ```
 
-Teste ob die Daten verfügbar sind
+Teste ob die Daten verfügbar sind. <br>
 
 ```
 # Tabellen anzeigen
@@ -75,36 +80,322 @@ ALTER TABLE data.twitter EXECUTE optimize;
 EXPLAIN SELECT * FROM data.twitter;
 
 ```
+--------------------------------
+## 3. Aufgaben in SQL formulieren
+Die folgenden Aufgaben mit Hilfe von SQL-Abfragen gelöst werden.
+### 1. Datensatzes
+Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentypen sind vorhanden? 
 
-Folgende Aufgaben in SQL formuleren
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  *
+from
+  twitter;
+```
+
+Das Schema steht im SQL Pad links an der Seite.
+
+```
+tweet_id: varchar
+created_at: timestamp(3) with time zone 
+tweet_message: varchar
+user_name: varchar
+user_location: varchar
+user_follower_count: integer
+user_friends_count: integer 
+retweet_count: integer
+language: varchar
+hashtags: array(varchar)
+```
+
+</details>
+</p>
+
+### 2. Tweets
+Schau dir mal 1-2 Tweets und die dazugehörigen Hashtags an.
+
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+select
+  <tweet-message>,
+  <hashtag-array>
+from
+  <dataset>
+limit
+<number>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  tweet_message,
+  hashtags
+from
+  twitter
+limit
+2;
+```
+
+</details>
+</p>
+
+### 3. Tweets pro Stunde
+Schreibe eine Abfrage, die die **Tweets pro Stunde** zählt.
+
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+select date, <stunde>, count(*) as total
+from
+  (
+    select date(<timestamp>) as "date", hour(<timestamp>) as "hour"
+    from <dataset>
+  )
+group by date, <stunde>
+order by date, <stunde>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
 
 ```
 select date, hour, count(*) as total
 from
   (
     select date(created_at) as "date", hour(created_at) as "hour"
-    from data.twitter
+    from twitter
   )
 group by date, hour
-order by date, hour
+order by date, hour;
 ```
 
-Hier alle weiterne Aufgaben anfügen
+</details>
+</p>
 
-Schreiben mit Trino
-Ziel wir schreiben ein aggregat als csv nach s3
 
-dafür
+### 4. Top 10 User nach Tweet-Anzahl
+Schreibe eine Abfrage, die die **Top User** nach ihrer **Anzahl an Tweets** ausgibt. Bedenke dabei, deine Ausgabe auf **10** Einträge zu limitieren.
 
-1. Schema in hive auf dem gleichen Bucket aber hive connector erstelen
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+select
+  <user>,
+  count(<tweet>) as numberOfTweets
+from
+  <dataset>
+group by
+  <user>
+order by
+  count(<tweet>) desc
+limit
+  <number>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  user_name,
+  count(tweet_id) as numberOfTweets
+from
+  twitter
+group by
+  user_name
+order by
+  count(tweet_id) desc
+limit
+  10;
+```
+
+</details>
+</p>
+
+### 5. Unnest
+Für die folgenden Aufgaben wird die `unnest` Funktion benötigt. Schreibe eine Abfrage die das Hashtag-array mit `unnest` teilt.
+
+
+### 6. Top 5 Hashtags der Top 10 User
+Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt. 
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+SELECT
+  tags,
+  count(<tweet>)
+FROM
+  twitter
+  CROSS JOIN UNNEST(<hashtags-array>) AS t (tags)
+  INNER JOIN (
+    SELECT
+      <user> AS user,
+      max(<follower>) as follower
+    FROM
+      <data>
+    GROUP BY
+      <user>
+    ORDER BY
+      max(<follower>) desc
+    LIMIT
+      <number>
+  ) ON <dataset>.<user> = user
+GROUP BY
+  tags
+ORDER BY
+  count(<tweet>) desc
+LIMIT
+  <number>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT
+  tags,
+  count(tweet_id)
+FROM
+  twitter
+  CROSS JOIN UNNEST(hashtags) AS t (tags)
+  INNER JOIN (
+    SELECT
+      user_name AS user,
+      max(user_follower_count) as follower
+    FROM
+      twitter
+    GROUP BY
+      user_name
+    ORDER BY
+      max(user_follower_count) desc
+    LIMIT
+      10
+  ) ON twitter.user_name = user
+GROUP BY
+  tags
+ORDER BY
+  count(tweet_id) desc
+LIMIT
+  5;
+```
+
+</details>
+</p>
+
+
+
+### 7. Top 10 Influencer
+Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower** zählt und sortiert anzeigt.
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+select
+  <user>,
+  max(<follower>) as follower
+from
+  <dataset>
+group by
+  <user>
+order by
+  max(<follower>) desc
+limit
+  <number>;
+```
+
+</details>
+</p>
+
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  user_name,
+  max(user_follower_count) as follower
+from
+  twitter
+group by
+  user_name
+order by
+  max(user_follower_count) desc
+limit
+  10;
+```
+
+</details>
+</p>
+
+### 8. Influencer vs. User
+!!!!!!!!!TODO!!!!!!!!!!
+
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+
+```
+
+</details>
+</p>
+
+
+---------------------------------------
+## 4. Schreiben mit Trino
+Ziel ist, wir schreiben ein Aggregat als csv Datei nach s3.
+
+Dafür: <br>
+
+#### 1. Schema in hive auf dem gleichen Bucket aber hive connector erstellen.
 
 ```
 CREATE SCHEMA hive.export
 WITH (location = 's3a://twitter/')
 ```
 
-2. Tabelle aus dem Ergebniss einer Abfrage auf bucket erstellen
+#### 2. Tabelle aus dem Ergebniss einer Abfrage auf bucket erstellen
 
+```
 CREATE TABLE hive.export.csv
 COMMENT 'aggregation'
 WITH (
@@ -123,31 +414,16 @@ group by date, hour
 order by date, hour
 
 ```
-check ob es funktionoiert hat
+
+Checke ob es funktioniert hat. <br>
+
+```
 select * from hive.export.csv
-
-und auf s3
-
-s3 ls s3://twitter/csv
-
-
-
-
-
-
 ```
 
-CREATE TABLE hive.export.csv (
-hour int,
-total int,
-date timestamp
-)
-WITH (
-format = 'TEXTFILE',
-external_location = 's3a://twitter/csv/',
-partitioned_by = ARRAY['date']
-)
+Checke genauso s3. <br>
 
 ```
-
+s3 ls s3://twitter/csv/
 ```
+

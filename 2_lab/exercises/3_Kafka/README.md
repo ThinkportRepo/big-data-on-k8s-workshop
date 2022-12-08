@@ -35,13 +35,13 @@ Speicher diese Datei als `twitter.json` und befülle die XXX Felder mit deinen j
 ```
 
 ```
-# Check die verfügbaren Connectoren
+# Checke die verfügbaren Connectoren
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 
 # Erstelle einen neuen Connector
 curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config -d @twitter.json
 
-# Check the config des existierenden Connectoren 
+# Überprüfe die Konfiguration der existierenden Connectoren 
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config
 ```
 ---------------------------
@@ -68,7 +68,7 @@ kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local
 
 </p>
 </details> <br>
-Wenn das Topic erzeugt wurde, können wir uns auf das Topic subscriben und schauen ob gerde getwittert wird.
+Wenn das Topic erzeugt wurde, können wir uns auf das Topic subscriben und schauen ob gerade getwittert wird.
 
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning

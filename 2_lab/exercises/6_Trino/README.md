@@ -96,7 +96,8 @@ Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentyp
 select
   *
 from
-  twitter;
+  twitter
+limit 10;
 ```
 
 Das Schema steht im SQL Pad links an der Seite.
@@ -242,7 +243,35 @@ limit
 
 ### 5. Unnest
 Für die folgenden Aufgaben wird die `unnest` Funktion benötigt. Schreibe eine Abfrage die das Hashtag-array mit `unnest` teilt.
-Gebe dabei die Spalten *user_name*, *tweet_id* und die unnested *hashtags*-Spalte mit einem Limit von **20** Zeilen aus.
+Gebe dabei die Spalten `user_name`, `tweet_id` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen aus.
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+SELECT user_name, tweet_id, tags
+FROM twitter
+CROSS JOIN UNNEST(<feld>) AS t (tags)
+LIMIT 20;
+```
+
+</details>
+</p>
+
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT user_name, tweet_id, tags
+FROM twitter
+CROSS JOIN UNNEST(hashtags) AS t (tags)
+LIMIT 20;
+```
+
+</details>
+</p>
 
 ### 6. Top 5 Hashtags der Top 10 User
 Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt. 
@@ -404,7 +433,7 @@ limit
 </p>
 
 ### 8. Anzahl der Tweets der Top 10 Influencer
-Schreibe eine Abfrage, die **Top 10 Influencer** und die **Anzahl ihrer Tweets** ausgibt. 
+Schreibe eine Abfrage, die die **Top 10 Influencer**, ihre Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll es sortiert nach den Anzahl ihrer Follower sein.
 
 
 <details>

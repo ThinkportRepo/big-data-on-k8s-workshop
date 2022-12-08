@@ -1,21 +1,15 @@
 #K8s specific settings
 UniquePrefix = "" #if unset the workspace name is used
-SharedPrefix = "dummy"
-ResourceGroupName = "rg-k8s-workshop"
+SharedPrefix = "customer"
+ResourceGroupName = "bigdata-k8s-workshop"
 Location = "WestEurope"
-NodeCount = 1
-HttpApplicationRouting = false
+NodeCount = 2
+NodeSize = "standard_a4m_v2"
+NodeDiskSize = 50
+HttpApplicationRouting = true
 #GitHub specific configuration
-GitHubUsername = "admin"
-GitHubPackagesToken = "ghp_ABC"
-GitHubRepoToken = "github_pat_XXXX_DEF"
-#CloudFlare specific configuration
-CloudFlareToken = "XXXXXJ"
-CloudFlareDNSZoneID = "XXXXXX"
-CloudFlareDNS = "example.com"
-CloudFlareEmail = "admin@example.com"
-#LetsEncrypt settings
-ACMEServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
-ACMEAdminEmail = "admin@example.com"
-DockerhubUser = "XXXX"
-DockerhubPAT = "XXXXXXX"
+GitHubUsername = "myusername"
+GitHubRepoToken = "github_pat_XXXXXXXXXXXXXX"
+#Dockerhub specific configuration
+DockerhubUser = "myusername"
+DockerhubPAT = "dckr_pat_XXXXXXXXXXXXXXXX"

@@ -40,8 +40,10 @@ spec:
             - name: bashrc
               mountPath: /jupyter/.bashrc
               subPath: .bashrc
-            #- name: {{ .Release.Name }}-notebooks
-            #  mountPath: /jupyter/notebooks
+            {{- if .Values.jupyter.persistence.enabled }}
+            - name: {{ .Release.Name }}-notebooks
+              mountPath: /jupyter/notebooks
+            {{- end }}
       serviceAccountName: {{ template "pyspark-notebook.serviceAccountName" . }}
       volumes:
         - name: {{ .Release.Name }}-config-volume
@@ -56,8 +58,8 @@ spec:
         - name: bashrc
           configMap:
             name: bashrc
-      #- name: {{ .Release.Name }}-notebooks
-      #  {{- if .Values.jupyter.persistence.enabled }}
-      #  persistentVolumeClaim:
-      #    claimName: {{ template "pyspark-notebook.jupyter.pvc.name" . }}
-      #  {{- end }}
+        {{- if .Values.jupyter.persistence.enabled }}
+        - name: {{ .Release.Name }}-notebooks
+          persistentVolumeClaim:
+            claimName: {{ template "pyspark-notebook.jupyter.pvc.name" . }}
+        {{- end }}

@@ -121,7 +121,7 @@ Der Spark Pod kann den Python Code entweder intern aus dem Image oder dynamisch 
 s3 ls
 
 # Bucket erstellen
-s3 mb scripts
+s3 mb s3://scripts
 
 # Datei nach s3 laden
 s3 put pyspark-app.py s3://scripts/

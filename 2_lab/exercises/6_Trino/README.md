@@ -552,3 +552,17 @@ Checke genauso s3. <br>
 ```
 s3 ls s3://twitter/csv/
 ```
+
+sollen später weitere Zeilen hinzugefügt werden geht das mit
+
+```
+INSERT INTO hive.export.csv
+select date, count(*) as total, hour
+from
+(
+select date(created_at) as "date", hour(created_at) as "hour"
+from data.twitter
+)
+group by date, hour
+order by date, hour
+```

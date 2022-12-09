@@ -97,7 +97,7 @@ To connect from a client pod:
 3. Explore with kafka commands:
 
   # Create the topic
-  kafka-topics --zookeeper kafka-cp-zookeeper-headless:2181 --topic kafka-topic --create --partitions 1 --replication-factor 1 --if-not-exists
+  kafka-topics --zookeeper kafka-cp-zookeeper-headless:2181 --topic bernd --create --partitions 1 --replication-factor 1 --if-not-exists
 
   # Create a message
   MESSAGE="`date -u`"
@@ -260,3 +260,40 @@ Prerequisites:
   --> Sink schreibt nach S3 Bucket --> spark-target-schema3
   --> Spark kann wieder alles von s3 einlesen
 ````
+
+## ksql getrennt installieren
+
+helm install --set kafka.enabled=false --set kafka.bootstrapServers=kafka-cp-kafka.kafka.svc.cluster.local:9092 --set schema-registry.enabled=false --set schema-registry.url=kafka-cp-schema-registry.kafka.svc.cluster.local:8081 --set kafka-connect.enabled=false --set kafka-connect.url=kafka-cp-kafka-connect.kafka.svc.cluster.local:8083 ktool rhcharts/ksqldb
+
+CREATE STREAM test2 (tweet_id VARCHAR, created_at TIMESTAMP, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
+
+{
+"tweet_id":"1600474456073424898",
+"created_at":"2022-12-07 12:57:00",
+"tweet_message":"This #Tesla Cyberbike concept was designed entirely by Artificial Intelligence\n\nhttps://t.co/WUQa0oek4O\n\n#MachineLearning #AI #Python #DataScience #BigData\n#Algorithms #IoT #100DaysOfCode #5G #robots #tech\n#ArtificialIntelligence #NLP #cloud #4IR #cybersecurity https://t.co/HoJ4QCitO7",
+"user_name":"Paula_Piccard",
+"user_location":"New York",
+"user_follower_count":73768,
+"user_friends_count":9401,
+"retweet_count":0,
+"language":"en",
+"hashtag":[
+"Tesla",
+"MachineLearning",
+"AI",
+"Python",
+"DataScience",
+"BigData",
+"Algorithms",
+"IoT",
+"100DaysOfCode",
+"5G",
+"robots",
+"tech",
+"ArtificialIntelligence",
+"NLP",
+"cloud",
+"4IR",
+"cybersecurity"
+]
+}

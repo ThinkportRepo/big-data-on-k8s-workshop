@@ -121,8 +121,10 @@ additionalCatalogs:
     hive.s3.ssl.enabled=false
     hive.allow-drop-table=true
     hive.recursive-directories=true
-    hive.compression-codec=SNAPPY
     hive.metastore-timeout=128s
+    hive.non-managed-table-writes-enabled=true
+    hive.non-managed-table-creates-enabled=true
+    hive.collect-column-statistics-on-write=true
 
   delta: |
     connector.name=delta-lake
@@ -140,6 +142,14 @@ additionalCatalogs:
     connection-url=jdbc:postgresql://example.net:5432/database
     connection-user=root
     connection-password=secret
+
+  cassandra: |
+    connector.name=cassandra
+    cassandra.contact-points=cassandra.nosql.svc.cluster.local
+    cassandra.load-policy.dc-aware.local-dc=datacenter1
+    cassandra.allow-drop-table=true
+    cassandra.username=trainadm
+    cassandra.password=train@thinkport
 
 # Array of EnvVar (https://v1-18.docs.kubernetes.io/docs/reference/generated/kubernetes-api/v1.18/#envvar-v1-core)
 env: []

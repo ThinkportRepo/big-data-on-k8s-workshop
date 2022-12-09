@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="mb-4">
+      <!--<v-col cols="mb-4">
+        
         <Card
           title="Terminal"
           text="Terminal with Kubernetes access"
@@ -9,7 +10,7 @@
           subdomain="terminal"
           image="terminal_logo.png"
         ></Card
-      ></v-col>
+      ></v-col>-->
       <v-col cols="mb-4">
         <Card
           title="VSCode"
@@ -28,9 +29,7 @@
           image="jupyter_logo.png"
         ></Card
       ></v-col>
-    </v-row>
 
-    <v-row>
       <!--
       <v-col cols="mb-4">
         <Card
@@ -51,6 +50,9 @@
           image="sql_logo.png"
         ></Card
       ></v-col>
+    </v-row>
+
+    <v-row>
       <v-col cols="mb-4">
         <Card
           title="Metabase"
@@ -69,17 +71,6 @@
           image="minio_logo.png"
         ></Card
       ></v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="mb-4">
-        <Card
-          title="Spark UI"
-          text="Spark history server for all running and completed jobs"
-          url_label="Open SparkUI"
-          subdomain="spark"
-          image="spark_logo.png"
-        ></Card
-      ></v-col>
       <v-col cols="mb-4">
         <Card
           title="Trino UI"
@@ -89,6 +80,19 @@
           image="trino2_logo.png"
         ></Card
       ></v-col>
+    </v-row>
+    <v-row>
+      <!--
+      <v-col cols="mb-4">
+        <Card
+          title="Spark UI"
+          text="Spark history server for all running and completed jobs"
+          url_label="Open SparkUI"
+          subdomain="spark"
+          image="spark_logo.png"
+        ></Card
+      ></v-col>
+      
 
       <v-col cols="mb-4">
         <Card
@@ -99,7 +103,7 @@
           image="kafka_logo.png"
         ></Card
       ></v-col>
-      <!--
+     
     </v-row>
     
     <v-row><v-divider></v-divider> </v-row>

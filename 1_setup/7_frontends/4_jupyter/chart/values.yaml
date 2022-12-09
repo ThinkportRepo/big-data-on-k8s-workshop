@@ -32,7 +32,7 @@ jupyter:
   externalPort: 80
   persistence:
     # jupyter.persistence.enabled specifies whether Jupyter notebooks should be stored on a persistent volume
-    enabled: true
+    enabled: false
     # jupyter.persistence.accessMode specifies the access mode of the notebook volume
     accessMode: ReadWriteOnce
     # jupyter.persistence.size specifies the size of the notebook volume

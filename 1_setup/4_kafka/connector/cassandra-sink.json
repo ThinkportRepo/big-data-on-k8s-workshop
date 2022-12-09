@@ -1,0 +1,15 @@
+{   "connector.class": "io.confluent.connect.cassandra.CassandraSinkConnector",
+    "tasks.max": "1",
+    "topics": "twitter-avroConverter",
+
+    "cassandra.write.mode" : "Update",
+    "cassandra.contact.points": "cassandra.nosql.svc.cluster.local",
+    "cassandra.load-policy.dc-aware.local-dc": "datacenter1" ,
+    "cassandra.allow-drop-table": true,
+    "cassandra.username": "trainadm" ,
+    "cassandra.password": "train@thinkport",
+    "cassandra.local.datacenter": "datacenter1",
+    "cassandra.keyspace": "test"
+
+
+}

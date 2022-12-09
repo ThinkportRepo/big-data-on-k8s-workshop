@@ -171,7 +171,7 @@ Der Service heißt `minio`.
 
 ```
 #  verwenden der manifest yaml (im Ordner in dem die Datei liegt)
-kubectl apply -f spark-pi-app.yaml
+kubectl apply -f pyspark-job.yaml
 
 # spark app anzeigen
 kubectl get sparkapp -n spark

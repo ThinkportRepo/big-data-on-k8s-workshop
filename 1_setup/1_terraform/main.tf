@@ -7,6 +7,7 @@ module "aks" {
   Location = var.Location
   NodeSize = var.NodeSize
   NodeCount = var.NodeCount
+  NodeDiskSize = var.NodeDiskSize
   HttpApplicationRouting = var.HttpApplicationRouting
   NetworkPlugin = var.NetworkPlugin
   NetworkPolicy = var.NetworkPolicy
@@ -40,4 +41,3 @@ resource "local_file" "dns_zone" {
     filename = "./${local.UniquePrefix}-dns.txt"
     content = module.aks.dns_zone
 } 
-

@@ -40,10 +40,10 @@ spec:
             - name: bashrc
               mountPath: /jupyter/.bashrc
               subPath: .bashrc
-             {{- if .Values.jupyter.persistence.enabled }}
+            {{- if .Values.jupyter.persistence.enabled }}
             - name: {{ .Release.Name }}-notebooks
               mountPath: /jupyter/notebooks
-             {{- end }}
+            {{- end }}
       serviceAccountName: {{ template "pyspark-notebook.serviceAccountName" . }}
       volumes:
         - name: {{ .Release.Name }}-config-volume

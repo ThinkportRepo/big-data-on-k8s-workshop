@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{template "trino.fullname" .}}
+  namespace: {{.Release.Namespace}}
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
 spec:
@@ -12,6 +13,8 @@ spec:
           - backend:
               service:
                 name: {{template "trino.fullname" .}}
+                name: trino
                 port:
                   number: {{.Values.service.port}}
-            pathType: ImplementationSpecific
+            path: /
+            pathType: Prefix

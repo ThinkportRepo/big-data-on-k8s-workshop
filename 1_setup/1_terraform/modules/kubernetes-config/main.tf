@@ -306,8 +306,9 @@ resource "helm_release" "trino" {
   ]
   name = "trino"
   namespace = kubernetes_namespace.ns["trino"].metadata.0.name
-  chart = "trino"
-  repository = "https://trinodb.github.io/charts/"
+  #chart = "trino"
+  #repository = "https://trinodb.github.io/charts/"
+  chart = "../6_trino/"
   values = [
     "${file("../6_trino/values.yaml")}"
   ]

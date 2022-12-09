@@ -403,6 +403,7 @@ resource "kubernetes_config_map" "bashrc" {
     alias s3=s3cmd
     alias kn=kubens
     export KUBECONFIG=/home/coder/kubeconfig
+    export KUBECACHEDIR=/tmp/kubecache
     EOT
   }
 }

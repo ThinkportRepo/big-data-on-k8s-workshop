@@ -3,6 +3,12 @@
 ## 1. Erstelle ein Connector um von der Twitter API zu lesen
 
 Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und befülle die XXX Felder mit deinen jeweiligen Zugangsdaten. <br>
+Desweitern fülle an den passenden Stellen folgene values ein:
+
+```
+Topic, in das geschrieben werden soll: twitter-raw
+Hashtag, der gefiltert werden soll: BigData
+```
 
 ```
 {
@@ -19,10 +25,10 @@ Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und b
   "topic.creation.default.retention.ms": "86400000",
   "topic.creation.default.retention.bytes": "10000000",
 
-  "topics": "twitter-raw",
+  "topics": "XXX",
   "process.deletes": "true",
-  "filter.keywords": "BigData",
-  "kafka.status.topic": "twitter-raw",
+  "filter.keywords": "XXX",
+  "kafka.status.topic": "XXX",
   "kafka.delete.topic": "twitter-raw-deletions",
   "twitter.oauth.accessTokenSecret": "XXX",
   "twitter.oauth.consumerSecret": "XXX",
@@ -46,6 +52,12 @@ curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect
 
 # Überprüfe die Konfiguration der existierenden Connectoren
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config
+
+# Wenn ein Fehler beim Konfigurieren unterlaufen ist, kann der Connector gelöscht werden
+curl -X DELETE http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream
+
+# für die Fehlersuche können sich die Logs angeschaut werden
+kubectl logs <kafka-connect-pod> -n kafka -f
 ```
 
 ---
@@ -149,6 +161,13 @@ kafka-topics.sh --describe --topic twitter-table --bootstrap-server kafka-cp-kaf
 </details>
 <br>
 
+Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu löschen.
+
+```
+kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+```
+
+
 Schau den Code an, was der macht `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py`.
 
 Pod/Deployment mit diesem Code starten.<br>
@@ -201,16 +220,4 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 </details>
 <br>
 
-## Backup Commands
 
-delete connector
-
-```
-curl -X DELETE http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream
-```
-
-delete topic
-
-```
-kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
-```

@@ -17,12 +17,12 @@ Die Aufgaben können am einfachsten über Visual Studio Code gelöst werden, was
 ------------------ 
 
 ### Tipps und Tricks
-Um in Visual Studio Code das Terminal zu nutzen musst du auf das Auswahlmenü links oben in der Ecke klicken, dann `View` und dann `Terminal` auswählen. Alternativ kann `Strg+ö` gedrückt werden. <br>
+Um in Visual Studio Code das Terminal zu nutzen musst du auf das Auswahlmenü links oben in der Ecke klicken, dann `View` und dann `Terminal` auswählen. Alternativ kann `Strg`+`ö` gedrückt werden. <br>
 
 ![How to Terminal öffnen](/2_lab/solutions/images/VSCode-Terminal-oeffnen.png)  
 
 
-Um Zeilen in das Terminal einzufügen muss immer `Strg+Shift+v` gedrückt werden. <br>
+Um Zeilen in das Terminal einzufügen muss immer `Strg`+`Shift`+`v` gedrückt werden. <br>
 
 Es gibt in vielen Übungen Tipps und Lösungen die ausklappbar sind. Falls du nicht weiter weiß, versuche es bitte erstmal mit dem Tipp. Benutze bitte nur in Situationen wo du wirklich nicht mehr weiter kommst oder deine Lösungen überprüfen willst die ausklappbare Lösung.
 

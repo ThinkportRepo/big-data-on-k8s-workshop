@@ -1,6 +1,5 @@
 # Aufgaben zu Trino
 
-
 Trino kann über Connectoren auf eine Vielzahl von Datenquellen zugreifen.
 Für dieses Lab ist ein Connector für Delta Files auf s3 eingerichtet.<br>
 
@@ -9,7 +8,7 @@ Eine Sammlung von Tabellen entspricht einem Schema.
 
 Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`, also im Bucket `twitter` unter dem Prefix `delta`.
 
--------------------------
+---
 
 ## 1. Connection zu Trino anlegen
 
@@ -20,12 +19,13 @@ Eine neue Connection mit
 Name: Delta
 Driver: Trino
 Host: trino.trino.svc.cluster.local
+Port: 8080
 Database User: trino
 Catalog: delta
 Schema: data
 erstellen.
 Connection zuerst mit dem Button Test prüfen und dann speichern
-``` 
+```
 
 Eventuell tauchen links noch keine Schema auf. Schau mit folgenden Befehlen was bei Trino verfügbar ist. <br>
 
@@ -40,7 +40,7 @@ show schemas from delta;
 show tables from delta.data;
 ```
 
---------------------------
+---
 
 ## 2. Aufgabe: Schema für das Bucket anlegen
 
@@ -82,11 +82,16 @@ ALTER TABLE data.twitter EXECUTE optimize;
 EXPLAIN SELECT * FROM data.twitter;
 
 ```
---------------------------------
+
+---
+
 ## 3. Aufgaben in SQL formulieren
+
 Die folgenden Aufgaben mit Hilfe von SQL-Abfragen gelöst werden.
+
 ### 1. Datensatzes
-Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentypen sind vorhanden? 
+
+Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentypen sind vorhanden?
 
 <details>
 <summary>Lösung</summary>
@@ -104,12 +109,12 @@ Das Schema steht im SQL Pad links an der Seite.
 
 ```
 tweet_id: varchar
-created_at: timestamp(3) with time zone 
+created_at: timestamp(3) with time zone
 tweet_message: varchar
 user_name: varchar
 user_location: varchar
 user_follower_count: integer
-user_friends_count: integer 
+user_friends_count: integer
 retweet_count: integer
 language: varchar
 hashtags: array(varchar)
@@ -119,8 +124,8 @@ hashtags: array(varchar)
 </p>
 
 ### 2. Tweets
-Schau dir mal **1-2 Tweets** und die dazugehörigen **Hashtags** an.
 
+Schau dir mal **1-2 Tweets** und die dazugehörigen **Hashtags** an.
 
 <details>
 <summary>Tipp</summary>
@@ -157,6 +162,7 @@ limit
 </p>
 
 ### 3. Tweets pro Stunde
+
 Schreibe eine Abfrage, die die **Anzahl** der **Tweets pro Stunde** zählt.
 
 <details>
@@ -195,8 +201,8 @@ order by date, hour;
 </details>
 </p>
 
-
 ### 4. Top 10 User nach Tweet-Anzahl
+
 Schreibe eine Abfrage, die die **Top User** nach ihrer **Anzahl an Tweets** ausgibt. Bedenke dabei, deine Ausgabe auf **10** Einträge zu limitieren.
 
 <details>
@@ -242,8 +248,10 @@ limit
 </p>
 
 ### 5. Unnest
+
 Für die folgenden Aufgaben wird die `unnest` Funktion benötigt. Schreibe eine Abfrage die das Hashtag-array mit `unnest` teilt.
 Gebe dabei die Spalten `user_name`, `tweet_id` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen aus.
+
 <details>
 <summary>Tipp</summary>
 <p>
@@ -257,7 +265,6 @@ LIMIT 20;
 
 </details>
 </p>
-
 
 <details>
 <summary>Lösung</summary>
@@ -274,7 +281,8 @@ LIMIT 20;
 </p>
 
 ### 6. Top 5 Hashtags der Top 10 User
-Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt. 
+
+Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt.
 
 <details>
 <summary>Tipp</summary>
@@ -384,9 +392,8 @@ LIMIT
 </details>
 </p>
 
-
-
 ### 7. Top 10 Influencer
+
 Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower** zählt und sortiert anzeigt.
 
 <details>
@@ -410,7 +417,6 @@ limit
 </details>
 </p>
 
-
 <details>
 <summary>Lösung</summary>
 <p>
@@ -433,8 +439,8 @@ limit
 </p>
 
 ### 8. Anzahl der Tweets der Top 10 Influencer
-Schreibe eine Abfrage, die die **Top 10 Influencer**, ihre Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll es sortiert nach den Anzahl ihrer Follower sein.
 
+Schreibe eine Abfrage, die die **Top 10 Influencer**, ihre Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll es sortiert nach den Anzahl ihrer Follower sein.
 
 <details>
 <summary>Tipp</summary>
@@ -467,7 +473,6 @@ LIMIT
 </details>
 </p>
 
-
 <details>
 <summary>Lösung</summary>
 <p>
@@ -499,9 +504,10 @@ LIMIT
 </details>
 </p>
 
+---
 
----------------------------------------
 ## 4. Schreiben mit Trino
+
 Ziel ist, wir schreiben ein Aggregat als csv Datei nach s3.
 
 Dafür: <br>
@@ -524,7 +530,7 @@ external_location = 's3a://twitter/csv/',
 partitioned_by = ARRAY['hour']
 )
 AS
-select date, count(\*) as total, hour
+select date, count(*) as total, hour
 from
 (
 select date(created_at) as "date", hour(created_at) as "hour"
@@ -546,4 +552,3 @@ Checke genauso s3. <br>
 ```
 s3 ls s3://twitter/csv/
 ```
-

@@ -2,24 +2,24 @@
 
 ## 1. Erstelle ein Connector um von der Twitter API zu lesen
 
-Speicher diese Datei als `twitter.json` und befülle die XXX Felder mit deinen jeweiligen Zugangsdaten. <br>
+Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und befülle die XXX Felder mit deinen jeweiligen Zugangsdaten. <br>
 
 ```
 {
   "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
   "tasks.max": "1",
-  
-  "log.cleanup.policy": "delete", 
+
+  "log.cleanup.policy": "delete",
   "log.retention.hours": "24",
   "log.retention.bytes": "10000000",
 
-  "topic.creation.default.replication.factor": 1,  
-  "topic.creation.default.partitions": 2,  
-  "topic.creation.default.cleanup.policy": "delete",  
+  "topic.creation.default.replication.factor": 1,
+  "topic.creation.default.partitions": 2,
+  "topic.creation.default.cleanup.policy": "delete",
   "topic.creation.default.retention.ms": "86400000",
   "topic.creation.default.retention.bytes": "10000000",
 
-  "topics": "twitter-raw",    
+  "topics": "twitter-raw",
   "process.deletes": "true",
   "filter.keywords": "BigData",
   "kafka.status.topic": "twitter-raw",
@@ -34,6 +34,9 @@ Speicher diese Datei als `twitter.json` und befülle die XXX Felder mit deinen j
 
 ```
 
+Der Kafka Connector Server verfügt über eine REST API um die Connectoren zu erstellen und zu konfigurieren.
+Hier verwenden wir `curl` Befehle um die API anzusteuern.
+
 ```
 # Checke die verfügbaren Connectoren
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
@@ -41,11 +44,13 @@ curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 # Erstelle einen neuen Connector
 curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config -d @twitter.json
 
-# Überprüfe die Konfiguration der existierenden Connectoren 
+# Überprüfe die Konfiguration der existierenden Connectoren
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config
 ```
----------------------------
-## 2.  Kafka Topics anschauen
+
+---
+
+## 2. Kafka Topics anschauen
 
 Im Terminal von VS Code mit folgendem Befehl prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde.
 Dazu zunächst den Service Namen des Kafka Brokers herrausfinden.
@@ -58,12 +63,15 @@ kubectl get services -n kafka
 # Host Adresse zusammefügen
 kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
 ```
+
 <details>
 <summary>Lösung</summary>
 <p>
 
 ```
 kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
+# oder etwas gefiltert mit grep twitter
+kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 | grep twitter
 ```
 
 </p>
@@ -87,7 +95,8 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 </details>
 </p>
 
--------------------------
+---
+
 ## 3. Mikroservice App zur Reduzierung der Twitter Rohdaten starten
 
 Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folgenden Konfugurationen:
@@ -104,7 +113,6 @@ retention-bytes: 10000000
 ```
 kafka-topics.sh --create --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --partitions <partition-number> --replication-factor <replication-number> --config retention.ms=<retention-time> --config cleanup.policy=<policy> --config retention.bytes=<retention-bytes>
 ```
-
 
 <details>
 <summary>Lösung</summary>
@@ -141,9 +149,7 @@ kafka-topics.sh --describe --topic twitter-table --bootstrap-server kafka-cp-kaf
 </details>
 <br>
 
-
 Schau den Code an, was der macht `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py`.
-
 
 Pod/Deployment mit diesem Code starten.<br>
 
@@ -152,7 +158,6 @@ kubectl apply -f pod_twitter_data_converter.yaml
 ```
 
 Checke ob Pod läuft. (Logs)<br>
-
 
 ```
 kubectl get pod -n <namespace>
@@ -195,3 +200,17 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 </p>
 </details>
 <br>
+
+## Backup Commands
+
+delete connector
+
+```
+curl -X DELETE http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream
+```
+
+delete topic
+
+```
+kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+```

@@ -8,8 +8,8 @@ import uuid
 from datetime import datetime
 
 KAFKA_SERVER = os.environ["KAFKA_SERVER"] #"kafka-cp-kafka.kafka.svc.cluster.local:9092"
-KAFKA_SOURCE_TOPIC = os.environ["KAFKA_SOURCE_TOPIC"] #"twitter-json"
-KAFKA_TARGET_TOPIC = os.environ["KAFKA_TARGET_TOPIC"] #"twitter-table4"
+KAFKA_SOURCE_TOPIC = os.environ["KAFKA_SOURCE_TOPIC"] #"twitter-raw"
+KAFKA_TARGET_TOPIC = os.environ["KAFKA_TARGET_TOPIC"] #"twitter-table"
 GROUP_ID=str(uuid.uuid1())
 
 # Initialize consumer variable

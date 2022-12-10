@@ -47,7 +47,7 @@ spec:
             - name: bashrc
               mountPath: /home/coder/.bashrc
               subPath: .bashrc
-            - name: kube-config
+            - name: kubeconfig
               mountPath: /home/coder/.kube
       volumes:
         - name: workshop
@@ -59,7 +59,7 @@ spec:
         - name: bashrc
           configMap:
             name: bashrc
-        - name: kube-config
+        - name: kubeconfig
           secret:
-            secretName: kube-config
+            secretName: kubeconfig
             defaultMode: 0600

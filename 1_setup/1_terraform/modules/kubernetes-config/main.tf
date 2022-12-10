@@ -418,19 +418,19 @@ resource "kubernetes_config_map" "s3cmd" {
   
 }
 
-resource "kubernetes_pod" "admin" {
-  metadata {
-    name = "admin"
-    namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  }  
-  spec {
-    container {
-      name = "main"
-      image = "alpine:3.17"
-      command = ["sh", "-c", "apk add --no-cache curl; sleep 3000"]
-    }
-  }
-}
+# resource "kubernetes_pod" "admin" {
+#   metadata {
+#     name = "admin"
+#     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+#   }  
+#   spec {
+#     container {
+#       name = "main"
+#       image = "alpine:3.17"
+#       command = ["sh", "-c", "apk add --no-cache curl; sleep 3000"]
+#     }
+#   }
+# }
 resource "kubernetes_job" "gitcloner" {
   depends_on = [
     kubernetes_secret.github,
@@ -513,8 +513,11 @@ resource "kubernetes_job" "init" {
   depends_on = [
     kubernetes_secret.github,
     kubernetes_job.gitcloner,
-    kubernetes_secret.kubeconfig
-  ]
+    kubernetes_secret.kubeconfig,
+    kubernetes_config_map.bashrc,
+    kubernetes_service_account.kubectl,
+    helm_release.minio
+    ]
   metadata {
       name = "init"
       namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
@@ -542,12 +545,13 @@ resource "kubernetes_job" "init" {
                 "echo ls /workshop/exercises/;",
                 "ls /workshop/exercises/;",
                 "echo ls /workshop/solutions;",
-                "ls /workshop/solutions/;",
+                "ls /workshop/git/2_lab/data/;",
                 "echo kubectl get po;",
                 "kubectl get po;",
-                "s3 mb s3://data;",
-                "s3 ls;",
-                "s3 put git/2_lab/data/ s3://data/ -r;",
+                "s3cmd mb s3://data;",
+                "s3cmd ls;",
+                "s3cmd put /workshop/git/2_lab/data/ s3://data/ -r;",
+                "s3cmd ls s3://data;",
                 "echo \"############################################\";"]
                 )
             ]
@@ -582,11 +586,22 @@ resource "kubernetes_job" "init" {
                 mount_path = "/config/"
                 name = "kubeconfig"
               }
+              volume_mount {
+                mount_path = "/home/coder/.s3cfg"
+                name = "s3cmd"
+                sub_path = ".s3cfg"
+              }
         }
         volume {
           name = "workshop"
           persistent_volume_claim {
             claim_name = "workshop"
+          } 
+        }
+        volume {
+          name = "s3cmd"
+          config_map {
+            name = "s3cmd"
           } 
         }
         volume {
@@ -647,7 +662,8 @@ resource "helm_release" "vscode" {
   depends_on = [
     kubernetes_job.init,
     kubernetes_config_map.bashrc,
-    kubernetes_service_account.kubectl
+    kubernetes_service_account.kubectl,
+    kubernetes_secret.kubeconfig
     ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   chart = "../7_frontends/3_vscode/chart"

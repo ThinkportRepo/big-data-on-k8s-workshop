@@ -528,12 +528,10 @@ resource "kubernetes_job" "init" {
         service_account_name = kubernetes_service_account.kubectl.metadata.0.name
         restart_policy = "Never"
         container {
-            name = "git"
-            image = "alpine:3.17" 
+            name = "vscode"
+            image = "thinkportgmbh/workshops:vscode" 
             command = ["sh", "-c", 
-              join("\n", ["apk add --no-cache curl;",
-                "curl -LO \"https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\";",
-                "install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl",
+              join("\n", ["echo \"start init ...\"",
                 "echo \"cp /config/kubeconfig /workshop/kubeconfig\"",
                 "cp /config/kubeconfig /workshop/kubeconfig",
                 "echo \"################## Init Summary ############\";",
@@ -547,8 +545,11 @@ resource "kubernetes_job" "init" {
                 "ls /workshop/solutions/;",
                 "echo kubectl get po;",
                 "kubectl get po;",
-                "echo \"############################################\""
-                ])
+                "s3 mb s3://data;",
+                "s3 ls;",
+                "s3 put git/2_lab/data/ s3://data/ -r;",
+                "echo \"############################################\";"]
+                )
             ]
               env {
                 name = "GITHUB_REPOSITORY"

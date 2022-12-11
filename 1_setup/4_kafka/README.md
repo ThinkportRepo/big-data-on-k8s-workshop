@@ -261,6 +261,12 @@ Prerequisites:
   --> Spark kann wieder alles von s3 einlesen
 ````
 
+### Fehlerbehebung cp-ksql
+
+1. in den ksgl pod execen
+2. Fehlerhafte Environmentvariable über `unset JMX_PORT` entfernen.
+3. ksql shell über `ksql` starten
+
 ## ksql getrennt installieren
 
 helm install --set kafka.enabled=false --set kafka.bootstrapServers=kafka-cp-kafka.kafka.svc.cluster.local:9092 --set schema-registry.enabled=false --set schema-registry.url=kafka-cp-schema-registry.kafka.svc.cluster.local:8081 --set kafka-connect.enabled=false --set kafka-connect.url=kafka-cp-kafka-connect.kafka.svc.cluster.local:8083 ktool rhcharts/ksqldb

@@ -34,3 +34,6 @@ override.tf.json
 **/*.pem
 **/*.log
 **/*.plan
+
+*-dns.txt
+*.config

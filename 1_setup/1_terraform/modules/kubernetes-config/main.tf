@@ -636,6 +636,10 @@ resource "helm_release" "dashboard" {
     name = "k8shost"
     value = var.ClusterDNS
   }
+  set {
+    name = "lab_user"
+    value = var.ClusterDNS
+  }
   timeout = 600
 }
 

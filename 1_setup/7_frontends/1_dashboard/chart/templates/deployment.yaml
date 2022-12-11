@@ -24,3 +24,5 @@ spec:
           env:
             - name: K8S_HOST
               value: {{.Values.k8shost}}
+            - name: LAB_USER
+              value: "trainer"

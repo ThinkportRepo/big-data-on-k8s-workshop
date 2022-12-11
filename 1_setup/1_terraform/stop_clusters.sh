@@ -6,6 +6,6 @@ pwd=$PWD
 
 for i in $(cat < "$1"); do
   echo "terraform workspace select $i"
-  az aks stop --name "atruvia-${i}-aks" --resource-group "bigdata-k8s-workshop" | tee "${i}_azure_stop.log"
+  az aks stop --name "atruvia-${i}-aks" --resource-group "big-data-k8s-workshop" | tee "${i}_azure_stop.log"
   sleep 10
 done

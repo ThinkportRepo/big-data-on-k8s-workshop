@@ -60,8 +60,6 @@ Die Spark Anwendung ist typischerweise komplett fertig als ein (Docker) Image ge
 Für diese Aufgabe starten wir eine App die bereits auf dem Image vorhanden.<br>
 Führe zunächst folgenden Befehl aus:
 
-!! ACHTUNG DIESER BEFEHL FUNKTIONIERT AKTUELL NICHT AUS VSCODE/TERMINAL irgendetwas mit den Zertifikaten stimmt nicht
-
 ```
 spark-submit \
 --master "k8s://https://kubernetes.default.svc.cluster.local:443" \

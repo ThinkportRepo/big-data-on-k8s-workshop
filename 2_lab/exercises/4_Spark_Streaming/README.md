@@ -21,6 +21,36 @@ Jetzt die Zelle über das schwarze Viereck stoppen und ganz **wichtig** die Zell
 PySpark Code in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.py` validieren. <br>
 Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
 
+
+Der Spark Operator kann dieses Python Script von s3 lesen, nicht von lokal.
+Deswegen muss zunächst die Python Datei nach S3 hochgeladen werden.
+
+Gehe hierzu im VSCode Terminal in das richtige Verzeichnis. (4_Spark_Streaming Ordner)
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+cd /home/coder/git/2_lab/exercises/4_Spark_Streaming
+```
+
+</details>
+</p>
+
+und lade die Datei folgendermaßen hoch
+```
+# schauen ob es schon ein Bucket scripts gibt
+s3 ls
+
+# Bucket erstellen, falls es noch nicht existiert
+s3 mb s3://scripts
+
+# Datei nach s3 laden
+s3 put spark_stream_to_s3.py s3://scripts/
+```
+
+
 Prüfe die Spark App Definition `exercises/4_Spark_Streaming/sparkapp_stream_to_s3.yaml` und füge an den richtigen Stellen in die YAML folgene Werte ein.
 
 ```
@@ -96,29 +126,6 @@ spec:
 </details>
 </p>
 
-Gehe im VSCode Terminal in das richtige Verzeichnis. (4_Spark_Streaming Ordner)
-
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-cd /home/coder/git/2_lab/exercises/4_Spark_Streaming
-```
-
-</details>
-</p>
-
-```
-# schauen ob es schon ein Bucket scripts gibt
-s3 ls
-
-# Bucket erstellen, falls es noch nicht existiert
-s3 mb s3://scripts
-
-# Datei nach s3 laden
-s3 put spark_stream_to_s3.py s3://scripts/
-```
 
 Starte anschließend die Sparkapp und schau in den Logs ob sie läuft. <br>
 

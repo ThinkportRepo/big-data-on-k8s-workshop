@@ -176,7 +176,7 @@ kubectl get sparkapp -n spark
 kubectl describe sparkapp spark-pi -n spark
 
 # Anzeigen ob der Treiber und Executor pod läuft (-w ist die abkürzung für --watch und zeigt immer wieder STATUS veränderungen eines Pods an, beenden mit STRG+C)
-kubectl get po -n spark -w -n spark
+kubectl get po -n spark -w
 
 # anzeigen der Ergebnisse mit Hilfe der logs
 kubectl logs spark-pi-driver -n spark
@@ -188,5 +188,5 @@ kubectl logs spark-pi-driver -f -n spark
 #### 6. Alles wieder aufräumen.
 
 ```
-kubectl delete sparkapp spark-pi
+kubectl delete sparkapp spark-pi -n spark
 ```

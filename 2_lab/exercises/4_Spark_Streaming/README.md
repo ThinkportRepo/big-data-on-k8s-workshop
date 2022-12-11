@@ -114,7 +114,7 @@ cd /home/coder/git/2_lab/exercises/4_Spark_Streaming
 s3 ls
 
 # Bucket erstellen, falls es noch nicht existiert
-s3 mb scripts
+s3 mb s3://scripts
 
 # Datei nach s3 laden
 s3 put spark_stream_to_s3.py s3://scripts/

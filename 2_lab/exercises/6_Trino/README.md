@@ -14,8 +14,9 @@ Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`, also im Buc
 
 Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein und gehe oben Links auf das Dropdown "New connection".
 
+
+Eine neue Connection mit:
 ```
-Eine neue Connection mit
 Name: Delta
 Driver: Trino
 Host: trino.trino.svc.cluster.local
@@ -23,9 +24,9 @@ Port: 8080
 Database User: trino
 Catalog: delta
 Schema: data
-erstellen.
+erstellen. ```
 Connection zuerst mit dem Button Test prüfen und dann speichern
-```
+
 
 Eventuell tauchen links noch keine Schema auf. Schau mit folgenden Befehlen was bei Trino verfügbar ist. <br>
 

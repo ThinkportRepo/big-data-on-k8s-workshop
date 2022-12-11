@@ -29,7 +29,7 @@ Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und b
 Desweitern fülle an den passenden Stellen folgene values ein:
 
 
-**Topics:** twitter-raw
+**Topics:** twitter-raw <br>
 **Filter Keyword:** BigData
 
 

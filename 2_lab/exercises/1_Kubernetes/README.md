@@ -46,6 +46,9 @@ kubectl get pod --namespace <namespace>
 
 # oder alles Ressourcen in einem Namespace anzeigen (-n ist die abgekürzte Version für --namespace)
 kubectl get all -n <namespace>
+
+# den namespace ändern, in dem man sich befindet (dann braucht es kein -n <spezieller-namespace> mehr)
+kn default
 ```
 
 ---

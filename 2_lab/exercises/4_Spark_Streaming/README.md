@@ -16,8 +16,9 @@ s3 ls s3://twitter/avro/
 
 Jetzt die Zelle über das schwarze Viereck stoppen und ganz **wichtig** die Zelle mit `spark.stop()` ausführen um die Spark Session wieder zu beenden. <br>
 
-## 2. Streaming über den Sparkoperator starten
+## 2. Spark Streaming App via Spark Operator
 
+### 2.1 Python Code nach s3 kopieren
 PySpark Code in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.py` validieren. <br>
 Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
 
@@ -53,7 +54,7 @@ s3 put spark_stream_to_s3.py s3://scripts/
 s3 ls s3://scripts/
 ```
 
-
+### 2.2 Spark App Yaml vervollständigen
 Prüfe die Spark App Definition `exercises/4_Spark_Streaming/sparkapp_stream_to_s3.yaml` und füge an den richtigen Stellen in die YAML folgene Werte ein.
 
 ```
@@ -130,10 +131,11 @@ spec:
 </p>
 
 
-Starte anschließend die Sparkapp und schau in den Logs ob sie läuft. <br>
+### 2.3 Spark App erstellen
+Starte anschließend die Sparkapp und schau in den Pod Logs ob sie korrekt läuft. <br>
 
 ```
-# verwenden der manifest yaml (im ordner wo die Datei liegt)
+# anwenden der manifest yaml (im ordner wo die Datei liegt)
 kubectl apply -f sparkapp_stream_to_s3.yaml
 
 # spark app anzeigen
@@ -155,3 +157,5 @@ kubectl logs stream-to-s3-driver -f -n spark
 ```
 s3 ls s3://twitter/avro/
 ```
+
+Super, die Spark Streaming Aufgabe erfolgreich gemeistert

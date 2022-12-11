@@ -28,10 +28,10 @@ Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den k
 Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und befülle die XXX Felder mit deinen jeweiligen Zugangsdaten. <br>
 Desweitern fülle an den passenden Stellen folgene values ein:
 
-```
-Topic, in das geschrieben werden soll: twitter-raw
-Hashtag, der gefiltert werden soll: BigData
-```
+
+**Topics:** twitter-raw
+**Filter Keyword:** BigData
+
 
 ```
 {
@@ -51,7 +51,7 @@ Hashtag, der gefiltert werden soll: BigData
   "topics": "XXX",
   "process.deletes": "true",
   "filter.keywords": "XXX",
-  "kafka.status.topic": "XXX",
+  "kafka.status.topic": "twitter-raw",
   "kafka.delete.topic": "twitter-raw-deletions",
   "twitter.oauth.accessTokenSecret": "XXX",
   "twitter.oauth.consumerSecret": "XXX",

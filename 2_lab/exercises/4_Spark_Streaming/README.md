@@ -48,6 +48,9 @@ s3 mb s3://scripts
 
 # Datei nach s3 laden
 s3 put spark_stream_to_s3.py s3://scripts/
+
+# Prüfen ob angekommen
+s3 ls s3://scripts/
 ```
 
 

@@ -99,18 +99,6 @@ kubectl get services -n kafka
 kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
-# oder etwas gefiltert mit grep twitter
-kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 | grep twitter
-```
-
-</p>
-</details> <br>
 Wenn das Topic erzeugt wurde, können wir uns auf das Topic subscriben und schauen ob gerade getwittert wird.
 
 ```
@@ -119,16 +107,6 @@ kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.clus
 # mit den flags --from-beginning werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit --max-messages 5 kann die Ausgaben der Nachrichten limitiert werden
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning --max-messages 5
-```
-
-</details>
-</p>
 
 ---
 
@@ -149,18 +127,6 @@ retention-bytes: 10000000
 kafka-topics.sh --create --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --partitions <partition-number> --replication-factor <replication-number> --config retention.ms=<retention-time> --config cleanup.policy=<policy> --config retention.bytes=<retention-bytes>
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-kafka-topics.sh --create --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table --partitions 2 --replication-factor 2 --config retention.ms=86400000 --config cleanup.policy=delete --config retention.bytes=10000000
-```
-
-</p>
-</details>
-<br>
-
 Schau ob das Topic richtig erstellt wurde.<br>
 
 ```
@@ -170,19 +136,6 @@ kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster
 kafka-topics.sh --describe --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name>
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
-
-kafka-topics.sh --describe --topic twitter-table --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
-```
-
-</p>
-</details>
-<br>
 
 Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu löschen.
 
@@ -209,21 +162,6 @@ kubectl logs <pod-name> -n <namespace> -f
 # -f gibt fortlaufend die logs aus
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-# Pod finden
-kubectl get pod -n kafka
-
-# logs auslesen
-kubectl logs twitter-stream-converter -n kafka -f
-```
-
-</p>
-</details>
-<br>
 
 Checke ob Daten in Target Topic ankommen.<br>
 
@@ -231,16 +169,5 @@ Checke ob Daten in Target Topic ankommen.<br>
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
 ```
 
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table --from-beginning --max-messages 5
-```
-
-</p>
-</details>
-<br>
 
 

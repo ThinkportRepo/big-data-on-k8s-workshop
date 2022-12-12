@@ -15,7 +15,7 @@ Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`, also im Buc
 Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein und gehe oben Links auf das Dropdown "New connection".
 
 
-Eine neue Connection erstellen:
+Eine neue Connection erstellen mit:
 ```
 Name: Delta
 Driver: Trino
@@ -25,6 +25,7 @@ Database User: trino
 Catalog: delta
 Schema: data
 ```
+
 
 Connection zuerst mit dem Button Test prüfen und dann speichern
 
@@ -93,7 +94,19 @@ Die folgenden Aufgaben mit Hilfe von SQL-Abfragen gelöst werden.
 
 ### 1. Datensatzes
 
-Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentypen sind vorhanden?<br>
+Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentypen sind vorhanden?
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  *
+from
+  twitter
+limit 10;
+```
 
 Das Schema steht im SQL Pad links an der Seite.
 
@@ -109,6 +122,9 @@ retweet_count: integer
 language: varchar
 hashtags: array(varchar)
 ```
+
+</details>
+</p>
 
 ### 2. Tweets
 
@@ -131,7 +147,22 @@ limit
 </details>
 </p>
 
+<details>
+<summary>Lösung</summary>
+<p>
 
+```
+select
+  tweet_message,
+  hashtags
+from
+  twitter
+limit
+2;
+```
+
+</details>
+</p>
 
 ### 3. Tweets pro Stunde
 
@@ -150,6 +181,24 @@ from
   )
 group by date, <stunde>
 order by date, <stunde>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select date, hour, count(*) as total
+from
+  (
+    select date(created_at) as "date", hour(created_at) as "hour"
+    from twitter
+  )
+group by date, hour
+order by date, hour;
 ```
 
 </details>
@@ -180,6 +229,26 @@ limit
 </details>
 </p>
 
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  user_name,
+  count(tweet_id) as numberOfTweets
+from
+  twitter
+group by
+  user_name
+order by
+  count(tweet_id) desc
+limit
+  10;
+```
+
+</details>
+</p>
 
 ### 5. Unnest
 
@@ -205,13 +274,28 @@ limit
 </details>
 </p>
 
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  user_name,
+  tweet_id,
+  tags
+from
+  twitter
+  cross join unnest(hashtags) AS t (tags)
+limit
+  20;
+```
+
+</details>
+</p>
 
 ### 6. Top 5 Hashtags der Top 10 User
 
 Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt.
-
-
-
 
 <details>
 <summary>Tipp</summary>
@@ -248,6 +332,41 @@ LIMIT
 </details>
 </p>
 
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT
+  tags,
+  count(tweet_id)
+FROM
+  twitter
+  CROSS JOIN UNNEST(hashtags) AS t (tags)
+  INNER JOIN (
+    SELECT
+      user_name AS user,
+      max(user_follower_count) as follower
+    FROM
+      twitter
+    GROUP BY
+      user_name
+    ORDER BY
+      max(user_follower_count) desc
+    LIMIT
+      10
+  ) ON twitter.user_name = user
+GROUP BY
+  tags
+ORDER BY
+  count(tweet_id) desc
+LIMIT
+  5;
+```
+
+</details>
+</p>
+
 ### 7. Top 10 Influencer
 
 Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower** zählt und sortiert anzeigt.
@@ -268,6 +387,27 @@ order by
   max(<follower>) desc
 limit
   <number>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+select
+  user_name,
+  max(user_follower_count) as follower
+from
+  twitter
+group by
+  user_name
+order by
+  max(user_follower_count) desc
+limit
+  10;
 ```
 
 </details>
@@ -303,6 +443,37 @@ ORDER BY
   max(<follower>) DESC
 LIMIT
   <number>;
+```
+
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT
+  user_name,
+  max(user_follower_count) AS number_of_followers,
+  max(numberOfTweets) AS number_of_Tweets
+FROM
+  twitter
+  LEFT JOIN (
+    select
+      user_name AS user,
+      count(tweet_id) as numberOfTweets
+    from
+      twitter
+    group by
+      user_name
+  ) ON user = user_name
+GROUP BY
+  user_name
+ORDER BY
+  max(user_follower_count) DESC
+LIMIT
+  10;
 ```
 
 </details>

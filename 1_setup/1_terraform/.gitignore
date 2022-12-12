@@ -37,3 +37,4 @@ override.tf.json
 
 *-dns.txt
 *.config
+trainer_kubeconfig

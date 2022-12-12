@@ -187,7 +187,7 @@ kafka-topics.sh --describe --topic twitter-table --bootstrap-server kafka-cp-kaf
 Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu löschen.
 
 ```
-kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table
 ```
 
 

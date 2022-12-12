@@ -271,35 +271,60 @@ Prerequisites:
 
 helm install --set kafka.enabled=false --set kafka.bootstrapServers=kafka-cp-kafka.kafka.svc.cluster.local:9092 --set schema-registry.enabled=false --set schema-registry.url=kafka-cp-schema-registry.kafka.svc.cluster.local:8081 --set kafka-connect.enabled=false --set kafka-connect.url=kafka-cp-kafka-connect.kafka.svc.cluster.local:8083 ktool rhcharts/ksqldb
 
-CREATE STREAM test2 (tweet_id VARCHAR, created_at TIMESTAMP, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
+## ksql Aufgabe
 
-{
-"tweet_id":"1600474456073424898",
-"created_at":"2022-12-07 12:57:00",
-"tweet_message":"This #Tesla Cyberbike concept was designed entirely by Artificial Intelligence\n\nhttps://t.co/WUQa0oek4O\n\n#MachineLearning #AI #Python #DataScience #BigData\n#Algorithms #IoT #100DaysOfCode #5G #robots #tech\n#ArtificialIntelligence #NLP #cloud #4IR #cybersecurity https://t.co/HoJ4QCitO7",
-"user_name":"Paula_Piccard",
-"user_location":"New York",
-"user_follower_count":73768,
-"user_friends_count":9401,
-"retweet_count":0,
-"language":"en",
-"hashtag":[
-"Tesla",
-"MachineLearning",
-"AI",
-"Python",
-"DataScience",
-"BigData",
-"Algorithms",
-"IoT",
-"100DaysOfCode",
-"5G",
-"robots",
-"tech",
-"ArtificialIntelligence",
-"NLP",
-"cloud",
-"4IR",
-"cybersecurity"
-]
-}
+1. in den ksgl pod execen
+2. Fehlerhafte Environmentvariable über `unset JMX_PORT` entfernen.
+3. ksql shell über `ksql` starten
+
+```
+kubectl exec -it <ksql-pod-name> -- bash
+```
+
+im Pod folgende Befehle ausführen um in ksql zu kommen
+
+```
+# bei jedem login auf die Shell wieder entfernen
+unset JMX_PORT
+
+# ksql starten
+ksql
+```
+
+In ksql zunächst eine Stream Abstraktion auf das Topic `twitter-table` erstellen
+
+```
+# anzeigen ob die Topics erkannt wurden
+show topics;
+
+CREATE STREAM twitter (tweet_id VARCHAR, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
+
+# checken ob der Stream erzeugt wurde
+show streams;
+
+# create table
+CREATE TABLE twittertable (tweet_id VARCHAR primary key, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>)  WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
+
+# check table
+show tables;
+
+
+```
+
+Jetzt können Abfragen und Aggretationen auf den Stream gemacht werden
+
+```
+# select all
+SELECT * FROM TWITTER EMIT CHANGES;
+
+# select some column
+SELECT TWEET_ID,CREATED_AT,USER_LOCATION,LANGUAGE from TWITTER EMIT CHANGES;
+
+# select aggregation
+SELECT LANGUAGE,COUNT(*) as TOTAL from TWITTER GROUP BY LANGUAGE EMIT CHANGES;
+
+
+# select aggregation
+SELECT LANGUAGE,COUNT(*) as TOTAL from TWITTERTABLE GROUP BY LANGUAGE EMIT CHANGES;
+
+```

@@ -173,20 +173,20 @@ kubectl apply -f pyspark-job.yaml
 
 # spark app anzeigen
 kubectl get sparkapp -n spark
-kubectl describe sparkapp spark-pi -n spark
+kubectl describe sparkapp simple-app -n spark
 
 # Anzeigen ob der Treiber und Executor pod läuft (-w ist die abkürzung für --watch und zeigt immer wieder STATUS veränderungen eines Pods an, beenden mit STRG+C)
 kubectl get po -n spark -w
 
 # anzeigen der Ergebnisse mit Hilfe der logs
-kubectl logs spark-pi-driver -n spark
+kubectl logs simple-app-driver -n spark
 
 # live logs anschauen während der pod läuft (-f ist die Abkürzung für follow, exit mit STRG+c)
-kubectl logs spark-pi-driver -f -n spark
+kubectl logs simple-app-driver -f -n spark
 ```
 
 #### 6. Alles wieder aufräumen.
 
 ```
-kubectl delete sparkapp spark-pi -n spark
+kubectl delete sparkapp simple-app -n spark
 ```

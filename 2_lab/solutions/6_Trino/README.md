@@ -90,7 +90,8 @@ EXPLAIN SELECT * FROM data.twitter;
 
 ## 3. Aufgaben in SQL formulieren
 
-Die folgenden Aufgaben mit Hilfe von SQL-Abfragen gelöst werden.
+Die folgenden Aufgaben können mit Hilfe von SQL-Abfragen gelöst werden. <br>
+> Die Trino Dokumentation kann dabei sehr gut behilflich sein. <br> https://trino.io/docs/current/index.html
 
 ### 1. Datensatzes
 
@@ -487,7 +488,7 @@ Ziel ist, wir schreiben ein Aggregat als csv Datei nach s3.
 
 Dafür: <br>
 
-### 1. Schema in hive auf dem gleichen Bucket aber hive connector erstellen.
+### 1. Schema in hive auf dem gleichen Bucket aber hive connector erstellen
 
 ```
 CREATE SCHEMA hive.export
@@ -528,7 +529,7 @@ Checke genauso s3. <br>
 s3 ls s3://twitter/csv/
 ```
 
-sollen später weitere Zeilen hinzugefügt werden geht das mit
+Wenn später weitere Zeilen hinzugefügt werden sollen, geht das mit:
 
 ```
 INSERT INTO hive.export.csv

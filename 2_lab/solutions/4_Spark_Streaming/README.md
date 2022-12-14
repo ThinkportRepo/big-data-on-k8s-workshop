@@ -158,4 +158,10 @@ kubectl logs stream-to-s3-driver -f -n spark
 s3 ls s3://twitter/avro/
 ```
 
+Wenn du möchtest kannst du dir eine AVRO Datei anschauen, bedenke dabei, dass AVRO nur bedingt humanreadable ist.
+
+```
+s3 get s3://twitter/avro/part-<individueller-string>.avro .
+```
+
 Super, die Spark Streaming Aufgabe erfolgreich gemeistert

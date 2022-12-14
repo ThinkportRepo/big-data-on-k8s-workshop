@@ -4,8 +4,8 @@ Es gibt verschiedene Möglichkeiten Spark Applikationen auf Kubneretes
 zu starten und verteilen.
 
 1. **Jupyter/Zeppelin:** Starte eine Interaktive Spark Session für ad Hoc Analysen.
-2. **Spark-Submit:** Schicke ein Spark Programm mit `spark-submit` mit einem Kubernetes Cluster als Resource Manager
-3. **Spark-Operator:** Erzeuge mit einer speziellen Kubernetes Resource eine `sparkapp`
+2. **Spark-Submit:** Schicke ein Spark Programm mit `spark-submit` mit einem Kubernetes Cluster als Ressource Manager.
+3. **Spark-Operator:** Erzeuge mit einer speziellen Kubernetes Ressource eine `sparkapp`.
 
 ---
 
@@ -100,7 +100,7 @@ kubectl logs spark-submit-pi-<xxxx>-driver -n spark
 
 ## Spark Operator
 
-Der Spark Operator ermöglicht es eine Spark Applikation als Custom Kubernetes Ressource wie alle Kubernetes Ressourcen über eine YAML Datei zu konfigurieren und zu starten. Der Vorteil ist, dass so alle Kubernetes Resourcen (z.B. Secrets, Zertifikate, Volumes etc.) in den Spark Pods genutzt werden können.
+Der Spark Operator ermöglicht es eine Spark Applikation als Custom Kubernetes Ressource wie alle Kubernetes Ressourcen über eine YAML Datei zu konfigurieren und zu starten. Der Vorteil ist, dass so alle Kubernetes Ressourcen (z.B. Secrets, Zertifikate, Volumes etc.) in den Spark Pods genutzt werden können.
 
 ### 1. Spark Pos und Apps
 
@@ -110,7 +110,7 @@ Zuerst schauen wir mal ob aktuell irgendwelche Pods und Sparkapps im Namespace `
 # laufende pods anzeigen
 kubectl get po -n spark
 
-# spezielle sparkapp resource group anzeigen
+# spezielle sparkapp ressource group anzeigen
 kubectl get sparkapp -n spark
 ```
 
@@ -185,7 +185,7 @@ kubectl apply -f pyspark-job.yaml
 kubectl get sparkapp -n spark
 kubectl describe sparkapp simple-app -n spark
 
-# Anzeigen ob der Treiber und Executor pod läuft (-w ist die abkürzung für --watch und zeigt immer wieder STATUS veränderungen eines Pods an, beenden mit STRG+C)
+# Anzeigen ob der Treiber und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
 kubectl get po -n spark -w
 
 # anzeigen der Ergebnisse mit Hilfe der logs

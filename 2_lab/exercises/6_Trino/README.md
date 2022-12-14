@@ -26,7 +26,7 @@ Catalog: delta
 Schema: data
 ```
 
-Connection zuerst mit dem Button Test prüfen und dann speichern
+Connection zuerst mit dem Button Test prüfen und dann speichern.
 
 
 Eventuell tauchen links noch keine Schema auf. Schau mit folgenden Befehlen was bei Trino verfügbar ist. <br>
@@ -89,7 +89,8 @@ EXPLAIN SELECT * FROM data.twitter;
 
 ## 3. Aufgaben in SQL formulieren
 
-Die folgenden Aufgaben mit Hilfe von SQL-Abfragen gelöst werden.
+Die folgenden Aufgaben können mit Hilfe von SQL-Abfragen gelöst werden. <br>
+> Die Trino Dokumentation kann dabei sehr gut behilflich sein. <br> https://trino.io/docs/current/index.html
 
 ### 1. Datensatzes
 
@@ -357,7 +358,7 @@ Checke genauso s3. <br>
 s3 ls s3://twitter/csv/
 ```
 
-sollen später weitere Zeilen hinzugefügt werden geht das mit
+Wenn später weitere Zeilen hinzugefügt werden sollen, geht das mit:
 
 ```
 INSERT INTO hive.export.csv

@@ -39,7 +39,7 @@ spec:
             fieldPath: metadata.name
   # executor pod configuration
   executor:
-    cores: 2
+    cores: 1
     instances: 1
     memory: "512m"
     labels:

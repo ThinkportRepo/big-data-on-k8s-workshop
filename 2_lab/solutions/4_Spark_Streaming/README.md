@@ -141,7 +141,7 @@ kubectl apply -f sparkapp_stream_to_s3.yaml
 # spark app anzeigen
 kubectl get sparkapp -n spark
 
-# Anzeigen ob der Treiber und Executor pod läuft (-w ist die abkürzung für --watch und zeigt immer wieder STATUS veränderungen eines Pods an, beenden mit STRG+C)
+# Anzeigen ob der Treiber und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
 
 kubectl get po -n spark -w
 
@@ -156,6 +156,12 @@ kubectl logs stream-to-s3-driver -f -n spark
 
 ```
 s3 ls s3://twitter/avro/
+```
+
+Wenn du möchtest kannst du dir eine AVRO Datei anschauen, bedenke dabei, dass AVRO nur bedingt humanreadable ist.
+
+```
+s3 get s3://twitter/avro/part-<individueller-string>.avro .
 ```
 
 Super, die Spark Streaming Aufgabe erfolgreich gemeistert

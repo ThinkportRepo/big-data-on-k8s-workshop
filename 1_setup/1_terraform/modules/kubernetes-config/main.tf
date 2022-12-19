@@ -638,7 +638,7 @@ resource "helm_release" "dashboard" {
   }
   set {
     name = "lab_user"
-    value = var.ClusterDNS
+    value = var.UserName
   }
   timeout = 600
 }

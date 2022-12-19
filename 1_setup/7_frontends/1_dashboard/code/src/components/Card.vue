@@ -6,6 +6,11 @@
     :href="getUrl"
     target="_blank"
   >
+    <v-avatar
+      :color="status_color"
+      size="15"
+      style="position: absolute; right: 7px; top: 7px"
+    ></v-avatar>
     <v-list-item three-line>
       <v-list-item-avatar tile size="80">
         <v-img class="elevation-6 ma-5" alt="" :src="getImgUrl(image)"></v-img>
@@ -15,9 +20,11 @@
         <v-list-item-title class="text-h5 mb-1">
           {{ title }}
         </v-list-item-title>
+
         <v-list-item-subtitle>{{ text }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
+
     <!--
     <v-card-actions>
       <v-spacer></v-spacer>
@@ -36,6 +43,7 @@ export default {
     url_label: String,
     subdomain: String,
     image: String,
+    status_color: String,
   },
   data: () => ({
     url: "",

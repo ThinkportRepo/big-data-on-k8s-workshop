@@ -23,6 +23,7 @@ module "kubernetes-config" {
   depends_on   = [module.aks]
   source       = "./modules/kubernetes-config"
   ClusterName = module.aks.kubernetes_cluster_name
+  UserName = local.UniquePrefix
   kubeconfig   = data.azurerm_kubernetes_cluster.this.kube_config_raw
   #TlsCertificate = file("k8s-${var.CloudFlareDNS}.pem")
   #TlsKey = file("k8s-${var.CloudFlareDNS}.key")

@@ -27,7 +27,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content class="ma-0">
-            <v-list-item-title>Student</v-list-item-title>
+            <v-list-item-title>REPLACE_LAB_USER</v-list-item-title>
             <v-list-item-subtitle>Practice Lab</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -43,6 +43,13 @@
       </template>
       <v-divider></v-divider>
       <v-list>
+        <v-list-item router to="/">
+          <v-list-item-icon>
+            <v-icon>mdi-home</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-title>Home</v-list-item-title>
+        </v-list-item>
         <v-list-group no-action prepend-icon="mdi-view-dashboard">
           <template v-slot:activator>
             <v-list-item-content>
@@ -244,7 +251,15 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
+        <v-list-item router to="/status">
+          <v-list-item-icon>
+            <v-icon>mdi-clipboard-pulse</v-icon>
+          </v-list-item-icon>
+
+          <v-list-item-title>Cluster Health</v-list-item-title>
+        </v-list-item>
       </v-list>
+
       <!--
       <v-divider></v-divider>
       <v-list>

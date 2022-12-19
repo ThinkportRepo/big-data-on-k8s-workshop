@@ -11,3 +11,6 @@ host: dashboard.4c13e49defa742168ff1.northeurope.aksapp.io
 
 # Replacement Host name
 k8shost: 4c13e49defa742168ff1.northeurope.aksapp.io
+
+# Replacement User name
+lab_user: trainer

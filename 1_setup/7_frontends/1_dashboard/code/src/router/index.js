@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 
 import Navbar from "@/components/Navbar.vue";
 import Dashboard from "@/components/Dashboard.vue";
+import Status from "@/components/Status.vue";
 import Lab_1_Kubernetes from "@/components/Lab_1_Kubernetes.vue";
 import Lab_2_SparkSimple from "@/components/Lab_2_SparkSimple.vue";
 
@@ -14,6 +15,14 @@ const routes = [
     name: "Home",
     components: {
       default: Dashboard,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/status",
+    name: "Statzs",
+    components: {
+      default: Status,
       navigation: Navbar,
     },
   },

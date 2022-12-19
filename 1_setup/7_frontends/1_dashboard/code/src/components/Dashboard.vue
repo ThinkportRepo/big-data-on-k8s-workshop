@@ -1,5 +1,12 @@
 <template>
   <v-container>
+    <v-row v-if="serverOutputStatus">
+      <v-col>
+        <v-progress-linear indeterminate color="deep-orange" height="25"
+          >connecting to Kubernetes Cluster ...</v-progress-linear
+        >
+      </v-col>
+    </v-row>
     <v-row>
       <!--<v-col cols="mb-4">
         
@@ -18,6 +25,7 @@
           url_label="Open VSCode"
           subdomain="vscode"
           image="vscode_logo.png"
+          :status_color="appStatusColor('vscode')"
         ></Card
       ></v-col>
       <v-col cols="mb-4">
@@ -27,6 +35,7 @@
           url_label="Open Jupyter"
           subdomain="jupyter"
           image="jupyter_logo.png"
+          :status_color="appStatusColor('jupyter')"
         ></Card
       ></v-col>
 
@@ -48,6 +57,7 @@
           url_label="Open SQLPad"
           subdomain="sqlpad"
           image="sql_logo.png"
+          :status_color="appStatusColor('sqlpad')"
         ></Card
       ></v-col>
     </v-row>
@@ -60,6 +70,7 @@
           url_label="Open Metabase"
           subdomain="metabase"
           image="metabase_logo.png"
+          :status_color="appStatusColor('metabase')"
         ></Card
       ></v-col>
       <v-col cols="mb-4">
@@ -69,6 +80,7 @@
           url_label="Open Minio"
           subdomain="minio"
           image="minio_logo.png"
+          :status_color="appStatusColor('minio')"
         ></Card
       ></v-col>
       <v-col cols="mb-4">
@@ -78,6 +90,7 @@
           url_label="Open Trino UI"
           subdomain="trino"
           image="trino2_logo.png"
+          :status_color="appStatusColor('trino')"
         ></Card
       ></v-col>
     </v-row>
@@ -132,6 +145,8 @@
 
 <script>
 import Card from "@/components/Card";
+import * as socketio from "@/plugins/socketio";
+
 export default {
   name: "Dashboard",
   components: {
@@ -139,7 +154,42 @@ export default {
   },
 
   data: () => ({
+    serverOutput: "",
+    serverOutputStatus: true,
     host: "VUE_APP_K8S_HOST",
   }),
+  created() {
+    //this.getApplicationInfo();
+    //setInterval(this.apiCallWrapper, 6000);
+  },
+  //the mounted lifecycle hook
+  mounted() {
+    socketio.addEventListener({
+      type: "cluster",
+      callback: (message) => {
+        this.serverOutput = message;
+        this.serverOutputStatus = false;
+      },
+    });
+  },
+  computed: {},
+  methods: {
+    appStatusColor(app_key) {
+      let status = "";
+      if (app_key == "minio") {
+        status = this.serverOutput.minio.status;
+      } else if (app_key == "trino") {
+        status = this.serverOutput.trino.status;
+      } else {
+        status = this.serverOutput.frontend[app_key].status;
+      }
+
+      if (status == "Running") {
+        return "green";
+      } else {
+        return "red";
+      }
+    },
+  },
 };
 </script>

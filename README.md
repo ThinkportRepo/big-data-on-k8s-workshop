@@ -42,3 +42,20 @@ This repo contains all the setup for the workshop lab as wall as the tasks and s
 2_lab
 
 3_docs
+
+## Weitere Ideen
+
+- Cassandra als noSQL in Business Case
+- Kubernetes UI
+- Kafka UI
+- KSQL korrekt angebunden
+- Richtiges Monitoring mit JMX, Prometheus und Grafana
+- Airflow Sheduling Beispiel
+- Docker Lab Aufgabe
+- HTTPS sauber integrieren
+- Copy & Paste und Autocomplete im Terminal
+- Dashboard
+  - Aufgaben in Dashboard, rendern von Markdown
+  - Dynamisch Anzeigen von Lab User Namen in Dashboard
+  - Abfrage der Kubernetes Stati via Fronend
+  - Trainer View mit übersicht über alle Cluster

@@ -2,6 +2,10 @@ variable "ClusterName" {
   type = string
 }
 
+variable "UserName" {
+  type = string
+}
+
 variable "ClusterDNS" {
     type = string
 }

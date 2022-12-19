@@ -39,5 +39,6 @@ override.tf.json
 *.config
 trainer_kubeconfig
 
+clusters*
 logs
 logs/

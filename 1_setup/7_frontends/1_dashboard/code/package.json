@@ -13,7 +13,9 @@
     "socket.io": "^4.5.4",
     "socket.io-client": "^4.5.4",
     "vue": "^2.6.11",
+    "vue-resource": "^1.5.3",
     "vue-router": "^3.5.1",
+    "vue-showdown": "^2.4.1",
     "vuetify": "^2.6.0"
   },
   "devDependencies": {

@@ -260,13 +260,12 @@
         </v-list-item>
       </v-list>
 
-      <!--
       <v-divider></v-divider>
       <v-list>
         <v-list-group no-action prepend-icon="mdi-checkbox-blank-outline">
           <template v-slot:activator>
             <v-list-item-content>
-              <v-list-item-title>Exercises</v-list-item-title>
+              <v-list-item-title>Lab</v-list-item-title>
             </v-list-item-content>
           </template>
 
@@ -290,6 +289,7 @@
           >
         </v-list-group>
       </v-list>
+      <!--
       <v-divider></v-divider>
       <v-list>
         <v-list-group no-action prepend-icon="mdi-checkbox-marked-outline">

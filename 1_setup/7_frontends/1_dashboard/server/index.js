@@ -434,7 +434,6 @@ socketio.on("connection", (socket) => {
         prom_minio,
         prom_spark,
         prom_frontend,
-        prom_podlimits,
       ])
       .then(
         axios.spread((...responses) => {

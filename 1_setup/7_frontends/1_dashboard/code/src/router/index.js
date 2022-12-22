@@ -6,6 +6,7 @@ import Dashboard from "@/components/Dashboard.vue";
 import Status from "@/components/Status.vue";
 import Lab_1_Kubernetes from "@/components/Lab_1_Kubernetes.vue";
 import Lab_2_SparkSimple from "@/components/Lab_2_SparkSimple.vue";
+import Lab_3_Kafka from "@/components/Lab_3_Kafka.vue";
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,14 @@ const routes = [
     name: "Lab_2_SparkSimple",
     components: {
       default: Lab_2_SparkSimple,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/lab-kafka",
+    name: "Lab_3_Kafka",
+    components: {
+      default: Lab_3_Kafka,
       navigation: Navbar,
     },
   },

@@ -24,7 +24,7 @@ export default {
   },
   methods: {
     getContent() {
-      this.fileContent = "rendering ";
+      this.fileContent = "pulling Markdown from github ... ";
       // var self;
       this.$http.get(this.fileToRender).then(
         (response) => {

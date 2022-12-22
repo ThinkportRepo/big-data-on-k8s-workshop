@@ -4,3 +4,5 @@
 # TF Log and Plan
 **/*.log
 **/*.plan
+
+**/.DS_Store

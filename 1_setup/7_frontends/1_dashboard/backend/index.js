@@ -260,7 +260,6 @@ function parseSpark(message, response) {
   };
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
-
     if (item.metadata.name.includes("spark-operator")) {
       message.spark.operator = {
         status: item.status.phase,
@@ -309,11 +308,6 @@ function parseFrontend(message, response) {
     pod: "",
   };
   message.frontend.zeppelin = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.spark.history = {
     status: "Missing",
     restarts: 0,
     pod: "",

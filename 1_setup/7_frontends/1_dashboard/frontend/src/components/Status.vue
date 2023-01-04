@@ -50,8 +50,7 @@
                             appStatusColor(
                               serverOutput.frontend.dashboard.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.dashboard.status
@@ -72,8 +71,7 @@
                             appStatusColor(
                               serverOutput.frontend.terminal.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.terminal.status
@@ -92,8 +90,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.frontend.vscode.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.vscode.status
@@ -112,8 +109,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.frontend.jupyter.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.jupyter.status
@@ -134,8 +130,7 @@
                             appStatusColor(
                               serverOutput.frontend.zeppelin.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.zeppelin.status
@@ -154,8 +149,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.frontend.sqlpad.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.sqlpad.status
@@ -176,8 +170,7 @@
                             appStatusColor(
                               serverOutput.frontend.metabase.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.frontend.metabase.status
@@ -196,8 +189,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.minio.minio1.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(serverOutput.minio.minio1.status)
                           }}
@@ -216,8 +208,7 @@
                             appStatusColor(
                               serverOutput.trino.coordinator.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.trino.coordinator.status
@@ -236,8 +227,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.spark.history.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.spark.history.status
@@ -284,8 +274,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.minio.minio1.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(serverOutput.minio.minio1.status)
                           }}
@@ -302,8 +291,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.minio.minio2.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(serverOutput.minio.minio2.status)
                           }}
@@ -349,8 +337,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.kafka.broker0.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.broker0.status
@@ -369,8 +356,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.kafka.broker1.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.broker1.status
@@ -389,8 +375,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.kafka.broker2.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.broker2.status
@@ -409,8 +394,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.kafka.zookeeper.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.zookeeper.status
@@ -431,8 +415,7 @@
                             appStatusColor(
                               serverOutput.kafka.schemaRegistry.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.schemaRegistry.status
@@ -451,8 +434,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.kafka.ksqlServer.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.ksqlServer.status
@@ -473,8 +455,7 @@
                             appStatusColor(
                               serverOutput.kafka.kafkaConnect.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.kafka.kafkaConnect.status
@@ -522,8 +503,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.spark.operator.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.spark.operator.status
@@ -542,8 +522,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.spark.history.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.spark.history.status
@@ -593,8 +572,7 @@
                             appStatusColor(
                               serverOutput.trino.coordinator.status
                             )
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.trino.coordinator.status
@@ -613,8 +591,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.trino.worker1.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.trino.worker1.status
@@ -633,8 +610,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.trino.worker2.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.trino.worker2.status
@@ -653,8 +629,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.trino.hive.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(serverOutput.trino.hive.status)
                           }}
@@ -671,8 +646,7 @@
                         <v-icon
                           :color="
                             appStatusColor(serverOutput.trino.postgres.status)
-                          "
-                        >
+                          ">
                           {{
                             appStatusIconTable(
                               serverOutput.trino.postgres.status

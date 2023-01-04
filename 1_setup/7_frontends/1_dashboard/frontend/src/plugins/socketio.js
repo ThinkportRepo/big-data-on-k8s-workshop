@@ -4,7 +4,7 @@ let socket = undefined;
 const localIP = "localhost";
 const networkIP = "backend.REPLACE_K8S_HOST";
 const port = 3030;
-const networkConnection = true;
+const networkConnection = false;
 
 function initialiseSocket() {
   const url = networkConnection

@@ -1,11 +1,10 @@
 # Dashboard App
 
-Kleine Webapp um schnell auf alle Frontends des Labs zu kommen
-
-## Webapp
-
-Der Code liegt im Verzeichnis code und ist eine auf node bzw vue und vuetify basierende app
-Details siehe in der README.md der app
+Die Dashboard App ist ein Frontend um die verschiedenen UI der Big Data Anwendungen die auf Kubernetes laufen zu öffnen.
+Die App hat im Wesentlichen 3 Funktionalitäten
+* Links auf die UIs
+* Live Status der Pods (via Backend und Kube Proxy im Sidecar)
+* Rendering der Markdown Dateien aus Github für die Lab Instructions
 
 ## Docker Image
 
@@ -42,3 +41,27 @@ Der Helm Chart wird aus dem chart Verzeichnis installiert über
 ```
 helm upgrade --install -f values.yaml  dashboard -n frontend .
 ```
+
+## Architectur
+
+![frontendArchitecutr drawio](https://user-images.githubusercontent.com/16557412/210658017-6423e9a7-5d88-4a0d-8cdb-b08ad777a431.png)
+
+Das Frontend ist eine Vue bzw. Vuetify App die via Websocket (socket.io) auf ein Backend zugreift und von dort die Kubernetes API abfragt. 
+Das Backend ist nötig, da wegen CORS Policy kein Zugriff direkt aus dem Frontend auf die Kubernetes API möglich ist.
+Um die ganze Authentifizierung via Token auf die Kubernetes API zu vermeiden wird kubectl proxy in einem sidecar Container verwendet (in der Kubernetes Doku empfohlenes Vorgehen). 
+
+
+
+Inspiriert von 
+https://medium.com/@barnie_M/accessing-kubernetes-api-from-a-pod-using-kubectl-proxy-sidecar-fbb85781969f
+
+## Verzeichnisstruktur
+### /backend
+einfacher Express Server, der die Kubernetes API abfragt
+### /frontend
+Vue App
+### /docker
+Docker files für das Frontend, Backend und das Sidecar sowie startup Scripte, die die Variablen für jeden Cluster substituieren
+### /helm
+Helm Chart um alles zu deployen
+

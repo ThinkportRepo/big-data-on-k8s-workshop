@@ -56,12 +56,12 @@ Inspiriert von
 https://medium.com/@barnie_M/accessing-kubernetes-api-from-a-pod-using-kubectl-proxy-sidecar-fbb85781969f
 
 ## Verzeichnisstruktur
-### /backend
+##### /backend
 einfacher Express Server, der die Kubernetes API abfragt
-### /frontend
+##### /frontend
 Vue App
-### /docker
+##### /docker
 Docker files für das Frontend, Backend und das Sidecar sowie startup Scripte, die die Variablen für jeden Cluster substituieren
-### /helm
+##### /helm
 Helm Chart um alles zu deployen
 

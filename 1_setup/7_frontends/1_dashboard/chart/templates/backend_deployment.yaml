@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: {{.Values.namespace}}
+  labels:
+    app: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      serviceAccountName: kubectl
+      containers:
+        - name: backend
+          image: thinkportgmbh/workshops:backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3030
+          env:
+            - name: K8S_HOST
+              value: {{.Values.k8shost}}
+        - name: sidecar
+          image: thinkportgmbh/workshops:kubeproxy
+          ports:
+            - containerPort: 8081

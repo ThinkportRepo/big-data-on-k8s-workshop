@@ -1,0 +1,15 @@
+FROM node:14
+WORKDIR /app
+
+
+COPY backend/package*.json ./
+
+RUN apt-get update && apt-get install curl -y
+RUN npm install
+COPY backend/ .
+
+# Overriding the default NGINX container behavior
+COPY docker/substitute_environment_variables.backend.sh /substitute_environment_variables.sh
+RUN chmod +x /substitute_environment_variables.sh
+
+ENTRYPOINT ["/substitute_environment_variables.sh"]

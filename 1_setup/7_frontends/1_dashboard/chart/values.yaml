@@ -7,10 +7,10 @@ namespace: "frontend"
 image: "thinkportgmbh/workshops:dashboard"
 
 # Ingress Hostname
-host: dashboard.4c13e49defa742168ff1.northeurope.aksapp.io
+host: dashboard.0d266633af344b99889f.westeurope.aksapp.io
 
 # Replacement Host name
-k8shost: 4c13e49defa742168ff1.northeurope.aksapp.io
+k8shost: 0d266633af344b99889f.westeurope.aksapp.io
 
 # Replacement User name
 lab_user: trainer

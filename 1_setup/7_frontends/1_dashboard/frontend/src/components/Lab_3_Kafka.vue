@@ -12,8 +12,11 @@ export default {
     return {
       fileContent: null,
       fileToRender:
-        "https://raw.githubusercontent.com/alexortner/kubernetes-on-raspberry-pi/main/README.md",
+        "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/3_Kafka/README.md",
       rawContent: null,
+      gitUser: "alexortner",
+      gitToken:
+        "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",
     };
   },
   created: function () {
@@ -25,12 +28,21 @@ export default {
   methods: {
     getContent() {
       this.fileContent = "pulling Markdown from github ... ";
-      // var self;
-      this.$http.get(this.fileToRender).then(
+
+      var options = {
+        url: this.fileToRender,
+        method: "GET",
+        headers: {
+          Authorization:
+            "Basic YWxleG9ydG5lcjpnaXRodWJfcGF0XzExQUQ2S0taQTBtdWxsOTEzaTlzb1NfWUN3TGJoWk5ETFpIcGxzZWVGcFJXY0Zhdmcwa0J2VTlRTzlOU0QwN1ZubjVCT0FQTVRTQ0x0S0tHeWU=",
+        },
+      };
+      this.$http(options).then(
         (response) => {
           // get body data
 
           this.fileContent = response.body;
+          console.log(this.fileContent);
         },
         (response) => {
           // error callback

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: backend
+  namespace: {{.Values.namespace}}
+  annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
+spec:
+  rules:
+    - host: "backend.{{.Values.k8shost}}"
+      http:
+        paths:
+          - backend:
+              service:
+                name: backend
+                port:
+                  number: 3030
+            path: /
+            pathType: Prefix

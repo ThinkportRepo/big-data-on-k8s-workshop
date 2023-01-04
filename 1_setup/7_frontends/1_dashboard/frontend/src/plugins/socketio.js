@@ -2,13 +2,13 @@ import io from "socket.io-client";
 
 let socket = undefined;
 const localIP = "localhost";
-const networkIP = "192.168.178.20";
+const networkIP = "backend.REPLACE_K8S_HOST";
 const port = 3030;
-const networkConnection = false;
+const networkConnection = true;
 
 function initialiseSocket() {
   const url = networkConnection
-    ? `http://${networkIP}:${port}`
+    ? `http://${networkIP}:80`
     : `http://${localIP}:${port}`;
 
   socket = io(url, {

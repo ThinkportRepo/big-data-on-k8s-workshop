@@ -19,10 +19,17 @@ Das Shell Script `substitute_environment_variables` ersetzt die Key Words im Jav
 docker build -t thinkportgmbh/workshops:dashboard -f docker/Dockerfile.vue .
 
 # bzw.
-docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/workshops:dashboard -f docker/Dockerfile.vue .
+docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/workshops:dashboard -f docker/Dockerfile.frontend .
+
+docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/workshops:backend -f docker/Dockerfile.backend .
+
+docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/workshops:kubeproxy -f docker/Dockerfile.sidecar .
 
 # testen auf docker
 docker run  -e K8S_HOST=k8s-cluster.io -p 8081:80 thinkportgmbh/workshops:dashboard
+
+docker run  -e K8S_HOST=k8s-cluster.io -p 3030:3030 thinkportgmbh/workshops:backend
+
 
 # öffnen unter http://localhost:8081
 

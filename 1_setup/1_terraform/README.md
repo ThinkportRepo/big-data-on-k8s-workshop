@@ -1,21 +1,38 @@
-# Azure Lab Setup via Teraform
+# Terraform Setup for Big Data Lab
 
-## Login at Azure
+This Terraform scripts create several Kubernetes Clusters and pre install all resources that are necessary for the lab for each participant.
 
-You should login to azure by using `az` command first.
-Check the correct subscription by using `az account show`. Keep in mind to select the correct subscription `az account set --subscription <subscriptionname>`.
+Therefore a list of the participants has to be provided upfront e.g. `clusters.txt`
 
-### Required settings
+```
+trainer
+student1
+student2
+```
 
-Copy the example terraform.tfvars.template to terraform.tfvars. 
-The following parameters can be set: 
+## Azure Environment Preparation
+
+Login to Azure Cloud Console and create a Resource Group in the correct subscription
+
+## Local Environment Preparation
+
+Azure Shell and Terraform CLI has to be installed and correctly configured
+
+First login to azure by using `az` command first.
+Check the correct subscription by using `az account show`.  
+Keep in mind to select the correct subscription `az account set --subscription <subscriptionname>`.
+
+## Adjust Terraform Settings
+
+Copy the example setting file `terraform.tfvars.template` to `terraform.tfvars` and
+set the following parameters:
 
 | Parameter              | Description                                                                                                            |
-|------------------------|------------------------------------------------------------------------------------------------------------------------|
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
 | UniquePrefix           | Should be empty                                                                                                        |
 | SharedPrefix           | Will be included in the name of all clusters (e.g. customer or workshop name)                                          |
 | ResourceGroupName      | Resource Group in Azure (needs to be created before)                                                                   |
-| Location               | Location to deploy the clusters to                                                                                     |
+| Location               | Location to deploy the clusters to (e.g. WestEurope)                                                                   |
 | NodeCount              | Number of cluster nodes                                                                                                |
 | NodeSize               | Azure VM Size                                                                                                          |
 | NodeDiskSize           | Disk size in Gibibytes                                                                                                 |
@@ -25,28 +42,57 @@ The following parameters can be set:
 | DockerhubUser          | Your Dockerhub username                                                                                                |
 | DockerhubPAT           | Your Dockerhub PAT to extend the pull limit to 200 requests                                                            |
 
-### Terraform Deployment
+## Terraform Deployment
 
-Use the helper scripts to use terraform for the deployment. 
-Create a cluster.txt (or any other name) with the names of your clusters. 
+Use the helper scripts to use terraform for the deployment.
+Create a `cluster.txt` (or any other name) with the names of your clusters.
+
 #### create workspaces
-To create and configure the aks cluster at the same time, we need to a workspace for each cluster.
 
-Use `terraform_create_workspace.sh clusters.txt` to create the workspaces. 
+To create and configure several aks cluster at the same time, we need to a workspace for each cluster.
+
+To create the terraform workspaces run
+
+```
+terraform_create_workspace.sh clusters.txt
+```
 
 #### create clusters
-Run `terraform_plan.sh clusters.txt` to generate terraform plans (if desired), can be skipped. 
-Use `terraform_apply.sh clusters.txt`to create your clusters. Check the creates log files. 
+
+To generate the terraform plans (if desired, can be skipped) and to create the clusters run
+
+```
+terraform_plan.sh clusters.txt
+terraform_apply.sh clusters.txt
+```
 
 #### do something on a single cluster
-If you need to fix a single cluster you can use `terraform select workspace <clustername>` and `terraform apply` for changes. 
+
+If you need to fix a single cluster you can use
+
+```
+terraform select workspace <clustername>
+# and
+terraform apply
+```
+
+for changes.
 
 #### stop your clusters
-If you need to stop your clusters (e.g. because there are several days between your workshop days), you can use `stop_clusters.sh cluster.txt`. 
+
+If you need to stop your clusters (e.g. because there are several days between your workshop days), you can use ```
+stop_clusters.sh cluster.txt
+
+```
 
 #### start your clusters
-The clusters can be started again by runinng `start_clusters.sh clusters.txt`
 
+The clusters can be started again by runinng
+```
+
+start_clusters.sh clusters.txt
+
+````
 
 ### Kubeconfig
 

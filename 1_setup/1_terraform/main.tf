@@ -15,7 +15,7 @@ module "aks" {
 
 resource "local_file" "kube_config" {
   #  count = var.NumberOfClusters
-    filename = "./${local.UniquePrefix}.config"
+    filename = "./logs/${local.UniquePrefix}.config"
     content = module.aks.kube_config
 } 
 
@@ -39,6 +39,6 @@ module "kubernetes-config" {
 }
 
 resource "local_file" "dns_zone" {
-    filename = "./${local.UniquePrefix}-dns.txt"
+    filename = "./logs/${local.UniquePrefix}-dns.txt"
     content = module.aks.dns_zone
 } 

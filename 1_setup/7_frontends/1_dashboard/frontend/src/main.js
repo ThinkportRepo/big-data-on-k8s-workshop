@@ -10,6 +10,22 @@ Vue.use(VueResource, {
   flavor: "github",
 });
 
+Vue.directive("mdstyle", (parentElement) => {
+  const els = parentElement.querySelectorAll("h1");
+
+  els.forEach((el) => {
+    el.style.fintSize = "200px";
+  });
+});
+
+Vue.directive("default-classes", (parentElement) => {
+  const els = parentElement.querySelectorAll("h1");
+
+  els.forEach((el) => {
+    el.classList.add("custom");
+  });
+});
+
 new Vue({
   router,
   vuetify,

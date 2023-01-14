@@ -224,7 +224,7 @@ resource "helm_release" "minio" {
     name = "consoleIngress.hosts[0]"
     value = "minio.${var.ClusterDNS}"
   }
-  timeout = 600
+  timeout = 1600
 }
 
 resource "helm_release" "hive" {
@@ -505,8 +505,8 @@ resource "kubernetes_job" "gitcloner" {
   }
   wait_for_completion = true
   timeouts {
-    create = "2m"
-    update = "1m"
+    create = "4m"
+    update = "2m"
   }
 }
 resource "kubernetes_job" "init" {
@@ -616,8 +616,8 @@ resource "kubernetes_job" "init" {
   }
   wait_for_completion = true
   timeouts {
-    create = "2m"
-    update = "1m"
+    create = "4m"
+    update = "2m"
   }
 }
 

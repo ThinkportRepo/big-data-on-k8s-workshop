@@ -260,7 +260,10 @@ function parseSpark(message, response) {
   };
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
-    if (item.metadata.name.includes("spark-operator")) {
+    if (
+      item.metadata.name.includes("spark-operator") &&
+      !item.metadata.name.includes("webhook")
+    ) {
       message.spark.operator = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,

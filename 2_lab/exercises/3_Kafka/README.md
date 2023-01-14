@@ -12,7 +12,7 @@ Schau dir in Kubernetes zunächst nochmal alle Service die im Kafka Namespace la
 ```
 kubectl get pod -n kafka
 
-#und
+# und
 
 kubectl get services -n kafka
 ```

@@ -25,7 +25,9 @@ Jetzt die Zelle wieder über das schwarze Viereck stoppen und **GANZ WICHTIG** d
 
 ## 2. Spark Streaming App via Spark Operator
 
-### 2.1 Python Code nach s3 kopieren
+Als nächstes soll der gleiche Spark Code über den Spark Operator als Kubernetes Deployment gestartet werden.
+
+### Aufgabe: Python Code nach s3 kopieren
 PySpark Code in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.py` validieren. <br>
 Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
 

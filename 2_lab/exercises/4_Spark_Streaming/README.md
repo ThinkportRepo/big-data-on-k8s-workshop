@@ -5,21 +5,23 @@ Die Spark Streaming Aufgaben werden zunächst in einem Jupyter Notebook ausgefü
 
 ![BigDataLab-Architecture-SparkStreaming drawio](https://user-images.githubusercontent.com/16557412/212683374-676acaba-c4d6-4944-844d-ce43c2878421.png)
 
-## 1. Streaming Code in Jupyter validieren
+## 1. Jupyter Playground
 
-Öffne Notebook `exercises/4_Spark_Streaming/notebook_stream_app.ipynb` und führe die einzelnen Code Blöcke aus. <br>
+Starte Jupyter über den Link im Menu unter Apps.
 
-Führe die Zelle "For Debugging: write stream to console" aus um zu sehen was wieder in das nächste Topic geschrieben werden würde. <br> Die Zelle mit Klicken auf das schwarze Viereck stoppen. <br>
+Öffne dort das Notebook aus dem Verzeichnis `exercises/4_Spark_Streaming/notebook_stream_app.ipynb` und führe die einzelnen Code Blöcke nacheinander aus.  
+Führe die Zelle **For Debugging: write stream to console** aus um zu sehen was wieder in das nächste Topic geschrieben werden würde.   
+Die Ausführung der Zelle mit Klicken auf das schwarze Viereck in der Menüleiste abbrechen.   
 
-Anschließend die Zelle "Write Stream to Avro" ausführen. Jetzt werden die Daten in ein s3 Bucket geschrieben. <br>
+Anschließend die Zelle **Write Stream to Avro** ausführen. Jetzt werden die Daten in ein s3 Bucket geschrieben. <br>
 
-Im Terminal von VSCode mit dem Befehl checken, ob dort auch Dateien angekommen sind.<br>
+Wechsle nun in das Terminal von VSCode und überprüfe mit der s3 CLI ob die Daten auch angekommen sind:
 
-```
+```bash
 s3 ls s3://twitter/avro/
 ```
 
-Jetzt die Zelle über das schwarze Viereck stoppen und ganz **wichtig** die Zelle mit `spark.stop()` ausführen um die Spark Session wieder zu beenden. <br>
+Jetzt die Zelle wieder über das schwarze Viereck stoppen und **GANZ WICHTIG** die Zelle mit `spark.stop()` ausführen um die Spark Session wieder zu beenden und den Stream zu stoppen.  
 
 ## 2. Spark Streaming App via Spark Operator
 

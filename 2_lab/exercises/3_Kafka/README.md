@@ -30,8 +30,9 @@ curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 ```
-</details>
 </p>
+</details>
+
 
 
 Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.  

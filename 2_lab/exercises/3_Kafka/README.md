@@ -9,7 +9,7 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 ## 1. Kafka Connector zu Twitter API
 
-#### Aufgabe: Kafka Connector zum auslesen der Twitter API erstelle und Twitter Daten in das Topic `twitter-raw` schreiben.  
+#### Aufgabe 1) Kafka Connector zum auslesen der Twitter API erstelle und Twitter Daten in das Topic `twitter-raw` schreiben.  
 
 Kakfa Connect bietet vordefinierte Mikroservice für typische Datenquellen (Sources) und Datenziele ((Sinks) die nur noch konfiguriert werden müssen. Dies erstpart die Arbeit ein eigenes Java/Python Programm zu schreiben, was die Daten von der Twitter API ziehen und nach Kafka schreiben würde.
 

@@ -1,21 +1,21 @@
 # Kafka Aufgaben
-Diese Aufgaben werden alle in VSCode und dem VSCode Terminal berabeitet.
-Bitte VSCode über das Dashboard öffnen.
+Diese Aufgaben werden alle im Texteditor oder Terminal von VSCode bearbeitet.
+VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
+## 1.Kafka Connector zu Twitter API
+**Aufgabe:**
+Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
 
+Kakfa Connect bietet vordefinierte Mikroservice für typische Datenquellen (Sources) und Datenziele ((Sinks) die nur noch konfiguriert werden müssen. Dies erstpart die Arbeit ein eigenes Java/Python Programm zu schreiben, was die Daten von der Twitter API ziehen und nach Kafka schreiben würde.
 
-## 1. Erstelle ein Connector um von der Twitter API zu lesen
-Als erste Aufgabe erstellen wir einen Mikroservice der als Stream App in Echtzeit neue Tweets von Twitter in unser Kafka Topic schreibt.
-Um diesen Mikroservice zu erstellen nutzen wir Kafka Connect.
+Schau Dir in Kubernetes zunächst nochmal alle Service an, die im Kafka Namespace laufen:
 
-Schau dir in Kubernetes zunächst nochmal alle Service die im Kafka Namespace laufen an.
 ```
 kubectl get pod -n kafka
-
 # und
-
 kubectl get services -n kafka
 ```
+
 Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL Definition `<service-name>.<namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden. 
 Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connektoren zu listen. Teste dies über den Terminal mit folgendem Befehl.
 

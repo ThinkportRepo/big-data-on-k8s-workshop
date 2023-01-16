@@ -31,18 +31,6 @@ curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 
 ```
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
-
-  select
-  <user>,
-  count(<tweet>) as numberOfTweets
-from
-  <dataset>
-group by
-  <user>
-order by
-  count(<tweet>) desc
-limit
-  <number>;
 ```
 
 </details>

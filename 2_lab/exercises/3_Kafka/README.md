@@ -8,6 +8,13 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 
 ## 1. Kafka Connector zu Twitter API
+<v-alert
+      dense
+      text
+      type="success"
+    >
+      I'm a dense alert with the <strong>text</strong> prop and a <strong>type</strong> of success
+    </v-alert>
 **Aufgabe:**
 Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
 

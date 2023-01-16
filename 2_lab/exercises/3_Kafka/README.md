@@ -3,7 +3,7 @@ Diese Aufgaben werden alle im Texteditor oder Terminal von VSCode bearbeitet.
 VSCode über den Dashboard Link im linken Menu unter Apps öffnen.  
 
 ## Architektur
-
+  
 
 ![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212665913-a876b3aa-2bbf-48a7-9069-d5ce0b21a276.png)
 

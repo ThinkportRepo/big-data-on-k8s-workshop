@@ -16,9 +16,10 @@ kubectl get pod -n kafka
 kubectl get services -n kafka
 ```
 
-Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL Definition `<service-name>.<namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden. 
+Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL Definition  
+`<service-name>.<namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden. 
 Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connectoren zu listen.   
-Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Trage hierzu den richtigen Namen für den *Service* und *Namespace* ein den du in der vorherigen Aufgabe gefunden hast.
+Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Trage hierzu den richtigen Namen für den *Service* und *Namespace* ein, den du in der vorherigen Aufgabe gefunden hast.
 
 ```
 curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
@@ -34,18 +35,12 @@ curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 </details>
 
 
-
-
-
 Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.  
+Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_Kafka/` an, kopiere folgende Konfiguration in die Datei und ersetzte die Felder, die ein XXX enthalten mit den korrekten Werten und Zugangsdaten.  
 
-Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und befülle die XXX Felder mit deinen jeweiligen Zugangsdaten. <br>
-Desweitern fülle an den passenden Stellen folgene values ein:
-
-
-**Topics:** twitter-raw <br>
+**Weitere Parameter:**
+**Topics:** twitter-raw  
 **Filter Keyword:** BigData
-
 
 ```
 {
@@ -77,25 +72,27 @@ Desweitern fülle an den passenden Stellen folgene values ein:
 
 ```
 
-Der Kafka Connector Server verfügt über eine REST API um die Connectoren zu erstellen und zu konfigurieren.
-Hier verwenden wir `curl` Befehle um die API anzusteuern.
-
+Die API des Kafka Connector Pods wird über den `curl` Befehle gesteuert.
+Erstelle mit folgenden Befehlen einen neuen Connector und prüfe ob er erfolgreich erstellt und konfiguriert wurde
 ```
-# Checke die verfügbaren Connectoren
-curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
+# Erstelle einen neuen Connector aus dem twitter_connector.json
+curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config -d @twitter_connector.json
 
-# Erstelle einen neuen Connector
-curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config -d @twitter.json
+# Prüfe ob der neue Connector erstellt wurde
+curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 
-# Überprüfe die Konfiguration der existierenden Connectoren
+
+# Überprüfe die Konfiguration des neuen Connectors
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config
 
 # Wenn ein Fehler beim Konfigurieren unterlaufen ist, kann der Connector gelöscht werden
 curl -X DELETE http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream
 
-# für die Fehlersuche können sich die Logs angeschaut werden
+# für die Fehlersuche können die Logs des Kafka Connect Pods hilfreich sein
 kubectl logs <kafka-connect-pod> -n kafka -f
 ```
+
+
 
 ---
 

@@ -27,12 +27,12 @@ curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 
 <details>
 <summary>Lösung</summary>
-
+ <p>
   
 ```
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 ```
-
+</p>
 </details>
 
 

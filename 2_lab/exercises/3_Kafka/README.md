@@ -4,7 +4,7 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 ## Architektur
 
-![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212665913-a876b3aa-2bbf-48a7-9069-d5ce0b21a276.png)
+![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212669833-e1a77d40-5245-42a8-a45f-0eed2b9e4522.png)
 
 
 ## 1. Kafka Connector zu Twitter API
@@ -104,21 +104,20 @@ kubectl logs <kafka-connect-pod> -n kafka -f
 **Aufgabe:** Überprüfe mit der Kafka CLI ob das Topic erstellt wurde und ob Twitter Daten in den Stream fließen.  
 
 
-Im Terminal folgenden Befehlen prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde.
-Dazu zunächst den Service Namen des Kafka Brokers herrausfinden.
+Im Terminal folgenden Befehlen prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde. Hierzu zunächst wieder den Service Namen des Kafka Brokers herrausfinden.
 
 ```
-# Service und Pods im Kafka Namespace anschauen
 kubectl get po -n kafka
+
 kubectl get services -n kafka
 ```
-Anschließend die korrekte Host Adresse in folgendem verwenden
+Anschließend können die Kafka Tpoics mit folgendem Shell Befehl angezeigt werden (korrekten Werte für Host und Port einfügen)
 ```
 kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port>
 ```
 
-Wenn das Topic erzeugt wurde, können wir uns auf das Topic subscriben und schauen was gerade getwittert wird.
-
+Wenn das Topic erzeugt wurde, kann sich auf das Topic subscribed werden. Jetzt sollten nach und nach Twitternachrichten zu sehen sein.
+ 
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
 

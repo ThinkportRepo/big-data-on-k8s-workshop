@@ -132,12 +132,12 @@ mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, a
 App zur Reduzierung der Twitter Rohdaten starten
 Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folgenden Konfigurationen:
 
-**name:** `twitter-table`
-**partition:** `2`
-**replication:** `2`
-**retention-time:** `86400000` (1 Tag in ms)
-**cleanup policy:** `delete`
-**retention-bytes:** `10000000`
+**name:** `twitter-table`  
+**partition:** `2`  
+**replication:** `2`  
+**retention-time:** `86400000` (1 Tag in ms)  
+**cleanup policy:** `delete`  
+**retention-bytes:** `10000000`  
 ```
 
 ```

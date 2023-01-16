@@ -1,4 +1,9 @@
-# Aufgabe zu Spark Streaming
+# Spark-Streaming Aufgaben
+Die Spark Streaming Aufgaben werden zunächst in einem Jupyter Notebook ausgeführt und anschließend mit dem Spark Operator dauerhaft gestartet.
+
+## Architektur
+
+![BigDataLab-Architecture-SparkStreaming drawio](https://user-images.githubusercontent.com/16557412/212683374-676acaba-c4d6-4944-844d-ce43c2878421.png)
 
 ## 1. Streaming Code in Jupyter validieren
 

@@ -160,26 +160,25 @@ kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.loc
 ```
 
 
-Die Streaming App (Mikroservice) ist bereits programmiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programms an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden.
-
-Pod/Deployment mit diesem Code starten.<br>
+Die Streaming App (Mikroservice) ist bereits programmiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/Stream-Mikroservice/pod_twitter_data_converter.yaml` 
+ 
+Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/Stream-Mikroservice/` gehen)
 
 ```
 kubectl apply -f pod_twitter_data_converter.yaml
 ```
 
-Checke ob Pod läuft. (Logs)<br>
+Anschlißend überprüfe ob der Pod erfolgreich gestartartet ist und Twitterdaten verarbeitet.  
 
 ```
 kubectl get pod -n <namespace>
 
 kubectl logs <pod-name> -n <namespace> -f
 
-# -f gibt fortlaufend die logs aus
 ```
+Die Flag `-f` gibt fortlaufend die logs aus. Beende die *Float* Ansicht auf die Logs mit `strg+c`
 
-
-Checke ob Daten in Target Topic ankommen.<br>
+Prüfe anschließend ob die reduzierten Daten auch im neuen Kafka Topic ankommen
 
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning

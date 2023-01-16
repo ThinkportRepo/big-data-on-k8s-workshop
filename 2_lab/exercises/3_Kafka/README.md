@@ -125,6 +125,18 @@ kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.clus
 mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit der Flag `--max-messages 5` kann die Ausgaben der Nachrichten limitiert werden
 
 
+<details>
+<summary>Lösungen</summary>
+
+```bash
+kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
+  
+kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning
+
+```
+</details>
+
+
 
 ## 3. Streaming App (Mikroservice)
 **Aufgabe:** Erstelle ein neues Topic in welchen die reduzierten Daten geschrieben werden und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.  

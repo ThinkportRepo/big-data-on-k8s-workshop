@@ -41,7 +41,7 @@ curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 
 
 Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.  
-Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_Kafka/` an, kopiere folgende Konfiguration in die Datei und ersetzte die Felder, die ein XXX enthalten mit den korrekten Werten und Zugangsdaten.  
+Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_Kafka/` an, kopiere folgende Konfiguration in die Datei und ersetzte die Felder, die ein XXXXX enthalten mit den korrekten Werten und Zugangsdaten. Die Zugangsdaten werden dir in Rahmen des Workshops zur Verfügung gestellt.
 
 **Weitere Parameter:**
 **Topics:** twitter-raw  
@@ -62,15 +62,15 @@ Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_K
   "topic.creation.default.retention.ms": "86400000",
   "topic.creation.default.retention.bytes": "10000000",
 
-  "topics": "XXX",
+  "topics": "XXXXX",
   "process.deletes": "true",
-  "filter.keywords": "XXX",
+  "filter.keywords": "XXXXX",
   "kafka.status.topic": "twitter-raw",
   "kafka.delete.topic": "twitter-raw-deletions",
-  "twitter.oauth.accessTokenSecret": "XXX",
-  "twitter.oauth.consumerSecret": "XXX",
-  "twitter.oauth.accessToken": "XXX",
-  "twitter.oauth.consumerKey": "XXX",
+  "twitter.oauth.accessTokenSecret": "XXXXX",
+  "twitter.oauth.consumerSecret": "XXXXX",
+  "twitter.oauth.accessToken": "XXXXX",
+  "twitter.oauth.consumerKey": "XXXXX",
   "key.converter": "org.apache.kafka.connect.json.JsonConverter",
   "value.converter": "org.apache.kafka.connect.json.JsonConverter"
 }
@@ -79,7 +79,7 @@ Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_K
 
 Die API des Kafka Connector Pods wird über den `curl` Befehle gesteuert.
 Erstelle mit folgenden Befehlen einen neuen Connector und prüfe ob er erfolgreich erstellt und konfiguriert wurde
-```
+```bash
 # Erstelle einen neuen Connector aus dem twitter_connector.json
 curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config -d @twitter_connector.json
 

@@ -26,7 +26,7 @@ curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 
 
 <details>
-<summary>Tipp</summary>
+<summary>Lösung</summary>
 <p>
 
 ```

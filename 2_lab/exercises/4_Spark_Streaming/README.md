@@ -56,13 +56,14 @@ Prüfe die Spark App Definition in der Datei `exercises/4_Spark_Streaming/sparka
 executor cores: 1
 mainApplicationFile: s3a://<bucket>/<python-script>.py
 ```
+
 <details>
 <summary>Lösung </summary>
+  
 <p>
 verwende in den eckigen Klammern
 **bucket:** `scripts`  
 **python-script:** `spark_stream_to_s3´  
-```
 
 </details>
 </p>

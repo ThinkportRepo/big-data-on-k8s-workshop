@@ -61,9 +61,9 @@ mainApplicationFile: s3a://<bucket>/<python-script>.py
 <summary>Lösung </summary>
   
 <p>
-verwende in den eckigen Klammern  
-**bucket:** `scripts`   
-**python-script:** `spark_stream_to_s3´    
+verwende in den eckigen Klammern  <br> 
+  <b>bucket:</b> <code>scripts</code><br> 
+<b>python-script:</b> <code>spark_stream_to_s3</code>    
 
 </details>
 </p>

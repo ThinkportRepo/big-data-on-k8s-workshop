@@ -9,7 +9,7 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 ## 1. Kafka Connector zu Twitter API
 
-#### Aufgabe 1) Kafka Connector zum auslesen der Twitter API erstelle und Twitter Daten in das Topic `twitter-raw` schreiben.  
+### Aufgabe 1) Kafka Connector zum streamen der Twitterdaten erstellen  
 
 Kakfa Connect bietet vordefinierte Mikroservice für typische Datenquellen (Sources) und Datenziele ((Sinks) die nur noch konfiguriert werden müssen. Dies erstpart die Arbeit ein eigenes Java/Python Programm zu schreiben, was die Daten von der Twitter API ziehen und nach Kafka schreiben würde.
 
@@ -101,7 +101,7 @@ kubectl logs <kafka-connect-pod> -n kafka -f
 
 ## 2. Kafka Topics 
 
-**Aufgabe:** Überprüfe mit der Kafka CLI ob das Topic erstellt wurde und ob Twitter Daten in den Stream fließen.  
+### Aufgabe 2) Überprüfe ob das Topic erstellt wurde und ob Daten geschrieben werden 
 
 
 Im Terminal folgenden Befehlen prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde. Hierzu zunächst wieder den Service Namen des Kafka Brokers herrausfinden.
@@ -139,7 +139,8 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 
 
 ## 3. Streaming App (Mikroservice)
-**Aufgabe:** Erstelle ein neues Topic in welchen die reduzierten Daten geschrieben werden und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.  
+
+### Aufgabe 3) Erstelle manuell ein neues Topic für die reduzierten Daten
 
 
 Erstelle zunächst ein neues Topic mit der Kafka CKU folgenden Konfigurationen:
@@ -171,8 +172,10 @@ Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu lösche
 kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table
 ```
 
+und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt. 
 
-Die Streaming App (Mikroservice) ist bereits programmiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/Stream-Mikroservice/pod_twitter_data_converter.yaml` 
+### Aufgabe 4) Starte eine containerisierte Streaming App (Mikroservice in Python/Java)
+Die Streaming App (Mikroservice) ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/Stream-Mikroservice/pod_twitter_data_converter.yaml` 
  
 Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/Stream-Mikroservice/` gehen)
 

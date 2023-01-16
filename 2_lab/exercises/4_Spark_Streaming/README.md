@@ -34,37 +34,34 @@ Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
 
 Der Spark Operator kann dieses Python Script nur von s3 lesen, nicht von lokal. Deswegen muss zunächst die Python Datei nach s3 kopiert werden.
 
-Gehe hierzu im VSCode Terminal in das Verzeichnis `exercises/4_Spark_Streaming/`  
-
-und lade die Datei folgendermaßen hoch
+Gehe hierzu im VSCode Terminal in das Verzeichnis `exercises/4_Spark_Streaming/` und lade die Datei folgendermaßen hoch:
 ```
-# schauen ob es schon ein Bucket scripts gibt
+# überprüfen ob es schon ein Bucket scripts gibt
 s3 ls
 
 # Bucket erstellen, falls es noch nicht existiert
 s3 mb s3://scripts
 
-# Datei nach s3 laden
+# Datei nach s3 kopieren
 s3 put spark_stream_to_s3.py s3://scripts/
 
-# Prüfen ob angekommen
+# überprüfen ob die Datei angekommen ist
 s3 ls s3://scripts/
 ```
 
-### 2.2 Spark App Yaml vervollständigen
-Prüfe die Spark App Definition `exercises/4_Spark_Streaming/sparkapp_stream_to_s3.yaml` und füge an den richtigen Stellen in die YAML folgene Werte ein.
+### Aufgabe 2) SparkApp Yaml vervollständigen
+Prüfe die Spark App Definition in der Datei `exercises/4_Spark_Streaming/sparkapp_stream_to_s3.yaml` und füge an den richtigen Stellen in der YAML folgene Werte ein, wobei die Werte in der spitzen Klammer ersetzt werden müssen.
 
 ```
 executor cores: 1
 mainApplicationFile: s3a://<bucket>/<python-script>.py
 ```
 <details>
-<summary>Tipp </summary>
+<summary>Lösung </summary>
 <p>
-
-```
-bucket: scripts
-python-script: spark_stream_to_s3
+verwende in den eckigen Klammern
+**bucket:** `scripts`
+**python-script:** `spark_stream_to_s3´
 ```
 
 </details>

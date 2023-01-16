@@ -8,14 +8,14 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 
 ## 1. Kafka Connector zu Twitter API
-**Aufgabe:**
-Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
+> **Aufgabe:**
+> Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
 
 Kakfa Connect bietet vordefinierte Mikroservice für typische Datenquellen (Sources) und Datenziele ((Sinks) die nur noch konfiguriert werden müssen. Dies erstpart die Arbeit ein eigenes Java/Python Programm zu schreiben, was die Daten von der Twitter API ziehen und nach Kafka schreiben würde.
 
 Schau Dir in Kubernetes zunächst nochmal alle Service an, die im Kafka Namespace laufen:
 
-```
+```bash
 kubectl get pod -n kafka
 
 kubectl get services -n kafka
@@ -26,7 +26,7 @@ Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Servi
 Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connectoren zu listen.   
 Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Trage hierzu den richtigen Namen für den *Service* und *Namespace* ein, den du in der vorherigen Aufgabe gefunden hast.
 
-```
+```bash
 curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 
@@ -34,7 +34,7 @@ curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 <details>
 <summary>Lösung</summary>
 
-```
+```bash
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 ```
 </details>
@@ -47,7 +47,7 @@ Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_K
 **Topics:** twitter-raw  
 **Filter Keyword:** BigData
 
-```
+```json
 {
   "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
   "tasks.max": "1",
@@ -99,9 +99,7 @@ kubectl logs <kafka-connect-pod> -n kafka -f
 
 
 
----
-
-## 2. Kafka Topics anschauen
+## 2. Kafka Topics 
 
 Im Terminal von VS Code mit folgendem Befehl prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde.
 Dazu zunächst den Service Namen des Kafka Brokers herrausfinden.

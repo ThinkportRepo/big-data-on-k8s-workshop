@@ -24,7 +24,7 @@ Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Tr
 curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 
-<details class="solution">
+<details>
 <summary>Lösung</summary>
 <p>
 ```

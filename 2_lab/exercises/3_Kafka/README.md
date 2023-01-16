@@ -44,8 +44,8 @@ Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den k
 Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_Kafka/` an, kopiere folgende Konfiguration in die Datei und ersetzte die Felder, die ein XXXXX enthalten mit den korrekten Werten und Zugangsdaten. Die Zugangsdaten werden dir in Rahmen des Workshops zur Verfügung gestellt.
 
 **Weitere Parameter:**
-**Topics:** twitter-raw  
-**Filter Keyword:** BigData
+**Topics:** `twitter-raw` 
+**Filter Keyword:** `BigData`
 
 ```json
 {
@@ -126,17 +126,18 @@ mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, a
 
 
 
-## 3. Mikroservice App zur Reduzierung der Twitter Rohdaten starten
+## 3. Streaming App (Mikroservice)
 
-Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folgenden Konfugurationen:
 
-```
-name: twitter-table
-partition: 2
-replication: 2
-retention-time: 86400000 (1 Tag in ms)
-cleanup policy: delete
-retention-bytes: 10000000
+App zur Reduzierung der Twitter Rohdaten starten
+Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folgenden Konfigurationen:
+
+**name:** `twitter-table`
+**partition:** `2`
+**replication:** `2`
+**retention-time:** `86400000` (1 Tag in ms)
+**cleanup policy:** `delete`
+**retention-bytes:** `10000000`
 ```
 
 ```

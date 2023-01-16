@@ -1,5 +1,9 @@
-# Spark Aufgaben in Jupyter Notebooks
-Öffne für diese Aufgaben über das Dashboard das Jupyter Notebooks im Ordner Exercise.<br>
+# Spark SQL Aufgaben
+
+Die Spark SQL Aufgaben werden alle in Jupyter Notebooks ausgeführt in denen auch die Aufgaben im Detail beschriebens sind.
+Das Notebook befindet unter `/exercises/5_Spark_SQL/notebook_spark_analysis.ipynb` 
+
+
 Folge die Anleitung im Notebook.
 
 >Folgene Webseiten und Dokumentationen können dabei helfen. <br>

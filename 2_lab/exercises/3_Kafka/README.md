@@ -101,7 +101,7 @@ kubectl logs <kafka-connect-pod> -n kafka -f
 
 ## 2. Kafka Topics 
 
-### Aufgabe 2) Überprüfe ob das Topic erstellt wurde und ob Daten geschrieben werden 
+### Aufgabe 2) überprüfe ob das Topic erstellt wurde und ob Daten geschrieben werden 
 
 
 Im Terminal folgenden Befehlen prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde. Hierzu zunächst wieder den Service Namen des Kafka Brokers herrausfinden.
@@ -140,7 +140,7 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 
 ## 3. Streaming App (Mikroservice)
 
-### Aufgabe 3) Erstelle manuell ein neues Topic für die reduzierten Daten
+### Aufgabe 3) erstelle manuell ein neues Topic für die reduzierten Daten
 
 
 Erstelle zunächst ein neues Topic mit der Kafka CKU folgenden Konfigurationen:
@@ -174,7 +174,7 @@ kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.loc
 
 und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt. 
 
-### Aufgabe 4) Starte eine containerisierte Streaming App (Mikroservice in Python/Java)
+### Aufgabe 4) starte eine containerisierte Streaming App (Mikroservice in Python/Java)
 Die Streaming App (Mikroservice) ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/Stream-Mikroservice/pod_twitter_data_converter.yaml` 
  
 Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/Stream-Mikroservice/` gehen)

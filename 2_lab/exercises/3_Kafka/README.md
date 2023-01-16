@@ -2,7 +2,7 @@
 Diese Aufgaben werden alle im Texteditor oder Terminal von VSCode bearbeitet.
 VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
-## 1.Kafka Connector zu Twitter API
+## 1. Kafka Connector zu Twitter API
 **Aufgabe:**
 Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
 

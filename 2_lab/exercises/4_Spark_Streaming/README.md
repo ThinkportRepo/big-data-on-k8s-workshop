@@ -60,15 +60,15 @@ mainApplicationFile: s3a://<bucket>/<python-script>.py
 <summary>Lösung </summary>
 <p>
 verwende in den eckigen Klammern
-**bucket:** `scripts`
-**python-script:** `spark_stream_to_s3´
+**bucket:** `scripts`  
+**python-script:** `spark_stream_to_s3´  
 ```
 
 </details>
 </p>
 
 
-### 2.3 Spark App erstellen
+### Aufgabe 3) SparkApp starten
 Starte anschließend die Sparkapp und schau in den Pod Logs ob sie korrekt läuft. <br>
 
 ```

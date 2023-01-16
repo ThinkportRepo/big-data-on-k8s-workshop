@@ -35,7 +35,7 @@ Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
 Der Spark Operator kann dieses Python Script nur von s3 lesen, nicht von lokal. Deswegen muss zunächst die Python Datei nach s3 kopiert werden.
 
 Gehe hierzu im VSCode Terminal in das Verzeichnis `exercises/4_Spark_Streaming/` und lade die Datei folgendermaßen hoch:
-```
+```bash
 # überprüfen ob es schon ein Bucket scripts gibt
 s3 ls
 
@@ -52,7 +52,7 @@ s3 ls s3://scripts/
 ### Aufgabe 2) SparkApp Yaml vervollständigen
 Prüfe die Spark App Definition in der Datei `exercises/4_Spark_Streaming/sparkapp_stream_to_s3.yaml` und füge an den richtigen Stellen in der YAML folgene Werte ein, wobei die Werte in der spitzen Klammer ersetzt werden müssen.
 
-```
+```yaml
 executor cores: 1
 mainApplicationFile: s3a://<bucket>/<python-script>.py
 ```
@@ -70,16 +70,16 @@ verwende in den eckigen Klammern  <br>
 
 
 ### Aufgabe 3) SparkApp starten
-Starte anschließend die Sparkapp und schau in den Pod Logs ob sie korrekt läuft. <br>
+Starte anschließend die SparkApp und schau in den Pod Logs ob sie korrekt läuft. <br>
 
-```
-# anwenden der manifest yaml (im ordner wo die Datei liegt)
+```bash
+# anwenden der manifest yaml (aus dem Verzeichnis in welchem die Datei liegt)
 kubectl apply -f sparkapp_stream_to_s3.yaml
 
-# spark app anzeigen
+# SparkApp anzeigen
 kubectl get sparkapp -n spark
 
-# Anzeigen ob der Treiber und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
+# anzeigen ob der Driver und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
 
 kubectl get po -n spark -w
 
@@ -90,13 +90,12 @@ kubectl logs stream-to-s3-driver -n spark
 kubectl logs stream-to-s3-driver -f -n spark
 ```
 
-Überprüfe ob weitere Dateien nach s3 geschrieben werden. <br>
-
+Überprüfe ob weitere Dateien nach s3 geschrieben werden.  
 ```
 s3 ls s3://twitter/avro/
 ```
 
-Wenn du möchtest kannst du dir eine AVRO Datei anschauen, bedenke dabei, dass AVRO nur bedingt humanreadable ist.
+Wenn du möchtest kannst du dir eine AVRO Datei herunterladen und anschauen, bedenke dabei aber, dass AVRO nur bedingt humanreadable ist.
 
 ```
 s3 get s3://twitter/avro/part-<individueller-string>.avro .

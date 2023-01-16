@@ -24,14 +24,30 @@ Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Tr
 curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 
+
 <details>
-<summary>Lösung</summary>
+<summary>Tipp</summary>
 <p>
+
 ```
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
+
+  select
+  <user>,
+  count(<tweet>) as numberOfTweets
+from
+  <dataset>
+group by
+  <user>
+order by
+  count(<tweet>) desc
+limit
+  <number>;
 ```
-</p>
+
 </details>
+</p>
+
 
 
 

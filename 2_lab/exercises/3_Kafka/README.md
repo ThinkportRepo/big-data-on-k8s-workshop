@@ -127,10 +127,10 @@ mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, a
 
 
 ## 3. Streaming App (Mikroservice)
+**Aufgabe:** Erstelle ein neues Topic in welchen die reduzierten Daten geschrieben werden und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.  
 
 
-App zur Reduzierung der Twitter Rohdaten starten
-Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folgenden Konfigurationen:
+Erstelle zunächst ein neues Topic mit der Kafka CKU folgenden Konfigurationen:
 
 **name:** `twitter-table`  
 **partition:** `2`  
@@ -138,7 +138,6 @@ Erstelle ein Topic in den verarbeitete Daten gespeichert werden können mit folg
 **retention-time:** `86400000` (1 Tag in ms)  
 **cleanup policy:** `delete`  
 **retention-bytes:** `10000000`  
-```
 
 ```
 kafka-topics.sh --create --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --partitions <partition-number> --replication-factor <replication-number> --config retention.ms=<retention-time> --config cleanup.policy=<policy> --config retention.bytes=<retention-bytes>
@@ -161,7 +160,7 @@ kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.loc
 ```
 
 
-Schau den Code an, was der macht `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py`.
+Die Streaming App (Mikroservice) ist bereits programmiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programms an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden.
 
 Pod/Deployment mit diesem Code starten.<br>
 

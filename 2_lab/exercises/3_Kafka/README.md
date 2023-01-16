@@ -12,15 +12,15 @@ Schau Dir in Kubernetes zunächst nochmal alle Service an, die im Kafka Namespac
 
 ```
 kubectl get pod -n kafka
-# und
+
 kubectl get services -n kafka
 ```
 
 Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL Definition `<service-name>.<namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden. 
-Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connektoren zu listen. Teste dies über den Terminal mit folgendem Befehl.
+Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connectoren zu listen.   
+Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Trage hierzu den richtigen Namen für den *Service* und *Namespace* ein den du in der vorherigen Aufgabe gefunden hast.
 
 ```
-# Checke die verfügbaren Connectoren
 curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 

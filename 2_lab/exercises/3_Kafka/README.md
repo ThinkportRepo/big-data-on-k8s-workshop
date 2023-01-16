@@ -8,8 +8,8 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 
 ## 1. Kafka Connector zu Twitter API
-> **Aufgabe:**
-> Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
+**Aufgabe:**
+Erstelle einen Kafka Connector zum auslesen der Twitter API und schreibe die Twitter Stream Daten in ein Kafka Topic `twitter-raw`.  
 
 Kakfa Connect bietet vordefinierte Mikroservice für typische Datenquellen (Sources) und Datenziele ((Sinks) die nur noch konfiguriert werden müssen. Dies erstpart die Arbeit ein eigenes Java/Python Programm zu schreiben, was die Daten von der Twitter API ziehen und nach Kafka schreiben würde.
 
@@ -101,28 +101,31 @@ kubectl logs <kafka-connect-pod> -n kafka -f
 
 ## 2. Kafka Topics 
 
-Im Terminal von VS Code mit folgendem Befehl prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde.
+**Aufgabe:** Überprüfe mit der Kafka CLI ob das Topic erstellt wurde und ob Twitter Daten in den Stream fließen.  
+
+
+Im Terminal folgenden Befehlen prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde.
 Dazu zunächst den Service Namen des Kafka Brokers herrausfinden.
 
 ```
 # Service und Pods im Kafka Namespace anschauen
 kubectl get po -n kafka
 kubectl get services -n kafka
-
-# Host Adresse zusammefügen
+```
+Anschließend die korrekte Host Adresse in folgendem verwenden
+```
 kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port>
 ```
 
-Wenn das Topic erzeugt wurde, können wir uns auf das Topic subscriben und schauen ob gerade getwittert wird.
+Wenn das Topic erzeugt wurde, können wir uns auf das Topic subscriben und schauen was gerade getwittert wird.
 
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
 
-# mit den flags --from-beginning werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit --max-messages 5 kann die Ausgaben der Nachrichten limitiert werden
 ```
+mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit der Flag `--max-messages 5` kann die Ausgaben der Nachrichten limitiert werden
 
 
----
 
 ## 3. Mikroservice App zur Reduzierung der Twitter Rohdaten starten
 

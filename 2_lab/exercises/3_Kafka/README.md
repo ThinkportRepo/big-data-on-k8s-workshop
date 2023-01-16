@@ -24,17 +24,15 @@ Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Tr
 curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 
-<details>
-<summary>Tipp </summary>
+<details class="solution">
+<summary>Lösung</summary>
 <p>
-
 ```
-bucket: scripts
-python-script: spark_stream_to_s3
+curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 ```
-
-</details>
 </p>
+</details>
+
 
 Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.  
 

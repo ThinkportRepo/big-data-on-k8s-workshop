@@ -44,8 +44,8 @@ Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den k
 Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_Kafka/` an, kopiere folgende Konfiguration in die Datei und ersetzte die Felder, die ein XXXXX enthalten mit den korrekten Werten und Zugangsdaten. Die Zugangsdaten werden dir in Rahmen des Workshops zur Verfügung gestellt.
 
 **Weitere Parameter:**
-**Topics:** `twitter-raw` 
-**Filter Keyword:** `BigData`
+**Topics:** `twitter-raw`  
+**Filter Keyword:** `BigData`  
 
 ```json
 {

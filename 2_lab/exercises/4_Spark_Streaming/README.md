@@ -5,7 +5,7 @@ Die Spark Streaming Aufgaben werden zunächst in einem Jupyter Notebook ausgefü
 
 ![BigDataLab-Architecture-SparkStreaming drawio](https://user-images.githubusercontent.com/16557412/212683374-676acaba-c4d6-4944-844d-ce43c2878421.png)
 
-## 1. Jupyter Playground
+## 1. Jupyter Prototyping
 
 Starte Jupyter über den Link im Menu unter Apps.
 
@@ -23,19 +23,18 @@ s3 ls s3://twitter/avro/
 
 Jetzt die Zelle wieder über das schwarze Viereck stoppen und **GANZ WICHTIG** die Zelle mit `spark.stop()` ausführen um die Spark Session wieder zu beenden und den Stream zu stoppen.  
 
-## 2. Spark Streaming App via Spark Operator
+## 2. Spark Streaming via Spark Operator
 
 Als nächstes soll der gleiche Spark Code über den Spark Operator als Kubernetes Deployment gestartet werden.
 
-### Aufgabe: Python Code nach s3 kopieren
-PySpark Code in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.py` validieren. <br>
+### Aufgabe 1) Python Code nach s3 kopieren
+
+Validiere zunächst den PySpark Code in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.py`.  
 Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
 
+Der Spark Operator kann dieses Python Script nur von s3 lesen, nicht von lokal. Deswegen muss zunächst die Python Datei nach s3 kopiert werden.
 
-Der Spark Operator kann dieses Python Script von s3 lesen, nicht von lokal.
-Deswegen muss zunächst die Python Datei nach S3 hochgeladen werden.
-
-Gehe hierzu im VSCode Terminal in das richtige Verzeichnis. (4_Spark_Streaming Ordner) <br>
+Gehe hierzu im VSCode Terminal in das Verzeichnis `exercises/4_Spark_Streaming/`  
 
 und lade die Datei folgendermaßen hoch
 ```

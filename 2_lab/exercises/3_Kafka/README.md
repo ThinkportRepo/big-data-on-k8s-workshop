@@ -25,8 +25,8 @@ curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
 ```
 
 
-<details>
-<summary>Lösung</summary>
+<details class="md_details">
+<summary class="md_summary">Lösung</summary>
  <p>
   
 ```

@@ -4,7 +4,7 @@ VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 ## Architektur
 
-![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212680881-9deff97c-b028-41e8-9808-d321ecbec80b.png)
+![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212681113-6ca20976-9f27-499f-a2d9-3ef8d4b3102d.png)
 
 
 ## 1. Kafka Connector zu Twitter API

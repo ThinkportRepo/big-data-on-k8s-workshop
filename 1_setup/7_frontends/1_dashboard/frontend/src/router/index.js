@@ -5,8 +5,11 @@ import Navbar from "@/components/Navbar.vue";
 import Dashboard from "@/components/Dashboard.vue";
 import Status from "@/components/Status.vue";
 import Lab_1_Kubernetes from "@/components/Lab_1_Kubernetes.vue";
-import Lab_2_SparkSimple from "@/components/Lab_2_SparkSimple.vue";
+import Lab_2_SparkBasics from "@/components/Lab_2_SparkBasics.vue";
 import Lab_3_Kafka from "@/components/Lab_3_Kafka.vue";
+import Lab_4_SparkStreaming from "@/components/Lab_4_SparkStreaming.vue";
+import Lab_5_SparkSQL from "@/components/Lab_5_SparkSQL.vue";
+import Lab_6_Trino from "@/components/Lab_6_Trino.vue";
 
 Vue.use(VueRouter);
 
@@ -21,7 +24,7 @@ const routes = [
   },
   {
     path: "/status",
-    name: "Statzs",
+    name: "Status",
     components: {
       default: Status,
       navigation: Navbar,
@@ -36,10 +39,10 @@ const routes = [
     },
   },
   {
-    path: "/lab-spark-simple",
-    name: "Lab_2_SparkSimple",
+    path: "/lab-spark-basics",
+    name: "Lab_2_SparkBasics",
     components: {
-      default: Lab_2_SparkSimple,
+      default: Lab_2_SparkBasics,
       navigation: Navbar,
     },
   },
@@ -48,6 +51,30 @@ const routes = [
     name: "Lab_3_Kafka",
     components: {
       default: Lab_3_Kafka,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/lab-spark-streaming",
+    name: "Lab_4_SparkStreaming",
+    components: {
+      default: Lab_4_SparkStreaming,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/lab-spark-sql",
+    name: "Lab_5_SparkSQL",
+    components: {
+      default: Lab_5_SparkSQL,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/lab-trino",
+    name: "Lab_6_Trino",
+    components: {
+      default: Lab_6_Trino,
       navigation: Navbar,
     },
   },

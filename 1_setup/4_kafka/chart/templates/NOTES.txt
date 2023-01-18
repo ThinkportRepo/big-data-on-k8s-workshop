@@ -1,0 +1,3 @@
+Controlcenter can accessed via:
+{{.Values.ingress.subdomain }}.{{.Values.ingress.hosts }}
+##########################################################

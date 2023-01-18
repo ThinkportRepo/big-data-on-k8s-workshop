@@ -89,7 +89,8 @@
           text="Spark history server for all running and completed jobs"
           url_label="Open SparkUI"
           subdomain="spark"
-          image="spark_logo.png"></Card
+          image="spark_logo.png"
+          :status_color="appStatusColor('spark')"></Card
       ></v-col>
 
       <v-col cols="mb-4" v-if="show_kafka">
@@ -98,7 +99,8 @@
           text="UI for managing Kafka topics"
           url_label="Open Kafka UI"
           subdomain="kafka"
-          image="kafka_logo.png"></Card
+          image="kafka_logo.png"
+          :status_color="appStatusColor('kafka')"></Card
       ></v-col>
     </v-row>
 
@@ -118,8 +120,8 @@
           text="Analytics & monitoring "
           url_label="Open Grafana"
           subdomain="grafana"
-          image="grafana_logo.jpeg"></Card></v-col
-      >-->
+          image="grafana_logo.jpeg"></Card
+      ></v-col>
     </v-row>
   </v-container>
 </template>
@@ -146,7 +148,7 @@ export default {
     show_metabase: true,
     show_spark: true,
     show_trino: true,
-    show_kafka: false,
+    show_kafka: true,
     show_minio: true,
     show_kubernetes: false,
     show_grafana: false,
@@ -173,6 +175,10 @@ export default {
         status = this.serverOutput.minio.status;
       } else if (app_key == "trino") {
         status = this.serverOutput.trino.status;
+      } else if (app_key == "kafka") {
+        status = this.serverOutput.kafka.status;
+      } else if (app_key == "spark") {
+        status = this.serverOutput.spark.status;
       } else {
         status = this.serverOutput.frontend[app_key].status;
       }

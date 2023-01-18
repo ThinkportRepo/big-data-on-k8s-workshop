@@ -8,13 +8,13 @@
 import VueShowdown from "vue-showdown";
 
 export default {
-  name: "Lab_1_Kubernetes",
+  name: "App",
   components: VueShowdown,
   data: function () {
     return {
       fileContent: null,
       fileToRender:
-        "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/1_Kubernetes/README.md",
+        "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/4_Spark_Streaming/README.md",
       rawContent: null,
     };
   },

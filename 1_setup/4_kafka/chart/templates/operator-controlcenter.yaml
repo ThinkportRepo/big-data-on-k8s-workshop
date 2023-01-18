@@ -1,0 +1,22 @@
+{{- if .Values.controlcenter.create }}
+apiVersion: platform.confluent.io/v1beta1
+kind: ControlCenter
+metadata:
+  name: controlcenter
+  namespace: {{.Values.namespace}}
+spec:
+  replicas: {{.Values.controlcenter.replicas}}
+  image:
+    application: confluentinc/cp-enterprise-control-center:7.3.0
+    init: confluentinc/confluent-init-container:2.5.0
+  dataVolumeCapacity: 10Gi
+  dependencies:
+    schemaRegistry:
+      url: http://schemaregistry.kafka.svc.cluster.local:8081
+    ksqldb:
+      - name: ksqldb
+        url: http://ksqldb.kafka.svc.cluster.local:8088
+    connect:
+      - name: connect
+        url: http://connect.kafka.svc.cluster.local:8083
+{{- end -}}

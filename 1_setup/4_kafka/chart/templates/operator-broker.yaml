@@ -1,0 +1,15 @@
+{{- if .Values.broker.create }}
+apiVersion: platform.confluent.io/v1beta1
+kind: Kafka
+metadata:
+  name: kafka
+  namespace: {{.Values.namespace}}
+spec:
+  replicas: {{.Values.broker.replicas}}
+  image:
+    application: confluentinc/cp-server:7.3.0
+    init: confluentinc/confluent-init-container:2.5.0
+  dataVolumeCapacity: 50Gi
+  metricReporter:
+    enabled: true
+{{- end -}}

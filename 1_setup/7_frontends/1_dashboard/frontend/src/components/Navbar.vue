@@ -20,8 +20,7 @@
         <v-list-item
           two-line
           href="http://dashboard.REPLACE_K8S_HOST"
-          target="_blank"
-        >
+          target="_blank">
           <v-list-item-avatar>
             <img src="@/assets/thinkport_logo.png" />
           </v-list-item-avatar>
@@ -61,8 +60,7 @@
             v-if="show_terminal"
             class="pl-5 ml-5"
             href="http://terminal.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/terminal_logo.png" />
             </v-list-item-avatar>
@@ -78,8 +76,7 @@
             v-if="show_vscode"
             class="pl-5 ml-5"
             href="http://vscode.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/vscode_logo.png" />
             </v-list-item-avatar>
@@ -95,8 +92,7 @@
             v-if="show_jupyter"
             class="pl-5 ml-5"
             href="http://jupyter.REPLACE_K8S_HOST/jupyter/tree"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/jupyter_logo.png" />
             </v-list-item-avatar>
@@ -110,8 +106,7 @@
             v-if="show_zeppelin"
             class="pl-5 ml-5"
             href="http://zeppelin.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/zeppelin_logo.png" />
             </v-list-item-avatar>
@@ -128,8 +123,7 @@
             v-if="show_sqlpad"
             class="pl-5 ml-5"
             href="http://sqlpad.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/sql_logo.png" />
             </v-list-item-avatar>
@@ -143,8 +137,7 @@
             v-if="show_metabase"
             class="pl-5 ml-5"
             href="http://metabase.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/metabase_logo.png" />
             </v-list-item-avatar>
@@ -162,8 +155,7 @@
             v-if="show_spark"
             class="pl-5 ml-5"
             href="http://spark.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/spark_logo.png" />
             </v-list-item-avatar>
@@ -177,8 +169,7 @@
             v-if="show_trino"
             class="pl-5 ml-5"
             href="http://trino.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/trino_logo.png" />
             </v-list-item-avatar>
@@ -192,8 +183,7 @@
             v-if="show_kafka"
             class="pl-5 ml-5"
             href="http://kafka.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/kafka_logo.png" />
             </v-list-item-avatar>
@@ -207,8 +197,7 @@
             v-if="show_kubernetes"
             class="pl-5 ml-5"
             href="http://k8s.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/kubernetes_logo.png" />
             </v-list-item-avatar>
@@ -224,8 +213,7 @@
             v-if="show_grafana"
             class="pl-5 ml-5"
             href="http://grafana.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/grafana_logo.jpeg" />
             </v-list-item-avatar>
@@ -239,8 +227,7 @@
             v-if="show_minio"
             class="pl-5 ml-5"
             href="http://minio.REPLACE_K8S_HOST"
-            target="_blank"
-          >
+            target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/minio_logo.png" />
             </v-list-item-avatar>
@@ -262,7 +249,7 @@
 
       <v-divider></v-divider>
       <v-list>
-        <v-list-group no-action prepend-icon="mdi-checkbox-blank-outline">
+        <v-list-group no-action prepend-icon="mdi-flask">
           <template v-slot:activator>
             <v-list-item-content>
               <v-list-item-title>Lab</v-list-item-title>
@@ -272,20 +259,32 @@
           <v-list-item class="pl-5 ml-5" router to="/lab-kubernetes"
             >1. Kubernetes</v-list-item
           >
+          <v-list-item class="pl-5 ml-5" router to="/lab-spark-basics"
+            >2. Spark Basics</v-list-item
+          >
           <v-list-item class="pl-5 ml-5" router to="/lab-kafka"
-            >2. Kafka</v-list-item
+            >3. Kafka</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-sparkstreaming"
-            >3. Spark Streaming</v-list-item
+          <v-list-item class="pl-5 ml-5" router to="/lab-spark-streaming"
+            >4. Spark Streaming</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-spark"
-            >4. Spark</v-list-item
+          <v-list-item class="pl-5 ml-5" router to="/lab-spark-sql"
+            >5. Spark SQL</v-list-item
           >
           <v-list-item class="pl-5 ml-5" router to="/lab-trino"
-            >5. Trino</v-list-item
+            >6. Trino</v-list-item
+          >
+          <v-list-item class="pl-5 ml-5" router to="/lab-ksql"
+            >7. KSQL</v-list-item
           >
           <v-list-item class="pl-5 ml-5" router to="/lab-visualisation"
-            >6. Metabase</v-list-item
+            >8. Metabase</v-list-item
+          >
+          <v-list-item class="pl-5 ml-5" router to="/lab-monitoring"
+            >9. Prometheus & Grafana</v-list-item
+          >
+          <v-list-item class="pl-5 ml-5" router to="/lab-sheduling"
+            >10. Airflow</v-list-item
           >
         </v-list-group>
       </v-list>
@@ -327,7 +326,7 @@ export default {
     show_metabase: true,
     show_spark: true,
     show_trino: true,
-    show_kafka: false,
+    show_kafka: true,
     show_minio: true,
     show_kubernetes: false,
     show_grafana: false,

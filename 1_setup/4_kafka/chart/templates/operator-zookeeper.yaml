@@ -1,0 +1,14 @@
+{{- if .Values.zookeeper.create }}
+apiVersion: platform.confluent.io/v1beta1
+kind: Zookeeper
+metadata:
+  name: zookeeper
+  namespace: {{.Values.namespace}}
+spec:
+  replicas: {{.Values.zookeeper.replicas}}
+  image:
+    application: confluentinc/cp-zookeeper:7.3.0
+    init: confluentinc/confluent-init-container:2.5.0
+  dataVolumeCapacity: 10Gi
+  logVolumeCapacity: 10Gi
+{{- end -}}

@@ -1,19 +1,21 @@
+{{- if .Values.ingress.create }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: addon-http-application-routing
-  name: kafka
-  namespace: kafka
+  name: controlcenter
+  namespace: {{.Values.namespace}}
 spec:
   rules:
-    - host: kafka.4c13e49defa742168ff1.northeurope.aksapp.io
+    - host: {{.Values.ingress.subdomain}}.{{.Values.ingress.host}}
       http:
         paths:
           - backend:
               service:
-                name: kafka-cp-control-center
+                name: controlcenter
                 port:
                   number: 9021
             path: /
             pathType: Prefix
+{{- end -}}

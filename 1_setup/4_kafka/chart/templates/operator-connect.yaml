@@ -1,0 +1,30 @@
+{{- if .Values.connect.create }}
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect
+  namespace: {{.Values.namespace}}
+spec:
+  replicas: {{.Values.connect.replicas}}
+  image:
+    application: confluentinc/cp-server-connect:7.3.0
+    init: confluentinc/confluent-init-container:2.5.0
+  build:
+    type: onDemand
+    onDemand:
+      plugins:
+        locationType: confluentHub
+        confluentHub:
+          - name: kafka-connect-twitter
+            owner: jcustenborder
+            version: 0.3.34
+          - name: kafka-connect-s3
+            owner: confluentinc
+            version: 10.3.0
+          - name: kafka-connect-cassandra
+            owner: confluentinc
+            version: latest
+  dependencies:
+    kafka:
+      bootstrapEndpoint: kafka:9071
+{{- end -}}

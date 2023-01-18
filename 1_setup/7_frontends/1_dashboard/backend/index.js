@@ -55,23 +55,23 @@ function parseKafka(message, response) {
 
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
-    //console.log(item);
+    //console.log(item.metadata.name);
     // check if brokers are running
-    if (item.metadata.name == "kafka-cp-kafka-0") {
+    if (item.metadata.name == "kafka-0") {
       message.kafka.broker0 = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
         pod: item.metadata.name,
       };
     }
-    if (item.metadata.name == "kafka-cp-kafka-1") {
+    if (item.metadata.name == "kafka-1") {
       message.kafka.broker1 = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
         pod: item.metadata.name,
       };
     }
-    if (item.metadata.name == "kafka-cp-kafka-2") {
+    if (item.metadata.name == "kafka-2") {
       message.kafka.broker2 = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
@@ -79,7 +79,7 @@ function parseKafka(message, response) {
       };
     }
     // check schema registry
-    if (item.metadata.name.includes("kafka-cp-schema-registry")) {
+    if (item.metadata.name.includes("schemaregistry-0")) {
       message.kafka.schemaRegistry = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
@@ -87,7 +87,7 @@ function parseKafka(message, response) {
       };
     }
     // check kafka connect
-    if (item.metadata.name.includes("kafka-cp-kafka-connect")) {
+    if (item.metadata.name.includes("connect-0")) {
       message.kafka.kafkaConnect = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
@@ -95,7 +95,7 @@ function parseKafka(message, response) {
       };
     }
     // check ksql server
-    if (item.metadata.name.includes("kafka-cp-ksql-server")) {
+    if (item.metadata.name.includes("ksqldb-0")) {
       message.kafka.ksqlServer = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
@@ -103,7 +103,7 @@ function parseKafka(message, response) {
       };
     }
     // check zookeeper
-    if (item.metadata.name == "kafka-cp-zookeeper-0") {
+    if (item.metadata.name == "zookeeper-0") {
       message.kafka.zookeeper = {
         status: item.status.phase,
         restarts: item.status.containerStatuses[0].restartCount,
@@ -123,7 +123,6 @@ function parseKafka(message, response) {
   ) {
     message.kafka.status = "Running";
   }
-
   return message;
 }
 

@@ -1,15 +1,14 @@
 <template>
-  <div id="app">
-    <h1 v-mystyle>Sucker</h1>
-    <VueShowdown v-default-classes :markdown="fileContent"></VueShowdown>
-  </div>
+  <v-container>
+    <VueShowdown :markdown="fileContent" flavor="github"></VueShowdown>
+  </v-container>
 </template>
 
 <script>
 import VueShowdown from "vue-showdown";
 
 export default {
-  name: "App",
+  name: "Lab_3_Kafka",
   components: VueShowdown,
   data: function () {
     return {
@@ -27,7 +26,7 @@ export default {
   },
   methods: {
     getContent() {
-      this.fileContent = "pulling Markdown from github ... ";
+      this.fileContent = "pulling Readme from Github ... ";
 
       var options = {
         url: this.fileToRender,
@@ -55,6 +54,14 @@ export default {
   color: red;
   background-color: blue;
 }
+
+img {
+  padding-left: 50px;
+}
+h2 {
+  padding-bottom: 30px;
+  padding-top: 20px;
+}
 /* CSS Simple Pre Code */
 pre {
   background: #333;
@@ -66,7 +73,7 @@ pre {
   font-size: 15px;
   line-height: 1.6;
   margin-bottom: 1.6em;
-  max-width: 80%;
+  max-width: 100%;
   overflow: auto;
   padding: 1em 1.5em;
   display: block;
@@ -74,12 +81,13 @@ pre {
   white-space: pre;
 }
 
-pre.code {
+pre code {
   margin: 0px 0px;
-  padding: 0px;
+  padding: 0px !important;
+  font-size: 100% !important;
   position: relative;
   color: #e7e8ee !important;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0) !important;
 }
 
 code {
@@ -87,6 +95,5 @@ code {
   padding: 0px;
   position: relative;
   color: #647dd9 !important;
-  background-color: rgba(184, 38, 38, 0);
 }
 </style>

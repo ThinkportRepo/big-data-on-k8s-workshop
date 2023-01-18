@@ -1,0 +1,32 @@
+# this Helm chart is just calling yaml files to create the custom resources for the Kafka Operator via Teraform easely
+
+namespace: kafka
+
+zookeeper:
+  create: true
+  replicas: 1
+
+broker:
+  create: true
+  replicas: 3
+
+connect:
+  create: true
+  replicas: 1
+
+ksql:
+  create: true
+  replicas: 1
+
+controlcenter:
+  create: true
+  replicas: 1
+
+schemaregistry:
+  create: true
+  replicas: 1
+
+ingress:
+  create: true
+  subdomain: kafka
+  host: fdfce42d89b444cd867f.westeurope.aksapp.io

@@ -1,330 +1,196 @@
-# Install Confluent Kafka
+# Install Kafka via Confluent Operator
 
-## Build Docker Image
+The setup follows two steps
 
-We need to add the Twitter Connector into the kafka-connect Pod
-https://www.confluent.io/hub/jcustenborder/kafka-connect-twitter
+1. Install Confluent Operator via official Helm chart
+2. Create custom resources to spin up Zookeeper, Kafka broker, Connect server, ksql server and schema registry
+3. As Tasks in the Lab create custom resources to create connectors and topics
 
-```
-# regular build & push
-docker build -t thinkportgmbh/workshops:kafka-connect -f Dockerfile.connect .
-docker push  thinkportgmbh/workshops:kafka-connect
+## Install Confluent Operator
 
-
-# crossbuild on Mac Book with M1 Chip
-docker buildx build --push --platform linux/amd64,linux/arm64 --tag thinkportgmbh/workshops:kafka-connect -f Dockerfile.connect .
-```
-
-## Install Helm
+First add the repositories
 
 ```
-# add repo
-helm repo add confluentinc https://confluentinc.github.io/cp-helm-charts/
-helm repo update    #(2)
-
-helm upgrade --install kafka -f values.yaml  -n kafka confluentinc/cp-helm-charts
+helm repo add confluentinc https://packages.confluent.io/helm
+helm repo update
 ```
 
-#### Helm output
+Second install the operator
 
 ```
-## ------------------------------------------------------
-## Zookeeper
-## ------------------------------------------------------
-Connection string for Confluent Kafka:
-  kafka-cp-zookeeper-0.kafka-cp-zookeeper-headless:2181,kafka-cp-zookeeper-1.kafka-cp-zookeeper-headless:2181,...
-
-To connect from a client pod:
-
-1. Deploy a zookeeper client pod with configuration:
-
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: zookeeper-client
-      namespace: kafka
-    spec:
-      containers:
-      - name: zookeeper-client
-        image: confluentinc/cp-zookeeper:6.1.0
-        command:
-          - sh
-          - -c
-          - "exec tail -f /dev/null"
-
-2. Log into the Pod
-
-  kubectl exec -it zookeeper-client -- /bin/bash
-
-3. Use zookeeper-shell to connect in the zookeeper-client Pod:
-
-  zookeeper-shell kafka-cp-zookeeper:2181
-
-4. Explore with zookeeper commands, for example:
-
-  # Gives the list of active brokers
-  ls /brokers/ids
-
-  # Gives the list of topics
-  ls /brokers/topics
-
-  # Gives more detailed information of the broker id '0'
-  get /brokers/ids/0## ------------------------------------------------------
-## Kafka
-## ------------------------------------------------------
-To connect from a client pod:
-
-1. Deploy a kafka client pod with configuration:
-
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: kafka-client
-      namespace: kafka
-    spec:
-      containers:
-      - name: kafka-client
-        image: confluentinc/cp-enterprise-kafka:6.1.0
-        command:
-          - sh
-          - -c
-          - "exec tail -f /dev/null"
-
-2. Log into the Pod
-
-  kubectl exec -it kafka-client -- /bin/bash
-
-3. Explore with kafka commands:
-
-  # Create the topic
-  kafka-topics --zookeeper kafka-cp-zookeeper-headless:2181 --topic bernd --create --partitions 1 --replication-factor 1 --if-not-exists
-
-  # Create a message
-  MESSAGE="`date -u`"
-
-  # Produce a test message to the topic
-  echo "$MESSAGE" | kafka-console-producer --broker-list kafka-cp-kafka-headless:9092 --topic alex
-
-  # Consume a test message from the topic
-  kafka-console-consumer --bootstrap-server kafka-cp-kafka-headless:9092 --topic alex --from-beginning --timeout-ms 2000 --max-messages 1 | grep "$MESSAGE"
+helm upgrade --install kafka-operator confluentinc/confluent-for-kubernetes
 ```
 
-https://github.com/confluentinc/cp-helm-charts/blob/master/charts/cp-kafka-connect/values.yaml
-Andere Lösung.
-Python Programm das in Pod läuft
-https://sites.google.com/a/ku.th/big-data/pyspart
+## Create Kafka Cluster
 
-https://strimzi.io/documentation/
+The kafka Cluster consist of several parts
 
-kafka-topics --zookeeper kafka-cp-zookeeper.kafka.svc.cluster.local:2181 --alter --topic twitter_raw --config retention.bytes=10000000
+- Zookeeper
+- Brokers
+- Connect
+- Ksql
+- SchemaRegistry
 
-## Connector configuration
-
-```
-
-Prerequisites:
-  running Kafka-cluster with 1 zookeeper, 3 Kafka-broker, 1 connect, and 1 schema-registry (our setup)
-  check if the TwitterSourceConnector is in one of the folders documented in the plugin paths (describe pod)
-
-  kubectl exec pod <podname> -n <namespace> -- bash
-
-  then look into the plugin path to see if jcustenborder exists if yes - top that's how it should be
-```
-
-### Configuration
-
-#### Control-Center
+These resourses are created with custom resources definitions of the Operator which are packed into a simple helm chart in the folder crds.
+It is important to know that helm can't delete or update them. To spin up this workshop lab this might be ok but there is no possiblitly to run an update over it via helm
 
 ```
-
-  Step 1: Open the control center: http://kafka.4c13e49defa742168ff1.northeurope.aksapp.io/clusters
-
-  Step 2: Navigate to the right place:
-    Click on the wanted cluster (controlcenter.cluster)
-    go to Connect
-    then connect-default
-    then add-connector
-
-  Step 3:
-    Either choose TwitterSourceConnect and manually add a connector by filling in the data/arguments needed
-    or upload a config file
-
-  Step 4: launch the connector
-  Congratulations! Now look into topics and click on the topic name *** in messages should be arriving tweets
+helm upgrade --install -f values.yaml  kafka-resources -n kafka .
 ```
 
-### Terminal
+## Add Connectors do Connect
+
+Connectors that are available in the Confluent Hub can directly be integrated in an init Pod of the operator-connect resource definition like
 
 ```
-  Step 1: Open terminal
-
-
-
-  Step 2 create JSON file (e.g. in vscode or vim)
-
-  {
-    "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
-    "tasks.max": "1",
-   
-    "log.cleanup.policy": "delete",
-    "log.retention.hours": "24",
-    "log.retention.bytes": "10000000",
-
-    "topic.creation.default.replication.factor": 1,  
-    "topic.creation.default.partitions": 2,  
-    "topic.creation.default.cleanup.policy": "delete",  
-    "topic.creation.default.retention.ms": "86400000",
-    "topic.creation.default.retention.bytes": "10000000",
-
-    "topics": "twitter-json",    
-    "process.deletes": "true",
-    "filter.keywords": "BigData",
-    "kafka.status.topic": "twitter-json",
-    "kafka.delete.topic": "twitter-json-deletions",
-    "twitter.oauth.accessTokenSecret": "iN98gtMncFZ81r2BbQchNK59cynUBKiQjV3BNrzKUXAMX",
-    "twitter.oauth.consumerSecret": "pszPFw8GmKLAhBObEWKXokT4Rwkr1o2UgjVd8Pq6XXuTrkW6Cr",
-    "twitter.oauth.accessToken": "892314144589963264-spfqOaqpzc04JfX128XPB4GzZIczM2A",
-    "twitter.oauth.consumerKey": "LaNg9Dqdvjq7tRUIyX6vqbr4R",
-    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-    "value.converter": "org.apache.kafka.connect.json.JsonConverter"
-  }
-
-
-
-  Step 3: check if you can get information from the Kafka-connect service
-    curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
-    should be empty if no connector is configurated
-
-  Step 4:
-    curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-source-connector/config -d @<filename>.json
-
-    check if it was created:
-    curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
-    curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/config
-    you can check the logs in the Kafka-connect pod
-
-    kubectl logs <pod-name> -n kafka -f
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect
+  namespace: kafka
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-server-connect:7.3.0
+    init: confluentinc/confluent-init-container:2.5.0
+  build:
+    type: onDemand
+    onDemand:
+      plugins:
+        locationType: confluentHub
+        confluentHub:
+          - name: kafka-connect-twitter
+            owner: jcustenborder
+            version: 0.3.34
+          - name: kafka-connect-s3
+            owner: confluentinc
+            version: 10.3.0
+          - name: kafka-connect-cassandra
+            owner: confluentinc
+            version: latest
+  dependencies:
+    kafka:
+      bootstrapEndpoint: kafka:9071
 ```
 
-### S3 Sink connector to minIO
+## Create Topics
 
-````
-
-  Step 1: Create the following JSON file
-
-  {
-      "connector.class": "io.confluent.connect.s3.S3SinkConnector",
-      "tasks.max": "1",
-      "topics": "twitter-table",
-      "s3.bucket.name": "kafka-bucket",
-      "s3.part.size": 5242880,
-      "flush.size": 1,
-      "storage.class": "io.confluent.connect.s3.storage.S3Storage",
-      "format.class": "io.confluent.connect.s3.format.json.JsonFormat",
-      "schema.generator.class": "io.confluent.connect.storage.hive.schema.DefaultSchemaGenerator",
-      "schemas.enable": false,
-      "partitioner.class": "io.confluent.connect.storage.partitioner.DefaultPartitioner",
-      "schema.compatibility": "NONE",
-      "aws.secret.access.key": "train@thinkport",
-      "aws.access.key.id": "trainadm",
-      "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-      "value.converter": "org.apache.kafka.connect.json.JsonConverter",
-      "key.converter.schemas.enable": false,
-      "value.converter.schemas.enable": false,
-      "store.url":"http://minio.minio.svc.cluster.local:9000"
-    }
-
-  Step 2: Check if all values fit your implemented system (e.g. topics, bucket names)
-    !!IMPORTANT: The bucket and topic have to be created before configuring.!!
-
-  Step 3:
-    curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/minio-dump/config -d @<filename>.json
-
-  Step 4:
-    check if everything works:
-    kubectl logs <pod-name> -n kafka -f
-
-    logs should look somewhat like this:
-    INFO Starting commit and rotation for topic partition twitter-table-0 with start offset {partition=0=681} (io.confluent.connect.s3.TopicPartitionWriter)
-    INFO Files committed to S3. Target commit offset for twitter-table-0 is 682 (io.confluent.connect.s3.TopicPartitionWriter)
-    ```
-
-
-  ## Streamingkette die Funktioniert
-
-  Daten aus dem Twitter Connector der
-  --> Topic: twitter-json
-  --> Schema aus: dump dieses Topics nach s3 und wieder einlesen mit Spark
-  --> Einlesen mit to_json und konvertieren
-  --> Schreiben als JSON nach Kafka --> spark-target-schema3
-  --> Sink schreibt nach S3 Bucket --> spark-target-schema3
-  --> Spark kann wieder alles von s3 einlesen
-````
-
-### Fehlerbehebung cp-ksql
-
-1. in den ksgl pod execen
-2. Fehlerhafte Environmentvariable über `unset JMX_PORT` entfernen.
-3. ksql shell über `ksql` starten
-
-## ksql getrennt installieren
-
-helm install --set kafka.enabled=false --set kafka.bootstrapServers=kafka-cp-kafka.kafka.svc.cluster.local:9092 --set schema-registry.enabled=false --set schema-registry.url=kafka-cp-schema-registry.kafka.svc.cluster.local:8081 --set kafka-connect.enabled=false --set kafka-connect.url=kafka-cp-kafka-connect.kafka.svc.cluster.local:8083 ktool rhcharts/ksqldb
-
-## ksql Aufgabe
-
-1. in den ksgl pod execen
-2. Fehlerhafte Environmentvariable über `unset JMX_PORT` entfernen.
-3. ksql shell über `ksql` starten
+Topics can be created via crd
+A topics uses a yaml like
 
 ```
-kubectl exec -it <ksql-pod-name> -- bash
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  # name des Topics
+  name: twitter-raw
+  namespace: kafka
+spec:
+  # Anzahl Replica
+  replicas: 1
+  # Anzahl Partitionen
+  partitionCount: 2
+  configs:
+    # wie lange sollen Messages gespeichert werden (1Tag)
+    retention.ms: "86400000"
+    # wieviel Bytes an Messages sollen maximal gespeichert werden (100MB)
+    retention.bytes: "10000000"
+    # was soll mit den alten Nachrichten passieren wenn den Retention Bedinung überschritten wird (löschen)
+    cleanup.policy: "delete"
 ```
 
-im Pod folgende Befehle ausführen um in ksql zu kommen
+and can be applied with
 
 ```
-# bei jedem login auf die Shell wieder entfernen
-unset JMX_PORT
+kubeclt apply -f topic.yaml
 
-# ksql starten
-ksql
+kubectl get topic
 ```
 
-In ksql zunächst eine Stream Abstraktion auf das Topic `twitter-table` erstellen
+## Create Connectors
+
+Also Connectors can be created via crds
+A connector looks like
 
 ```
-# anzeigen ob die Topics erkannt wurden
+apiVersion: platform.confluent.io/v1beta1
+kind: Connector
+metadata:
+  name: twitter-stream
+  namespace: kafka
+spec:
+  # Name of Connector
+  name: twitter-stream
+  class: "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector"
+  taskMax: 1
+  configs:
+    # target topic to write in tweets
+    kafka.status.topic: "twitter-raw"
+    # filter on tweets
+    filter.keywords: "BigData"
+    process.deletes: "false"
+    value.converter: "org.apache.kafka.connect.json.JsonConverter"
+    # activte debugging
+    errors.tolerance: "all"
+    errors.log.enable": "true"
+    errors.log.include.messages": "true"
+    twitter.oauth.accessTokenSecret: "iN98gtMncFZ81r2BbQchNK59cynUBKiQjV3BNrzKUXAMX"
+    twitter.oauth.consumerSecret: "pszPFw8GmKLAhBObEWKXokT4Rwkr1o2UgjVd8Pq6XXuTrkW6Cr"
+    twitter.oauth.accessToken: "892314144589963264-spfqOaqpzc04JfX128XPB4GzZIczM2A"
+    twitter.oauth.consumerKey: "LaNg9Dqdvjq7tRUIyX6vqbr4R"
+    twitter.debug": "true"
+  restartPolicy:
+    type: OnFailure
+    maxRetry: 2
+```
+
+and can be deployed and checked via
+
+```
+kubectl apply -f connector.yaml
+
+kubectl get connectors
+```
+
+## Ksql Stream Processing
+
+#### Access ksql via Controlcenter
+
+#### Access ksql via cli
+
+The cli can be accessed directly on the ksqldb pod
+
+```
+kubectl exec -it ksqldb-0 -- ksql
+```
+
+Usefull commands
+
+```
 show topics;
-
-CREATE STREAM twitter (tweet_id VARCHAR, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
-
-# checken ob der Stream erzeugt wurde
 show streams;
-
-# create table
-CREATE TABLE twittertable (tweet_id VARCHAR primary key, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>)  WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
-
-# check table
 show tables;
 
+# live view on topic
+print 'twitter-reduced'
 
+SET 'auto.offset.reset' = 'earliest';
 ```
 
-Jetzt können Abfragen und Aggretationen auf den Stream gemacht werden
+create stream on topic
 
 ```
-# select all
-SELECT * FROM TWITTER EMIT CHANGES;
+CREATE STREAM twitter (tweet_id VARCHAR KEY, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-reduced', value_format='json', partitions=2);
 
-# select some column
-SELECT TWEET_ID,CREATED_AT,USER_LOCATION,LANGUAGE from TWITTER EMIT CHANGES;
+CREATE STREAM twitter2 (rowtime datetime, tweet_id VARCHAR, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-reduced', value_format='json', partitions=2);
+```
 
-# select aggregation
-SELECT LANGUAGE,COUNT(*) as TOTAL from TWITTER GROUP BY LANGUAGE EMIT CHANGES;
-
-
-# select aggregation
-SELECT LANGUAGE,COUNT(*) as TOTAL from TWITTERTABLE GROUP BY LANGUAGE EMIT CHANGES;
+create stream on stream
 
 ```
+CREATE STREAM twitter_country AS SELECT user_location, language from twitter emit changes;
+CREATE STREAM twitter_country AS SELECT language, count(*) total from twitter group by language emit changes;
+```
+
+ksql:
+https://www.youtube.com/watch?v=EtNZYIrOgHo&ab_channel=UpDegree

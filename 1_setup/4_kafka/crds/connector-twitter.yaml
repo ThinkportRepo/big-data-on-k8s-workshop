@@ -1,0 +1,29 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connector
+metadata:
+  name: twitter-stream
+  namespace: kafka
+spec:
+  # Name of Connector
+  name: twitter-stream
+  class: "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector"
+  taskMax: 1
+  configs:
+    # target topic to write in tweets
+    kafka.status.topic: "twitter-raw"
+    # filter on tweets
+    filter.keywords: "BigData"
+    process.deletes: "false"
+    value.converter: "org.apache.kafka.connect.json.JsonConverter"
+    # activte debugging
+    errors.tolerance: "all"
+    errors.log.enable": "true"
+    errors.log.include.messages": "true"
+    twitter.oauth.accessTokenSecret: "iN98gtMncFZ81r2BbQchNK59cynUBKiQjV3BNrzKUXAMX"
+    twitter.oauth.consumerSecret: "pszPFw8GmKLAhBObEWKXokT4Rwkr1o2UgjVd8Pq6XXuTrkW6Cr"
+    twitter.oauth.accessToken: "892314144589963264-spfqOaqpzc04JfX128XPB4GzZIczM2A"
+    twitter.oauth.consumerKey: "LaNg9Dqdvjq7tRUIyX6vqbr4R"
+    twitter.debug": "true"
+  restartPolicy:
+    type: OnFailure
+    maxRetry: 2

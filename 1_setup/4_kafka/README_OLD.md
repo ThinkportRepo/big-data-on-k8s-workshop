@@ -297,7 +297,7 @@ In ksql zunächst eine Stream Abstraktion auf das Topic `twitter-table` erstelle
 # anzeigen ob die Topics erkannt wurden
 show topics;
 
-CREATE STREAM twitter (tweet_id VARCHAR, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
+CREATE STREAM twitter (tweet_id VARCHAR KEY, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-reduced', value_format='json', partitions=2);
 
 # checken ob der Stream erzeugt wurde
 show streams;

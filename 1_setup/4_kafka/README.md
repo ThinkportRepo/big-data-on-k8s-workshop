@@ -181,16 +181,25 @@ create stream on topic
 
 ```
 CREATE STREAM twitter (tweet_id VARCHAR KEY, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-reduced', value_format='json', partitions=2);
-
-CREATE STREAM twitter2 (rowtime datetime, tweet_id VARCHAR, created_at VARCHAR, tweet_message VARCHAR, user_name VARCHAR,user_location VARCHAR, user_follower_count INT,user_friends_count INT, retweet_count INT,language VARCHAR, hashtags ARRAY<VARCHAR>) WITH (kafka_topic='twitter-reduced', value_format='json', partitions=2);
 ```
 
-create stream on stream
+create aggregation on stream. Stream view on data
 
 ```
-CREATE STREAM twitter_country AS SELECT user_location, language from twitter emit changes;
-CREATE STREAM twitter_country AS SELECT language, count(*) total from twitter group by language emit changes;
+select language,count(*) as total from twitter group by language emit changes;
+```
+
+create table on stream
+
+```
+CREATE TABLE twitter_country AS
+  SELECT language,count(*) as TOTAL
+  FROM twitter
+  GROUP BY language
+  EMIT CHANGES;
 ```
 
 ksql:
 https://www.youtube.com/watch?v=EtNZYIrOgHo&ab_channel=UpDegree
+
+https://towardsdatascience.com/introduction-to-kafka-stream-processing-in-python-e30d34bf3a12

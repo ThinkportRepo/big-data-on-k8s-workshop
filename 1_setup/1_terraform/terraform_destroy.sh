@@ -2,7 +2,7 @@
 
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
-pwd=$PWD
+pwd=$PWD/aks
 
 echo "WARNING!! terraform can only destroy cluster setup when clusters are running"
 

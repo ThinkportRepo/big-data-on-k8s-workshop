@@ -2,7 +2,7 @@
 
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
-pwd=$PWD
+pwd=$PWD/aks
 
 for i in $(cat < "$1"); do
   echo "terraform workspace select $i"

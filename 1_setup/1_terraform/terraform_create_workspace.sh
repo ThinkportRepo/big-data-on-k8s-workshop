@@ -2,7 +2,7 @@
 
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
-pwd=$PWD
+pwd=$PWD/aks
 
 rg="big-data-k8s-workshop"
 
@@ -27,5 +27,5 @@ fi
 
 for i in $(cat < "$1"); do
   echo "terraform workspace new $i"
-  cd "$pwd" && terraform workspace new $i
+  cd "$pwd/aks" && terraform workspace new $i
 done

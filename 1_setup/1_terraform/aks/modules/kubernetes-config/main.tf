@@ -102,20 +102,20 @@ resource "kubernetes_default_service_account" "default" {
 }
 
 # #TLS # Can be used if valid certificates are available
-# resource "kubernetes_secret" "tls_cert" {
-#   depends_on = [
-#       kubernetes_namespace.ingress
-#   ]
-#     metadata {
-#       name = "tls-cert"
-#       namespace = "ingress"
-#     }
-#     data = {
-#         "tls.crt" = var.TlsCertificate
-#         "tls.key" = var.TlsKey
-#     }
-#     type = "kubernetes.io/tls"
-# }
+ resource "kubernetes_secret" "tls_cert" {
+   depends_on = [
+       kubernetes_namespace.ingress
+   ]
+     metadata {
+       name = "tls-cert"
+       namespace = "ingress"
+     }
+     data = {
+         "tls.crt" = var.TlsCertificate
+         "tls.key" = var.TlsKey
+     }
+     type = "kubernetes.io/tls"
+ }
 
 #Example for a pvc
 # #Persistent Volume Claim
@@ -136,75 +136,81 @@ resource "kubernetes_default_service_account" "default" {
 # }
 
 
-#Helm stuff
-#Deploys Ingress Controller (non-azure)
-# resource "helm_release" "nginx_ingress" {
-#   depends_on = [
-#       kubernetes_namespace.ingress,
-#       kubernetes_secret.tls_cert
-#   ]
-#   name       = "nginx-ingress-controller"
-#   repository = "https://charts.bitnami.com/bitnami"
-#   chart      = "nginx-ingress-controller"
-#   namespace = "ingress"
+############################
+#######Helm Charts #########
+############################
 
-#   set {
-#     name  = "service.type"
-#     value = "LoadBalancer"
-#   }
-#   set {
-#     name = "ingressClassResource.default"
-#     value = true
-#   }
-#   set {
-#     name = "publishService.enabled"
-#     value = true
-#   }
-#   set {
-#     name = "extraArgs.default-ssl-certificate"
-#     value = "${kubernetes_secret.tls_cert.metadata.0.namespace}/${kubernetes_secret.tls_cert.metadata.0.name}"
-#   }
-# }
+############################
+#########TLS & DNS##########
+############################
+#Deploys Ingress Controller (non-azure)
+ resource "helm_release" "nginx_ingress" {
+   depends_on = [
+       kubernetes_namespace.ingress,
+       kubernetes_secret.tls_cert
+   ]
+   name       = "nginx-ingress-controller"
+   repository = "https://charts.bitnami.com/bitnami"
+   chart      = "nginx-ingress-controller"
+   namespace = "ingress"
+   set {
+     name  = "service.type"
+     value = "LoadBalancer"
+   }
+   set {
+     name = "ingressClassResource.default"
+     value = true
+   }
+   set {
+     name = "publishService.enabled"
+     value = true
+   }
+   set {
+     name = "extraArgs.default-ssl-certificate"
+     value = "${kubernetes_secret.tls_cert.metadata.0.namespace}/${kubernetes_secret.tls_cert.metadata.0.name}"
+   }
+ }
 
 #External DNS Controller (non-azure Domains)
-# resource "helm_release" "external_dns" {
-#   depends_on = [
-#       kubernetes_namespace.ingress
-#   ]
-#   name       = "external-dns"
-#   repository = "https://charts.bitnami.com/bitnami"
-#   chart      = "external-dns"
-#   namespace = "ingress"
-  
-#   set {
-#     name  = "sources[0]"
-#     value = "ingress"
-#   }
-#   set {
-#     name  = "provider"
-#     value = "cloudflare"
-#   }
-#   set {
-#     name  = "cloudflare.apiToken"
-#     value = var.CloudFlareToken
-#   }
-#   set {
-#     name = "txtOwnerId"
-#     value = var.ClusterDNS
-#   }
-#   set {
-#     name = "zoneIdFilters[0]"
-#     value = var.CloudFlareDNSZoneID
-#   }
-#   set {
-#     name = "cloudflare.proxied"
-#     value = false
-#   }
-#   set {
-#     name = "policy"
-#     value = "sync"
-#   }
-# }
+ resource "helm_release" "external_dns" {
+   depends_on = [
+       kubernetes_namespace.ingress
+   ]
+   name       = "external-dns"
+   repository = "https://charts.bitnami.com/bitnami"
+   chart      = "external-dns"
+   namespace = "ingress"
+ 
+   set {
+     name  = "sources[0]"
+     value = "ingress"
+   }
+   set {
+     name  = "provider"
+     value = "azure"
+   }
+   set {
+     name  = "azure.cloud"
+     value = var.AZ_Environment
+   }
+   set {
+     name = "azure.resourceGroup"
+     value = var.AZ_RG_Name
+   }
+   set {
+     name = "azure.tenantId"
+     value = var.AZ_Tenant_ID
+   }
+   set {
+     name = "azure.aadClientId"
+     value = var.AZ_Client_ID
+   }
+   set {
+     name = "azure.aadClientSecret"
+     value = var.AZ_Client_Secret
+   }
+ }
+ 
 ##################
 ####Basic Setup###
 ##################

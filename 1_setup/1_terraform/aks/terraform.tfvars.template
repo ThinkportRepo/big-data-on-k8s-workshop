@@ -13,3 +13,11 @@ GitHubRepoToken = "github_pat_XXXXXXXXXXXXXX"
 #Dockerhub specific configuration
 DockerhubUser = "myusername"
 DockerhubPAT = "dckr_pat_XXXXXXXXXXXXXXXX"
+#Azure DNS specific options
+AZ_Cert_Key_Vault_Name = "XXXXXXX"
+AZ_SA_Key_Vault_Name = "XXXXXXX"
+AZ_Subscription_ID = "XXXXXXXXXX"
+AZ_RG_Name = "XXXXXXXXXXXXX"
+# Cluster Domain & Subdomains
+Domain = "workshop.thinkport.cloud"
+ClusterFile = "../clusters.txt"

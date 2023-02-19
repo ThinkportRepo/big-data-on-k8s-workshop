@@ -27,6 +27,18 @@ data "azurerm_kubernetes_cluster" "this" {
   resource_group_name = module.aks.resource_group_name
 }
 
+provider "azurerm" {
+  features {
+    
+  }
+  skip_provider_registration = true
+  alias = "SA"
+  subscription_id = var.AZ_Subscription_ID
+  client_id = data.azurerm_key_vault_secret.cred_secret["client-id"].value
+  client_secret = data.azurerm_key_vault_secret.cred_secret["client-secret"].value
+  tenant_id = data.azurerm_key_vault_secret.cred_secret["tenant-id"].value
+}
+
 provider "kubernetes" {
   host                   = data.azurerm_kubernetes_cluster.this.kube_config.0.host
   client_certificate     = base64decode(data.azurerm_kubernetes_cluster.this.kube_config.0.client_certificate)

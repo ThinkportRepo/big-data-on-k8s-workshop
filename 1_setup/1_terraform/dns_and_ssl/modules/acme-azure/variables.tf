@@ -28,7 +28,7 @@ variable "AZ_Tenant_ID" {
 
 variable "AZ_Environment" {
   type = string
-  default = "german"
+  default = ""
 }
 
 variable "AZ_Subscription_ID" {

@@ -14,28 +14,17 @@ variable "kubeconfig" {
   type = string
 }
 
-#variable TlsCertificate {
-#  type = string
-#}
+variable TlsCertificate {
+  type = string
+}
 
-#variable TlsKey {
-#  type = string
-#}
+variable TlsKey {
+  type = string
+}
 
 variable GitHubRepoToken {
   type = string
 }
-
-#variable CloudFlareToken {
-#    description = "API Token for CloudFlare (DNS zone based)"
-#    type = string
-#}
-
-#variable CloudFlareDNSZoneID {
-#    description = "CloudFlare ZoneID belonging to the API Token"
-#    type = string
-#}
-
 variable GitHubUsername {
     description = "The Github username for the new fine-grained API-Token (GitHubRepoToken)"
     type = string
@@ -53,4 +42,29 @@ variable "DockerhubUser" {
 variable "DockerhubPAT" {
     description = "Dockerhub Personal Access Token"
     type = string
+}
+
+variable "AZ_Client_ID" {
+    type = string
+}
+
+variable "AZ_Client_Secret" {
+    type = string
+}
+
+variable "AZ_Tenant_ID" {
+    type = string
+}
+
+variable "AZ_Environment" {
+  type = string
+  default = ""
+}
+
+variable "AZ_Subscription_ID" {
+  type = string
+}
+
+variable "AZ_RG_Name" {
+  type = string
 }

@@ -2,7 +2,7 @@
 ####Namespaces & Secrets####
 ############################
 locals {
-  namespaces = toset([ "default", "minio", "hive", "kafka", "spark", "trino", "frontend" ])
+  namespaces = toset([ "default", "minio", "hive", "kafka", "spark", "trino", "frontend", "ingress" ])
 }
 resource "kubernetes_namespace" "ns" {
   for_each = setsubtract(local.namespaces, ["default"])
@@ -104,7 +104,7 @@ resource "kubernetes_default_service_account" "default" {
 # #TLS # Can be used if valid certificates are available
  resource "kubernetes_secret" "tls_cert" {
    depends_on = [
-       kubernetes_namespace.ingress
+       kubernetes_namespace.ns["ingress"]
    ]
      metadata {
        name = "tls-cert"
@@ -146,7 +146,7 @@ resource "kubernetes_default_service_account" "default" {
 #Deploys Ingress Controller (non-azure)
  resource "helm_release" "nginx_ingress" {
    depends_on = [
-       kubernetes_namespace.ingress,
+       kubernetes_namespace.ns["ingress"],
        kubernetes_secret.tls_cert
    ]
    name       = "nginx-ingress-controller"
@@ -174,7 +174,7 @@ resource "kubernetes_default_service_account" "default" {
 #External DNS Controller (non-azure Domains)
  resource "helm_release" "external_dns" {
    depends_on = [
-       kubernetes_namespace.ingress
+       kubernetes_namespace.ns["ingress"]
    ]
    name       = "external-dns"
    repository = "https://charts.bitnami.com/bitnami"
@@ -224,7 +224,7 @@ resource "helm_release" "minio" {
   chart = "minio"
   namespace = kubernetes_namespace.ns["minio"].metadata.0.name
   values = [
-    "${file("../2_minio/values.yaml")}"
+    "${file("../../2_minio/values.yaml")}"
   ]
   set {
     name = "consoleIngress.hosts[0]"
@@ -238,10 +238,10 @@ resource "helm_release" "hive" {
     helm_release.minio
   ]
   namespace = kubernetes_namespace.ns["hive"].metadata.0.name
-  chart = "../3_hive/"
+  chart = "../../3_hive/"
   name = "hive-metastore"
     values = [
-    "${file("../3_hive/values.yaml")}"
+    "${file("../../3_hive/values.yaml")}"
   ]
   set {
     name = "schemainit"
@@ -259,7 +259,7 @@ resource "helm_release" "kafka" {
   chart = "cp-helm-charts"
   repository = "https://confluentinc.github.io/cp-helm-charts/"
   values = [
-    "${file("../4_kafka/values.yaml")}"
+    "${file("../../4_kafka/values.yaml")}"
   ]
   timeout = 900
   
@@ -314,9 +314,9 @@ resource "helm_release" "trino" {
   namespace = kubernetes_namespace.ns["trino"].metadata.0.name
   #chart = "trino"
   #repository = "https://trinodb.github.io/charts/"
-  chart = "../6_trino/"
+  chart = "../../6_trino/"
   values = [
-    "${file("../6_trino/values.yaml")}"
+    "${file("../../6_trino/values.yaml")}"
   ]
   set {
     name = "host"
@@ -419,7 +419,7 @@ resource "kubernetes_config_map" "s3cmd" {
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   data = {
-    ".s3cfg" = "${file("../7_frontends/0_initialisation/.s3cfg")}"
+    ".s3cfg" = "${file("../../7_frontends/0_initialisation/.s3cfg")}"
   }
   
 }
@@ -629,10 +629,10 @@ resource "kubernetes_job" "init" {
 
 resource "helm_release" "dashboard" {
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/1_dashboard/chart"
+  chart = "../../7_frontends/1_dashboard/chart"
   name = "dashboard"
     values = [
-    "${file("../7_frontends/1_dashboard/chart/values.yaml")}"
+    "${file("../../7_frontends/1_dashboard/chart/values.yaml")}"
   ]
   set {
     name = "host"
@@ -656,10 +656,10 @@ resource "helm_release" "terminal" {
     kubernetes_service_account.kubectl
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/2_terminal/chart"
+  chart = "../../7_frontends/2_terminal/chart"
   name = "terminal"
     values = [
-    "${file("../7_frontends/2_terminal/chart/values.yaml")}"
+    "${file("../../7_frontends/2_terminal/chart/values.yaml")}"
   ]
   set {
     name = "host"
@@ -676,10 +676,10 @@ resource "helm_release" "vscode" {
     kubernetes_secret.kubeconfig
     ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/3_vscode/chart"
+  chart = "../../7_frontends/3_vscode/chart"
   name = "vscode"
     values = [
-    "${file("../7_frontends/3_vscode/chart/values.yaml")}"
+    "${file("../../7_frontends/3_vscode/chart/values.yaml")}"
   ]
   set {
     name = "host"
@@ -694,10 +694,10 @@ resource "helm_release" "jupyter" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/4_jupyter/chart"
+  chart = "../../7_frontends/4_jupyter/chart"
   name = "jupyter"
     values = [
-    "${file("../7_frontends/4_jupyter/chart/values.yaml")}"
+    "${file("../../7_frontends/4_jupyter/chart/values.yaml")}"
   ]
   set {
     name = "host"
@@ -717,10 +717,10 @@ resource "helm_release" "sqlpad" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/5_sqlpad/chart"
+  chart = "../../7_frontends/5_sqlpad/chart"
   name = "sqlpad"
     values = [
-    "${file("../7_frontends/5_sqlpad/chart/values.yaml")}"
+    "${file("../../7_frontends/5_sqlpad/chart/values.yaml")}"
   ]
   set {
     name = "host"
@@ -736,10 +736,10 @@ resource "helm_release" "metabase" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/6_metabase"
+  chart = "../../7_frontends/6_metabase"
   name = "metabase"
     values = [
-    "${file("../7_frontends/6_metabase/values.yaml")}"
+    "${file("../../7_frontends/6_metabase/values.yaml")}"
   ]
   set {
     name = "ingress.host"
@@ -755,10 +755,10 @@ resource "helm_release" "history" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../7_frontends/7_history_server/chart"
+  chart = "../../7_frontends/7_history_server/chart"
   name = "history"
     values = [
-    "${file("../7_frontends/7_history_server/chart/values.yaml")}"
+    "${file("../../7_frontends/7_history_server/chart/values.yaml")}"
   ]
   set {
     name = "ingress.host"
@@ -773,7 +773,7 @@ resource "helm_release" "k8sdashboard" {
   chart = "kubernetes-dashboard"
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   values = [
-    "${file("../7_frontends/8_kube-ui/values.yaml")}"
+    "${file("../../7_frontends/8_kube-ui/values.yaml")}"
   ]
   set {
     name = "hosts[0]"

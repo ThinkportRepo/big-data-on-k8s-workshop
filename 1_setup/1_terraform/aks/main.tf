@@ -18,15 +18,18 @@ resource "local_file" "kube_config" {
 } 
 
 data "azurerm_key_vault" "creds" {
+  provider = azurerm.prod
   name                = var.AZ_SA_Key_Vault_Name
   resource_group_name = var.AZ_RG_Name
 }
 
 data "azurerm_key_vault_secrets" "credentials" {
+  provider = azurerm.prod
   key_vault_id = data.azurerm_key_vault.creds.id
 }
 
 data "azurerm_key_vault_secret" "cred_secret" {
+  provider = azurerm.prod
   for_each     = toset(data.azurerm_key_vault_secrets.credentials.names)
   name         = each.key
   key_vault_id = data.azurerm_key_vault.creds.id
@@ -40,7 +43,7 @@ data "azurerm_key_vault" "certs" {
 
 data "azurerm_key_vault_certificate_data" "acme_cert" {
   provider = azurerm.SA
-  name         = replace(replace(var.Domain, ".", "-"), "*-", "")
+  name         = replace(replace("${var.SharedPrefix}.${var.Domain}", ".", "-"), "*-", "")
   key_vault_id = data.azurerm_key_vault.certs.id
 }
 

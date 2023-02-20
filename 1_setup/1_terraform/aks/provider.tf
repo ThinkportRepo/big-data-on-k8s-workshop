@@ -26,7 +26,14 @@ data "azurerm_kubernetes_cluster" "this" {
   name                = module.aks.kubernetes_cluster_name
   resource_group_name = module.aks.resource_group_name
 }
-
+provider "azurerm" {
+  features {
+    
+  }
+  skip_provider_registration = true
+  alias = "prod"  
+  subscription_id = var.AZ_Subscription_ID
+}
 provider "azurerm" {
   features {
     

@@ -1,23 +1,27 @@
 
-variable CloudFlareToken {
-    description = "API Token for CloudFlare (DNS zone based)"
-    type = string
-    sensitive   = true
-}
-variable CloudFlareDNSZoneID {
-    description = "CloudFlare ZoneID belonging to the API Token"
-    type = string
-    sensitive   = true
-}
+#variable CloudFlareToken {
+#    description = "API Token for CloudFlare (DNS zone based)"
+#    type = string
+#    sensitive   = true
+#}
+#variable CloudFlareDNSZoneID {
+#    description = "CloudFlare ZoneID belonging to the API Token"
+#    type = string
+#    sensitive   = true
+#}
 variable Domain {
     description = "Name of your DNS Zone" 
     type = string
 }
-variable CloudFlareEmail {
-    description = "EMail address of the account that created the API token"
+variable SharedPrefix {
+    description = "A prefix that is shared among all clusters"
     type = string
-    sensitive   = true
 }
+#variable CloudFlareEmail {
+#    description = "EMail address of the account that created the API token"
+#    type = string
+#    sensitive   = true
+#}
 variable "ACMEServer" {
     description = "The server for ACME challenges"
     default = "https://acme-staging-v02.api.letsencrypt.org/directory"

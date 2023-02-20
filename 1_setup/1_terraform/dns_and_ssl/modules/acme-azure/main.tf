@@ -22,8 +22,8 @@ resource "acme_registration" "reg" {
 
 resource "acme_certificate" "certificate" {
   account_key_pem           = acme_registration.reg.account_key_pem
-  common_name               = var.Domain
-  subject_alternative_names = concat([var.Domain],[for subdomain in var.SubDomains: ["*.${subdomain}.${var.Domain}","${subdomain}.${var.Domain}"]]...)
+  common_name               = "${var.SharedPrefix}.${var.Domain}"
+  subject_alternative_names = concat(["${var.SharedPrefix}.${var.Domain}"],[for subdomain in var.SubDomains: ["*.${subdomain}.${var.SharedPrefix}.${var.Domain}","${subdomain}.${var.SharedPrefix}.${var.Domain}"]]...)
 
   dns_challenge {
     provider = "azure"

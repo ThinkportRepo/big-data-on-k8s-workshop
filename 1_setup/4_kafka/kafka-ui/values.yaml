@@ -102,8 +102,8 @@ ingress:
   enabled: true
 
   # Annotations for the Ingress
-  annotations: 
-    kubernetes.io/ingress.class: addon-http-application-routing
+  #annotations: 
+  #  kubernetes.io/ingress.class: addon-http-application-routing
 
   # ingressClassName for the Ingress
   ingressClassName: ""

@@ -5,8 +5,8 @@ metadata:
   name: {{ .Values.ingress.name }}
   labels:
     {{- include "spark-history-server.labels" . | nindent 4 }}
-  annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+  #annotations:
+  #  kubernetes.io/ingress.class: addon-http-application-routing
   namespace: {{ .Values.namespace }}
 spec:
   rules:

@@ -3,8 +3,8 @@ kind: Ingress
 metadata:
   name: dashboard
   namespace: {{.Values.namespace}}
-  annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+  #annotations:
+  #  kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
     - host: {{.Values.host}}

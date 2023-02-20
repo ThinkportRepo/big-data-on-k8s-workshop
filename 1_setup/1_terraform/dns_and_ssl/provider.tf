@@ -16,7 +16,14 @@ provider "azurerm" {
   }
   skip_provider_registration = true
 }
-
+provider "azurerm" {
+  features {
+    
+  }
+  skip_provider_registration = true
+  alias = "prod"  
+  subscription_id = var.AZ_Subscription_ID
+}
 provider "azurerm" {
   features {
     

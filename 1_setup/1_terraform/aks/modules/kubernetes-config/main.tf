@@ -201,6 +201,10 @@ resource "kubernetes_default_service_account" "default" {
      name = "azure.tenantId"
      value = var.AZ_Tenant_ID
    }
+    set {
+     name = "azure.subscriptionId"
+     value = var.AZ_Subscription_ID
+   }
    set {
      name = "azure.aadClientId"
      value = var.AZ_Client_ID
@@ -209,6 +213,14 @@ resource "kubernetes_default_service_account" "default" {
      name = "azure.aadClientSecret"
      value = var.AZ_Client_Secret
    }
+  set {
+    name = "policy"
+    value = "sync"
+  }
+    set {
+    name = "txtOwnerId"
+    value = var.ClusterDNS
+  }
  }
  
 ##################
@@ -217,7 +229,8 @@ resource "kubernetes_default_service_account" "default" {
 
 resource "helm_release" "minio" {
   depends_on = [
-    kubernetes_default_service_account.default["minio"]
+    kubernetes_default_service_account.default["minio"],
+    helm_release.nginx_ingress
   ]
   name = "minio"
   repository = "https://charts.min.io/"
@@ -628,6 +641,9 @@ resource "kubernetes_job" "init" {
 }
 
 resource "helm_release" "dashboard" {
+  depends_on = [
+    helm_release.nginx_ingress
+  ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   chart = "../../7_frontends/1_dashboard/chart"
   name = "dashboard"
@@ -645,6 +661,10 @@ resource "helm_release" "dashboard" {
   set {
     name = "lab_user"
     value = var.UserName
+  }
+  set {
+    name = "hosts[0]"
+    value = "kube.${var.ClusterDNS}"
   }
   timeout = 600
 }

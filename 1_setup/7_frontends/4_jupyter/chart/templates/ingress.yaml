@@ -4,7 +4,7 @@ metadata:
   name: {{ template "pyspark-notebook.fullname" . }}
   namespace: {{ .Release.Namespace }}
   annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+  #  kubernetes.io/ingress.class: addon-http-application-routing
     nginx.ingress.kubernetes.io/app-root: /jupyter
   labels:
     "app.kubernetes.io/name": {{ template "pyspark-notebook.name" . }}

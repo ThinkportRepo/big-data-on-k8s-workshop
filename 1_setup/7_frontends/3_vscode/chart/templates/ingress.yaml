@@ -2,8 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: vscode
-  annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+  #annotations:
+  #  kubernetes.io/ingress.class: addon-http-application-routing
 spec:
   rules:
     - host: {{.Values.host}}

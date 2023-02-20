@@ -38,3 +38,7 @@ variable "AZ_Subscription_ID" {
 variable "AZ_RG_Name" {
   type = string
 }
+variable SharedPrefix {
+    description = "A prefix that is shared among all clusters"
+    type = string
+}

@@ -143,6 +143,15 @@ resource "kubernetes_default_service_account" "default" {
 ############################
 #########TLS & DNS##########
 ############################
+resource "kubernetes_config_map" "nginx" {
+  metadata {
+    name = "nginx-ingress-controller"
+    namespace = kubernetes_namespace.ns["ingress"].metadata.0.name
+  }
+  data = {
+    force-ssl-redirect: "true"
+  }
+}
 #Deploys Ingress Controller (non-azure)
  resource "helm_release" "nginx_ingress" {
    depends_on = [
@@ -168,6 +177,10 @@ resource "kubernetes_default_service_account" "default" {
    set {
      name = "extraArgs.default-ssl-certificate"
      value = "${kubernetes_secret.tls_cert.metadata.0.namespace}/${kubernetes_secret.tls_cert.metadata.0.name}"
+   }
+   set {
+     name = "configMapNamespace"
+     value = kubernetes_namespace.ns["ingress"].metadata.0.name
    }
  }
 

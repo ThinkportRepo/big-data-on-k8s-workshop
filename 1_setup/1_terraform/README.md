@@ -4,6 +4,7 @@ This Terraform scripts create several Kubernetes Clusters and pre install all re
 
 Therefore a list of the participants has to be provided upfront e.g. `clusters.txt`
 
+
 ```
 trainer
 student1
@@ -24,11 +25,38 @@ Keep in mind to select the correct subscription `az account set --subscription <
 
 ## Adjust Terraform Settings
 
+Please note that at the moment your user needs proper permissions to the Thinkport prod subscription and the required resource groups. Furthermore the DNS zone for this workshop must be created beforehand by using the terraform code at XXXX (ToDo: Upload TF Code to TP repo)
+
+### SSL Certificates
+
+Go to the dns_and_ssl directory.
+
 Copy the example setting file `terraform.tfvars.template` to `terraform.tfvars` and
 set the following parameters:
 
-| Parameter              | Description                                                                                                            |
+| Parameter              | Description                                                                                            |
+|------------------------|--------------------------------------------------------------------------------------------------------|
+| ACMEServer             | The server of the ACME Service you want to use (see example tfvars for Let's Encrypt prod and staging) |
+| ACMEAdminEmail         | Email address for getting messages from your ACME provider                                             |
+| AZ_Cert_Key_Vault_Name | Name of the key vault containing SSL certificates                                                      |
+| AZ_SA_Key_Vault_Name   | Name of the key vault containing the ServiceAccount credentials                                        |
+| AZ_Subscription_ID     | Thinkport's prod subscription ID                                                                       |
+| AZ_RG_Name             | Resource group that contains all key vaults and DNS zones.                                             |
+| Domain                 | The subdomain of this workshop                                                                         |
+| ClusterFile            | Path to the text file containing your cluster names (one name per line)                                |
+
+Use `terraform apply`to create your ACME certificates and upload them the certificates key vault by using the ServiceAccount. 
+
+### Kubernetes (AKS)
+
+Change the current directory to `../aks`.
+
+Copy the example setting file `terraform.tfvars.template` to `terraform.tfvars` and
+set the following parameters:
+
+| Parameter              | Description                                                                                            |
 | ---------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Domain                 | The subdomain of this workshop                                                                         |
 | UniquePrefix           | Should be empty                                                                                                        |
 | SharedPrefix           | Will be included in the name of all clusters (e.g. customer or workshop name)                                          |
 | ResourceGroupName      | Resource Group in Azure (needs to be created before)                                                                   |
@@ -41,11 +69,14 @@ set the following parameters:
 | GitHubRepoToken        | A fine grained PAT to clone the workshop repository                                                                    |
 | DockerhubUser          | Your Dockerhub username                                                                                                |
 | DockerhubPAT           | Your Dockerhub PAT to extend the pull limit to 200 requests                                                            |
+| AZ_Cert_Key_Vault_Name | Name of the key vault containing SSL certificates                                                      |
+| AZ_SA_Key_Vault_Name   | Name of the key vault containing the ServiceAccount credentials                                        |
+| AZ_Subscription_ID     | Thinkport's prod subscription ID                                                                       |
+| AZ_RG_Name             | Resource group that contains all key vaults and DNS zones.                                             |
 
 ## Terraform Deployment
 
 Use the helper scripts to use terraform for the deployment.
-Create a `cluster.txt` (or any other name) with the names of your clusters.
 
 #### create workspaces
 

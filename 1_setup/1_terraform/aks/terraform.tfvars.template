@@ -1,3 +1,5 @@
+# Cluster Domain & Subdomains
+Domain = "workshop.thinkport.cloud"
 #K8s specific settings
 UniquePrefix = "" #if unset the workspace name is used
 SharedPrefix = "customer"
@@ -18,6 +20,3 @@ AZ_Cert_Key_Vault_Name = "XXXXXXX"
 AZ_SA_Key_Vault_Name = "XXXXXXX"
 AZ_Subscription_ID = "XXXXXXXXXX"
 AZ_RG_Name = "XXXXXXXXXXXXX"
-# Cluster Domain & Subdomains
-Domain = "workshop.thinkport.cloud"
-ClusterFile = "../clusters.txt"

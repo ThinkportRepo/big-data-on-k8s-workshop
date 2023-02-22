@@ -12,3 +12,5 @@ AZ_RG_Name = "XXXXXXXXXXXXX"
 # Cluster Domain & Subdomains
 Domain = "workshop.thinkport.cloud"
 ClusterFile = "../clusters.txt"
+SharedPrefix = "customer"
+

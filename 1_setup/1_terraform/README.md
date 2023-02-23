@@ -21,15 +21,16 @@ Azure Shell and Terraform CLI has to be installed and correctly configured
 
 First login to azure by using `az` command first.
 Check the correct subscription by using `az account show`.  
-Keep in mind to select the correct subscription `az account set --subscription <subscriptionname>`.
+Keep in mind to select the correct subscription (schulungen) `az account set --subscription <subscriptionname>`.
 
 ## Adjust Terraform Settings
 
-Please note that at the moment your user needs proper permissions to the Thinkport prod subscription and the required resource groups. Furthermore the DNS zone for this workshop must be created beforehand by using the terraform code at XXXX (ToDo: Upload TF Code to TP repo)
+Please note that your user needs proper permissions to the Thinkport prod subscription and the required resource groups. Furthermore the DNS zone for this workshop must be created beforehand by using the terraform code at [the configuration repo](https://github.com/ThinkportRepo/thinkport-cloud-domain-mangement).
+The general architecture can be viewed [here](architecture.drawio.png)
 
 ### SSL Certificates
 
-Go to the dns_and_ssl directory.
+Go to the [dns_and_ssl](./dns_and_ssl) directory.
 
 Copy the example setting file `terraform.tfvars.template` to `terraform.tfvars` and
 set the following parameters:
@@ -45,7 +46,7 @@ set the following parameters:
 | Domain                 | The subdomain of this workshop                                                                         |
 | ClusterFile            | Path to the text file containing your cluster names (one name per line)                                |
 
-Use `terraform apply`to create your ACME certificates and upload them the certificates key vault by using the ServiceAccount. 
+Use `terraform apply`to create your ACME certificates and upload them the certificates Key Vault by using the Service Account. 
 
 ### Kubernetes (AKS)
 

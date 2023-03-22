@@ -1,0 +1,15 @@
+#K8s specific settings
+UniquePrefix = "" #if unset the workspace name is used
+SharedPrefix = "atruvia"
+ResourceGroupName = "big-data-k8s-workshop"
+Location = "WestEurope"
+NodeCount = 2
+NodeSize = "standard_a4m_v2"
+NodeDiskSize = 50
+HttpApplicationRouting = true
+#GitHub specific configuration
+GitHubUsername = "alexortner"
+GitHubRepoToken = "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"
+#Dockerhub specific configuration
+DockerhubUser = "alexortner"
+DockerhubPAT = "dckr_pat_CZTNQwtCiSzSJ6Tgk7Y07wEDDd8"

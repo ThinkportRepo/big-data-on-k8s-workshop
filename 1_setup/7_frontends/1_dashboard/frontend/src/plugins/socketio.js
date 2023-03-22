@@ -8,7 +8,7 @@ const networkConnection = true;
 
 function initialiseSocket() {
   const url = networkConnection
-    ? `http://${networkIP}:80`
+    ? `https://${networkIP}:443`
     : `http://${localIP}:${port}`;
 
   socket = io(url, {

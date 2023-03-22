@@ -19,7 +19,7 @@ then
       create_rg=$new_rg
     fi
 
-    az group create --location westeurope --resource-group $create_rg --tags 'created-by=Alex Ortner' 'ttl=30-03-2023' 'project=Big Data Workshop'
+    az group create --location westeurope --resource-group $create_rg --tags 'created-by=Alex Ortner' 'ttl=30-05-2023' 'project=Big Data Workshop'
 else
     echo "++ Skip "
 fi
@@ -27,5 +27,5 @@ fi
 
 for i in $(cat < "$1"); do
   echo "terraform workspace new $i"
-  cd "$pwd/aks" && terraform workspace new $i
+  cd "$pwd" && terraform workspace new $i
 done

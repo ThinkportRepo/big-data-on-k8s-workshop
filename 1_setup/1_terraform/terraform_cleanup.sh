@@ -3,7 +3,7 @@
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
 pwd=$PWD/aks
-
+cd $pwd
 read -p '++ Please confirm to delete all terraform workspace (yes/no): ' rm_wp 
 
 if [[ $rm_wp == "yes" ]]

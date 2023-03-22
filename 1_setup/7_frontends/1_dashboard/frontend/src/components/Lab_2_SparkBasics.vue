@@ -49,7 +49,7 @@ export default {
   },
 };
 </script>
-<style>
+<style scoped>
 .custom {
   color: red;
   background-color: blue;

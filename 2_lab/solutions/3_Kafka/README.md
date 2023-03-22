@@ -1,14 +1,15 @@
 # Kafka Aufgaben
+
 Diese Aufgaben werden alle in VSCode und dem VSCode Terminal berabeitet.
 Bitte VSCode über das Dashboard öffnen.
 
-
-
 ## 1. Erstelle ein Connector um von der Twitter API zu lesen
+
 Als erste Aufgabe erstellen wir einen Mikroservice der als Stream App in Echtzeit neue Tweets von Twitter in unser Kafka Topic schreibt.
 Um diesen Mikroservice zu erstellen nutzen wir Kafka Connect.
 
 Schau dir in Kubernetes zunächst nochmal alle Service die im Kafka Namespace laufen an
+
 ```
 kubectl get pod -n kafka
 
@@ -16,22 +17,22 @@ kubectl get pod -n kafka
 
 kubectl get services -n kafka
 ```
-Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL definition `<service-name><namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden. 
+
+Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL definition `<service-name><namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden.
 Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connektoren zu listen. Teste dies über den Terminal mit folgendem Befehl
+
 ```
 # Checke die verfügbaren Connectoren
 curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
 ```
 
-Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.  
+Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.
 
 Speicher diese Datei als `twitter.json` im Verzeichnis `exercises/3_Kafka/`und befülle die XXX Felder mit deinen jeweiligen Zugangsdaten. <br>
 Desweitern fülle an den passenden Stellen folgene values ein:
 
-
 **Topics:** twitter-raw <br>
 **Filter Keyword:** BigData
-
 
 ```
 {
@@ -190,7 +191,6 @@ Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu lösche
 kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table
 ```
 
-
 Schau den Code an, was der macht `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py`.
 
 Pod/Deployment mit diesem Code starten.<br>
@@ -242,5 +242,3 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 </p>
 </details>
 <br>
-
-

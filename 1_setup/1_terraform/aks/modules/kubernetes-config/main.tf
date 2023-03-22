@@ -237,7 +237,7 @@ resource "kubernetes_config_map" "nginx" {
  }
  
 ##################
-####Basic Setup###
+#### Minio S3  ###
 ##################
 
 resource "helm_release" "minio" {
@@ -259,6 +259,10 @@ resource "helm_release" "minio" {
   timeout = 1600
 }
 
+##################
+#### Hive      ###
+##################
+
 resource "helm_release" "hive" {
   depends_on = [
     helm_release.minio
@@ -276,19 +280,39 @@ resource "helm_release" "hive" {
     timeout = 600
 }
 
-resource "helm_release" "kafka" {
+
+##################
+#### Kafka  ###
+##################
+resource "helm_release" "kafka-operator" {
   #depends_on = [
   #  helm_release.hive
   #]
-  name = "kafka"
+  name = "kafka-operator"
   namespace = kubernetes_namespace.ns["kafka"].metadata.0.name
-  chart = "cp-helm-charts"
-  repository = "https://confluentinc.github.io/cp-helm-charts/"
-  values = [
-    "${file("../../4_kafka/values.yaml")}"
-  ]
+  chart = "confluent-for-kubernetes"
+  repository = "https://packages.confluent.io/helm"
+  #values = [
+  #  "${file("../../4_kafka/values.yaml")}"
+  #]
   timeout = 900
-  
+}
+
+resource "helm_release" "kafka-resources" {
+  depends_on = [
+    helm_release.kafka-operator
+  ]
+  name = "kafka-resources"
+  namespace = kubernetes_namespace.ns["kafka"].metadata.0.name
+  chart = "../../4_kafka/chart/"
+  values = [
+    "${file("../../4_kafka/chart/values.yaml")}"
+  ]
+  set {
+    name = "ingress.host"
+    value = "${var.ClusterDNS}"
+  }
+  timeout = 600
 }
 
 # resource "kubernetes_service_account" "spark" {
@@ -800,17 +824,17 @@ resource "helm_release" "history" {
   timeout = 600
 }
 
-resource "helm_release" "k8sdashboard" {
-  name = "kubernetes-dashboard"
-  repository = "https://kubernetes.github.io/dashboard/"
-  chart = "kubernetes-dashboard"
-  namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  values = [
-    "${file("../../7_frontends/8_kube-ui/values.yaml")}"
-  ]
-  set {
-    name = "hosts[0]"
-    value = "kube.${var.ClusterDNS}"
-  }
-  timeout = 600
-}
+#resource "helm_release" "k8sdashboard" {
+#  name = "kubernetes-dashboard"
+#  repository = "https://kubernetes.github.io/dashboard/"
+#  chart = "kubernetes-dashboard"
+#  namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+#  values = [
+#    "${file("../../7_frontends/8_kube-ui/values.yaml")}"
+#  ]
+#  set {
+#    name = "hosts[0]"
+#    value = "kube.${var.ClusterDNS}"
+#  }
+#  timeout = 600
+#}

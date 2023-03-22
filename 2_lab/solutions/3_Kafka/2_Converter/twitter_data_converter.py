@@ -7,9 +7,9 @@ import os
 import uuid
 from datetime import datetime
 
-KAFKA_SERVER = os.environ["KAFKA_SERVER"] #"kafka-cp-kafka.kafka.svc.cluster.local:9092"
-KAFKA_SOURCE_TOPIC = os.environ["KAFKA_SOURCE_TOPIC"] #"twitter-json"
-KAFKA_TARGET_TOPIC = os.environ["KAFKA_TARGET_TOPIC"] #"twitter-table4"
+KAFKA_SERVER = os.environ["KAFKA_SERVER"] #"kafka.kafka.svc.cluster.local:9092"
+KAFKA_SOURCE_TOPIC = os.environ["KAFKA_SOURCE_TOPIC"] #"twitter-raw"
+KAFKA_TARGET_TOPIC = os.environ["KAFKA_TARGET_TOPIC"] #"twitter-table"
 GROUP_ID=str(uuid.uuid1())
 
 # Initialize consumer variable
@@ -28,16 +28,16 @@ counter=0
 for message in consumer:
     counter=counter+1
     result={
-        "tweet_id": str(message.value["payload"]["Id"]),
-        "created_at": datetime.fromtimestamp(int(message.value["payload"]["CreatedAt"])/1000).strftime('%Y-%m-%d %H:%M:%S'),
-        "tweet_message": message.value["payload"]["Text"],
-        "user_name": message.value["payload"]["User"]["ScreenName"],
-        "user_location": message.value["payload"]["User"]["Location"],
-        "user_follower_count": int(message.value["payload"]["User"]["FollowersCount"]),
-        "user_friends_count": int(message.value["payload"]["User"]["FriendsCount"]),
-        "retweet_count": int(message.value["payload"]["RetweetCount"]),
-        "language": message.value["payload"]["Lang"],
-        "hashtags": [hashtag["Text"] for hashtag in message.value["payload"]["HashtagEntities"]]
+        "tweet_id": str(message.value["Id"]),
+        "created_at": datetime.fromtimestamp(int(message.value["CreatedAt"])/1000).strftime('%Y-%m-%d %H:%M:%S'),
+        "tweet_message": message.value["Text"],
+        "user_name": message.value["User"]["ScreenName"],
+        "user_location": message.value["User"]["Location"],
+        "user_follower_count": int(message.value["User"]["FollowersCount"]),
+        "user_friends_count": int(message.value["User"]["FriendsCount"]),
+        "retweet_count": int(message.value["RetweetCount"]),
+        "language": message.value["Lang"],
+        "hashtags": message.value["HashtagEntities"]
     }
     print("++ total: " + str(counter)+ "+++++++++++++++++++++++++++++++++++++++++++")
     print(json.dumps(result))

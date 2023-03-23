@@ -11,7 +11,7 @@ from lorem_text import lorem
 import names
 import random
 
-KAFKA_SERVER = os.environ["KAFKA_SERVER"] #"kafka-cp-kafka.kafka.svc.cluster.local:9092"
+KAFKA_SERVER = os.environ["KAFKA_SERVER"] #"kafka.kafka.svc.cluster.local:9092"
 KAFKA_TOPIC = os.environ["KAFKA_TOPIC"] #"twitter-raw"
 GROUP_ID=str(uuid.uuid1())
 

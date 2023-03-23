@@ -378,6 +378,20 @@ resource "helm_release" "trino" {
 ##################
 ####Frontends####
 ##################
+
+#StorageClass Spark History Server
+resource "kubernetes_storage_class" "sc-spark-history-server" {
+  metadata {
+    name = "sc-spark-history-server"
+  }
+  storage_provisioner = "file.csi.azure.com"
+  reclaim_policy      = "Retain"
+  parameters = {
+    skuName = "Standard_LRS"
+  }
+  mount_options = ["file_mode=0770", "dir_mode=0770", "mfsymlinks", "uid=185", "gid=185", "actimeo=30", "cache=strict"]
+}
+
 #Persistent Volume Claim
 resource "kubernetes_persistent_volume_claim" "workshop" {
   metadata {
@@ -394,6 +408,8 @@ resource "kubernetes_persistent_volume_claim" "workshop" {
     storage_class_name = "azurefile"
   }
 }
+
+
 resource "kubernetes_persistent_volume_claim" "spark" {
   metadata {
     name = "spark-history-server"
@@ -406,7 +422,7 @@ resource "kubernetes_persistent_volume_claim" "spark" {
         storage = "10Gi"
       }
     }
-    storage_class_name = "azurefile"
+    storage_class_name = kubernetes_storage_class.sc-spark-history-server.metadata.0.name
   }
 }
 
@@ -808,8 +824,8 @@ resource "helm_release" "metabase" {
 resource "helm_release" "history" {
   depends_on = [
     kubernetes_job.init,
-    helm_release.spark
-    #helm_release.vscode
+    helm_release.spark,
+    kubernetes_persistent_volume_claim.spark
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   chart = "../../7_frontends/7_history_server/chart"

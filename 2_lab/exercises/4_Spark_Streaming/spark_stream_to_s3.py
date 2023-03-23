@@ -10,7 +10,8 @@ import os
 
 # get application name from environment variables
 APP_NAME=os.environ["app_name"] 
-
+KAFKA_SERVER = os.environ["KAFKA_SERVER"] #"kafka.kafka.svc.cluster.local:9092"
+KAFKA_TOPIC = os.environ["KAFKA_TOPIC"] #"twitter-table"
 
 ###########################################################
 # Main function
@@ -31,8 +32,8 @@ if __name__ == "__main__":
 df_step_1 = (spark
       .readStream
       .format("kafka")
-      .option("kafka.bootstrap.servers", "kafka-cp-kafka.kafka.svc.cluster.local:9092")
-      .option("subscribe", "twitter-table")
+      .option("kafka.bootstrap.servers", KAFKA_SERVER)
+      .option("subscribe", KAFKA_TOPIC)
       .option("startingOffsets", "earliest")
       .load()
      )

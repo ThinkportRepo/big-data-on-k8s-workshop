@@ -19,7 +19,7 @@ Gehe über das Dashboard auf die Kafka UI und suche dort den Punkt um ein Topic 
 
 ### Aufgabe 2) Verwende die Kakfa CLI zum managen, senden und empfangen von Nachrichten
 
-Kafka kann auch über eigene CLI Tools bedient werden. Neben dem listen und erzeigen neuer Topics können dort auch Daten in Topics geschrieben und gelesen werden. Die CLI eignet sich vor allem bei der Fehlersuche und beim Automatisieren
+Kafka kann auch über eigene CLI Tools bedient werden. Neben dem anzeigen und erstellen von Topics können dort auch Daten nach Kafka geschrieben und gelesen werden. Die CLI eignet sich vor allem bei der Fehlersuche und beim Automatisieren.
 
 Um die CLI verwenden zu können muss die Kubernetes interne Adresse des Kafka Clusters angegebgen werden (`bootstrap-server`). Suche diese zunächst in den Servicen des Kafka Namespaces
 

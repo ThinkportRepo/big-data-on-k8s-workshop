@@ -74,7 +74,7 @@ Starte anschließend die SparkApp und schau in den Pod Logs ob sie korrekt läuf
 
 ```bash
 # anwenden der manifest yaml (aus dem Verzeichnis in welchem die Datei liegt)
-kubectl apply -f sparkapp_stream_to_s3.yaml
+kubectl apply -f spark_stream_to_s3.yaml
 
 # SparkApp anzeigen
 kubectl get sparkapp -n spark

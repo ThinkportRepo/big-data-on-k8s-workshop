@@ -5,7 +5,7 @@
 
 ## Architektur
 
-![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212681113-6ca20976-9f27-499f-a2d9-3ef8d4b3102d.png)
+![BigDataWorkshop-UseCase-Kafka](https://user-images.githubusercontent.com/16557412/227127231-f741be8f-67e4-42a2-be36-6fb5b9e24040.png)
 
 ## 1. Kafka Topics
 

@@ -38,4 +38,4 @@ Es gibt in vielen Übungen Tipps und Lösungen die ausklappbar sind. Falls du ni
 
 ### Wenn du Hilfe brauchst oder Fehler in den Aufgaben bemerkst melde dich einfach.
 
-## sViel Spaß!
+## Viel Spaß!

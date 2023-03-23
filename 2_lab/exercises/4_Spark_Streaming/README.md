@@ -73,8 +73,8 @@ executor:
 <details>
 <summary>Lösung </summary>
   
-<p>
-verwende in den eckigen Klammern  <br> 
+verwende in den eckigen Klammern 
+
 ```yaml
 # Pfad zum Python Script in S3
 mainApplicationFile: s3a://scripts/spark_stream_to_s3.py
@@ -90,7 +90,7 @@ mainApplicationFile: s3a://scripts/spark_stream_to_s3.py
 executor:
 cores: 1
 
-````
+```
 
 </details>
 </p>

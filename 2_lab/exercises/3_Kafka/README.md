@@ -98,13 +98,13 @@ kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 -
 
 Der Kafka Operator ermöglicht es ein Kafka Topic als Kubernetes Resource, also mit einer Yaml Konfiguration zu managen. Dass hat den großen Vorteil, dass sämtliche Topics und ihre Konfiguration als versionierbarer Code gespeichert und jederzeit wieder reproduziert werden können sowie keine langen CLI Befehle zum Topic management verwendet werden müssen.
 
-Im Ordner `/3_Kafka/Producer/` befindet sich die Datei `topic_twitter_raw.yaml`.
+Im Ordner `/3_Kafka/Producer/` befindet sich die Datei `TOPIC_twitter-raw.yaml`.
 Öffne diese Datei und füge den Topic Namen `twitter_raw` ein.
 
 Erstelle das Topic in Kafka anschließend durch
 ```
 
-kubectl apply -f topic_twitter_raw.yaml
+kubectl apply -f TOPIC_twitter-raw.yaml
 
 ```
 

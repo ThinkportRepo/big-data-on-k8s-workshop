@@ -72,12 +72,7 @@ executor:
 
 <details>
 <summary>Lösung </summary>
-  
-<<<<<<< HEAD
-verwende in den eckigen Klammern 
-=======
-verwende in den eckigen Klammern
->>>>>>> a85d084 (updated README)
+ 
 
 ```yaml
 # Pfad zum Python Script in S3

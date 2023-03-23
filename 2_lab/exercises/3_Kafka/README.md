@@ -157,7 +157,6 @@ kafka-topics.sh --describe --bootstrap-server kafka.kafka.svc.cluster.local:9092
 
 </details>
 
-und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.
 
 ## 2. Kafka Producer
 

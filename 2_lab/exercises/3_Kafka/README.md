@@ -199,7 +199,7 @@ Erstelle zunächst ein neues Topic via Custom Resource Definition mit folgenden 
 **retention-bytes:** `10000000`
 **cleanup policy:** `delete`
 
-Kopiere hierfür das Yaml `TOPIC_twitter-raw.yaml` in einen neue Datei `TOPIC_twitter-table.yaml`
+Erstelle hierfür eine neue Yaml Datei in `3_Kafka/2_Converter/TOPIC_twitter-table.yaml` mit den passenden Parametern. Verwende als Vorlage die Yaml Datei für das `twitter-raw` Topic (`3_Kafka/1_Producer/TOPIC_twitter-raw.yaml`)
 
 Prüfe ob das Topic richtig erstellt wurde.<br>
 

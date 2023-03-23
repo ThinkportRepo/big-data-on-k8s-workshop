@@ -13,7 +13,7 @@ In den Kafka Topics werden die einzelnen Streaming Nachrichten hineingeschrieben
 
 ### Aufgabe 1) Erstelle ein Topic über die graphische Oberfläche
 
-Es gibt mehrere graphische Oberflächen um Kafka zu konfigurieren. Wir verwenden hier die UI von Confluent, dem Anbieter der Kafka Enterprise Version.
+Es gibt mehrere graphische Oberflächen um Kafka zu konfigurieren. Wir verwenden hier die [UI von Confluent, dem Anbieter der Kafka Enterprise Version](https://docs.confluent.io/platform/current/control-center/index.html).
 
 Gehe über das Dashboard auf die Kafka UI und suche dort den Punkt um ein Topic zu erstellen. Erstelle dann ein Topic mit dem Namen `test`, publiziere dort eine Nachricht, z.B. `"Hallo nach Kafka"` und verifizieren, dass diese Nachricht auch angekommen ist.
 

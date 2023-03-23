@@ -29,7 +29,7 @@ for message in consumer:
     counter=counter+1
     result={
         "tweet_id": str(message.value["Id"]),
-        "created_at": datetime.fromtimestamp(int(message.value["CreatedAt"])/1000).strftime('%Y-%m-%d %H:%M:%S'),
+        "created_at": datetime.fromtimestamp(int(message.value["CreatedAt"])).strftime('%Y-%m-%d %H:%M:%S'),
         "tweet_message": message.value["Text"],
         "user_name": message.value["User"]["ScreenName"],
         "user_location": message.value["User"]["Location"],

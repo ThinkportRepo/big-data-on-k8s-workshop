@@ -476,6 +476,8 @@ resource "kubernetes_config_map" "bashrc" {
     alias kn=kubens
     export KUBECONFIG=/home/coder/kubeconfig
     export KUBECACHEDIR=/tmp/kubecache
+    export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
+    source /usr/share/bash-completion/bash_completion
     EOT
   }
 }
@@ -489,6 +491,26 @@ resource "kubernetes_config_map" "s3cmd" {
   }
   
 }
+
+resource "kubernetes_config_map" "vscode-settings" {
+  metadata {
+    name = "vscode"
+    namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+  }
+  data = {
+    "settings.json" = <<EOT
+    {
+    "files.exclude": {
+        "**/.*": true
+    },
+    "terminal.integrated.copyOnSelection": true
+    }
+    EOT
+  } 
+}
+
+
+
 
 # resource "kubernetes_pod" "admin" {
 #   metadata {
@@ -534,8 +556,8 @@ resource "kubernetes_job" "gitcloner" {
               "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
               "mkdir /workshop/exercises;",
               "mkdir /workshop/solutions;",
-              "cp -r /workshop/git/2_lab/exercises/ /workshop/;",
-              "cp -r /workshop/git/2_lab/solutions/ /workshop/"
+              "ln -s /workshop/git/2_lab/exercises /workshop;",
+              "ln -s /workshop/git/2_lab/solutions /workshop;"
               ])
             ]
               env {
@@ -607,8 +629,6 @@ resource "kubernetes_job" "init" {
             image = "thinkportgmbh/workshops:vscode" 
             command = ["sh", "-c", 
               join("\n", ["echo \"start init ...\"",
-                "echo \"cp /config/kubeconfig /workshop/kubeconfig\"",
-                "cp /config/kubeconfig /workshop/kubeconfig",
                 "echo \"################## Init Summary ############\";",
                 "echo Github User: $GITHUB_USER;",
                 "echo Github User: $GITHUB_REPOSITORY;",

@@ -7,7 +7,7 @@ image:
   repository: trinodb/trino
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart version.
-  tag: latest
+  tag: 410
 
 imagePullSecrets:
   - name: registry-credentials
@@ -136,6 +136,8 @@ additionalCatalogs:
     hive.s3.ssl.enabled=false
     delta.hive-catalog-name=hive
     delta.enable-non-concurrent-writes=true
+    delta.legacy-create-table-with-existing-location.enabled=true
+    delta.register-table-procedure.enabled=true
 
   postgres: |
     connector.name=postgresql

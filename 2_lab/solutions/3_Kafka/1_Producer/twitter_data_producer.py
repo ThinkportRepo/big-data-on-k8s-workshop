@@ -29,12 +29,16 @@ producer = KafkaProducer(bootstrap_servers=KAFKA_SERVER,value_serializer=lambda 
 # country list
 country_list=[
               {"country": "Germany","language": "DE"},
+              {"country": "Germany","language": "DE"},
               {"country": "USA","language": "EN"},
               {"country": "United Kingdom","language": "EN"},
               {"country": "France","language": "FR"},
               {"country": "India","language": "EN"},
               {"country": "Spain","language": "ES"},
-              {"country": "Brasil","language": "PT"}
+              {"country": "Brasil","language": "PT"},
+              {"country": "USA","language": "EN"},
+              {"country": "USA","language": "EN"},
+              {"country": "USA","language": "EN"}
              ]
 
 # create name list of 50 names
@@ -54,9 +58,12 @@ for name in names_list:
         "user_friends_count": random.randint(1000, 50000)
     })
    
+# add some non uniformity
+user_country_list.extend(user_country_list[10:50])
+user_country_list.extend(user_country_list[30:70])
 
 # hasthag list
-hastag_list=["DataScience","ML","AI","Data","DataEngineering","machinelearning", "iot","analytics","dataanlytics","cloud"]
+hastag_list=["BigData","DataScience","ML","AI","Data","BigData","DataEngineering","MachineLearning","BigData", "IoT","Analytics","BigData","DataAnlytics","Cloud"]
 
 
 def create_random_message(counter):
@@ -90,7 +97,7 @@ while True:
     print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     #producer.send(KAFKA_TOPIC,key=message.get("Id"),value=message)
     producer.send(KAFKA_TOPIC,value=message)
-    looptime=random.randint(1, 8)
+    looptime=random.randint(1, 4)
     time.sleep(looptime)
                
                

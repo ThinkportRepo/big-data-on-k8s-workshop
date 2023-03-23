@@ -67,27 +67,7 @@ Damit lautet die volle Kubernetes interne DNS-Adresse des Bootstrap servers
 kafka.kafka.svc.cluster.local:9092
 ```
 Und die Befehle der Aufgabe sind folglich
-```
-# list topics
-kafka-topics.sh --list --bootstrap-server kafka.kafka.svc.cluster.local:9092
 
-# describe topic details
-
-kafka-topics.sh --describe --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
-
-# publish to topic
-
-kafka-console-producer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
-
-# subscribe to topic
-
-kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test --from-beginning
-
-# delete topic
-
-kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
-
-```
 </details>
 
 

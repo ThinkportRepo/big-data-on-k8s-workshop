@@ -73,7 +73,11 @@ executor:
 <details>
 <summary>Lösung </summary>
   
+<<<<<<< HEAD
 verwende in den eckigen Klammern 
+=======
+verwende in den eckigen Klammern
+>>>>>>> a85d084 (updated README)
 
 ```yaml
 # Pfad zum Python Script in S3
@@ -93,7 +97,6 @@ cores: 1
 ```
 
 </details>
-</p>
 
 ### Aufgabe 3) SparkApp starten
 
@@ -115,7 +118,7 @@ kubectl logs stream-to-s3-driver -n spark
 
 # live logs anschauen während der pod läuft (-f ist die Abkürzung für follow, exit mit STRG+c)
 kubectl logs stream-to-s3-driver -f -n spark
-````
+```
 
 Überprüfe ob weitere Dateien nach s3 geschrieben werden.
 

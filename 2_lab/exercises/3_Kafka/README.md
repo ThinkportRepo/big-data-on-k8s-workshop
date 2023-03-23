@@ -186,6 +186,8 @@ kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.lo
 
 ## 3. Stream Processing
 
+Sobald die Daten in einem Topic sind sollen sie üblicherweise transformiert werden und verschiedenen Systemen wieder in weiteren Topics zu Verfügung gestellt werden. Dies nennt man Stream Processing. Eine typische Architektur ist es dafür Container basierte Mikroservices zu verwenden. Diese laufen evenfalls auf Kubernetes und können bei hoher Last einfach horizontal skalliert werden. Da nicht alle Daten aus dem Twitter Stream benötigt werden, wird jetzt eine Streaming App gestartet, die die Daten reduziert und nur einige Attribute in das nächste Topic weiter reicht.
+
 ### Aufgabe 5) erstelle ein neues Topic für die reduzierten Daten
 
 Erstelle zunächst ein neues Topic via Custom Resource Definition mit folgenden Parametern:

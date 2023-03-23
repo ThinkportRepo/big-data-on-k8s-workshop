@@ -93,7 +93,6 @@ kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 -
 
 </details>
 
-
 ### Aufgabe 3) Erstelle ein Topic für die Twitter Daten mit einer Kubernetes Custom Resource Definition
 
 Der Kafka Operator ermöglicht es ein Kafka Topic als Kubernetes Resource, also mit einer Yaml Konfiguration zu managen. Dass hat den großen Vorteil, dass sämtliche Topics und ihre Konfiguration als versionierbarer Code gespeichert und jederzeit wieder reproduziert werden können sowie keine langen CLI Befehle zum Topic management verwendet werden müssen.
@@ -102,6 +101,7 @@ Im Ordner `/3_Kafka/Producer/` befindet sich die Datei `TOPIC_twitter-raw.yaml`.
 Öffne diese Datei und füge den Topic Namen `twitter_raw` ein.
 
 Erstelle das Topic in Kafka anschließend durch
+
 ```
 
 kubectl apply -f TOPIC_twitter-raw.yaml
@@ -109,6 +109,7 @@ kubectl apply -f TOPIC_twitter-raw.yaml
 ```
 
 und überprüfe ob das Topic in Kubernetes als Custom Resource erzeugt wurde
+
 ```
 
 kubectl get topic
@@ -117,7 +118,8 @@ kubectl get topic
 
 kubectl get kafkatopics
 
-````
+```
+
 Überprüfe zusätzlich über die Kafka UI oder CLI ob das Topic tatsächlich auch in Kafka mit den in Yaml spezifizierten Parametern erzeugt wurde.
 
 <details>
@@ -142,7 +144,7 @@ spec:
     retention.bytes: "10000000"
     # was soll mit den alten Nachrichten passieren wenn den Retention Bedinung überschritten wird (löschen)
     cleanup.policy: "delete"
-````
+```
 
 und
 
@@ -156,7 +158,6 @@ kafka-topics.sh --describe --bootstrap-server kafka.kafka.svc.cluster.local:9092
 ```
 
 </details>
-
 
 ## 2. Kafka Producer
 
@@ -222,11 +223,40 @@ kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.loc
 
 und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.
 
+<details>
+<summary>Lösung</summary>
+Die Topic Definition sollte folgendermaßen aussehen
+
+```yaml
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  # name des Topics
+  name: twitter-table
+  namespace: kafka
+spec:
+  # Anzahl Replica
+  replicas: 2
+  # Anzahl Partitionen
+  partitionCount: 2
+  configs:
+    # wie lange sollen Messages gespeichert werden (1Tag)
+    retention.ms: "86400000"
+    # wieviel Bytes an Messages sollen maximal gespeichert werden (100MB)
+    retention.bytes: "10000000"
+    # was soll mit den alten Nachrichten passieren wenn den Retention Bedinung überschritten wird (löschen)
+    cleanup.policy: "delete"
+```
+
+</details>
+
 ### Aufgabe 4) starte eine containerisierte Streaming App (Mikroservice in Python/Java)
 
-Die Streaming App (Mikroservice) ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/Stream-Mikroservice/pod_twitter_data_converter.yaml`
+Der Microservice für das Stream Processing, also die Anwendung welche die Daten aus dem `twitter-raw` Topic ausliest, vereinfacht und weiter nach `twitter-table` schreibt, ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/2_Converter/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/2_Converter/pod_twitter_data_converter.yaml`.
 
-Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/Stream-Mikroservice/` gehen)
+Ersetzte hier zunächst die `XXXXXXXX` mit den korrekten Werten und starte den Pod in Kubernetes.
+
+Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/2_Converter/` gehen)
 
 ```
 kubectl apply -f pod_twitter_data_converter.yaml
@@ -248,3 +278,38 @@ Prüfe anschließend ob die reduzierten Daten auch im neuen Kafka Topic ankommen
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
 ```
+
+<details>
+<summary>Lösung</summary>
+Die Pod Definition sollte folgendermaßen aussehen
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: twitter-data-converter
+  namespace: kafka
+spec:
+  containers:
+    - name: python
+      image: thinkportgmbh/workshops:twitter-data-converter
+      imagePullPolicy: Always
+      command:
+        - sh
+        - "-c"
+        - |
+          echo "##############################################";
+          echo $KAFKA_SERVER;
+          echo $KAFKA_SOURCE_TOPIC;
+          echo $KAFKA_TARGET_TOPIC;
+          python3 twitter_data_converter.py;
+      env:
+        - name: KAFKA_SERVER
+          value: "kafka.kafka.svc.cluster.local:9092"
+        - name: KAFKA_SOURCE_TOPIC
+          value: "twitter-raw"
+        - name: KAFKA_TARGET_TOPIC
+          value: "twitter-table"
+```
+
+</details>

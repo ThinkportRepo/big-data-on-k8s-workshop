@@ -63,7 +63,8 @@ kafka-topics.sh --delete --bootstrap-server <service-name>.<namespace>.svc.clust
 <summary>Lösung</summary>
 Der korrekte Service für die Kafka Broker (den Boostrapserver) ist `kafka`
 Damit lautet die volle Kubernetes interne DNS-Adresse des Bootstrap servers
-```
+  
+````shell
 kafka.kafka.svc.cluster.local:9092
 ```
 Und die Befehle der Aufgabe sind folglich

@@ -8,7 +8,7 @@ Im Rahmen des Workshops wird ein typischer Business Case unter Verwendung der wi
 
 <div style="background-color:white";>
 
-![Business Case und Dataflow](/2_lab/solutions/images/Big-Data-Workshop.png)
+![BigDataWorkshop-UseCase](https://user-images.githubusercontent.com/16557412/227126097-ab3c9194-d369-4aa1-bfb3-f2eb9ffdc4e3.png)
 
 </div>
 <br>
@@ -38,4 +38,4 @@ Es gibt in vielen Übungen Tipps und Lösungen die ausklappbar sind. Falls du ni
 
 ### Wenn du Hilfe brauchst oder Fehler in den Aufgaben bemerkst melde dich einfach.
 
-## sViel Spaß!
+## Viel Spaß!

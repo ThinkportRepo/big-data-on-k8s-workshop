@@ -1,0 +1,50 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: stream-to-s3
+  namespace: spark
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "thinkportgmbh/workshops:spark-3.3.1"
+  imagePullPolicy: IfNotPresent # or Always
+  # Python Script/Java Jar that should be submitted
+  mainApplicationFile: s3a://<bucket>/<python-script>.py
+  sparkVersion: "3.3.1"
+  # extra Spark configurations
+  sparkConf:
+    "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
+  # s3 connection configuration
+  hadoopConf:
+    "fs.s3a.endpoint": "minio.minio.svc.cluster.local:9000"
+    "fs.s3a.access.key": "trainadm"
+    "fs.s3a.secret.key": "train@thinkport"
+    "fs.s3a.path.style.access": "true"
+    "fs.s3.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    "fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider"
+    "fs.s3a.connection.ssl.enabled": "false"
+  # driver pod configuration
+  driver:
+    cores: 1
+    coreLimit: "1200m"
+    memory: "512m"
+    labels:
+      version: 3.3.1
+    serviceAccount: spark
+    env:
+      - name: app_name
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: KAFKA_SERVER
+          value: "<service>.<namespace>.svc.cluster.local:9092"
+      - name: KAFKA_TOPIC
+          value: "<topic>"
+  # executor pod configuration
+  executor:
+    cores: <CORES>
+    instances: 1
+    memory: "512m"
+    labels:
+      version: 3.3.1

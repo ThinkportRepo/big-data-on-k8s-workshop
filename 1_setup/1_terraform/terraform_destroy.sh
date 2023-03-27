@@ -2,8 +2,15 @@
 
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
-pwd=$PWD
+pwd=$PWD/aks
 
+
+if [ -z "$1" ]
+  then
+    echo "ERROR!! Bitte cluster.txt angeben"
+    exit 1
+fi
+echo "$pwd"
 echo "WARNING!! terraform can only destroy cluster setup when clusters are running"
 
 for i in $(cat < "$1"); do

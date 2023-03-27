@@ -1,0 +1,22 @@
+# Cluster Domain & Subdomains
+Domain = "workshop.thinkport.cloud"
+#K8s specific settings
+UniquePrefix = "" #if unset the workspace name is used
+SharedPrefix = "customer"
+ResourceGroupName = "bigdata-k8s-workshop"
+Location = "WestEurope"
+NodeCount = 2
+NodeSize = "standard_a4m_v2"
+NodeDiskSize = 50
+HttpApplicationRouting = true
+#GitHub specific configuration
+GitHubUsername = "myusername"
+GitHubRepoToken = "github_pat_XXXXXXXXXXXXXX"
+#Dockerhub specific configuration
+DockerhubUser = "myusername"
+DockerhubPAT = "dckr_pat_XXXXXXXXXXXXXXXX"
+#Azure DNS specific options
+AZ_Cert_Key_Vault_Name = "XXXXXXX"
+AZ_SA_Key_Vault_Name = "XXXXXXX"
+AZ_Subscription_ID = "XXXXXXXXXX"
+AZ_RG_Name = "XXXXXXXXXXXXX"

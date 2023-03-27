@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: twitter-data-converter
+  namespace: kafka
+spec:
+  containers:
+    - name: python
+      image: thinkportgmbh/workshops:twitter-data-converter
+      imagePullPolicy: Always
+      command:
+        - sh
+        - "-c"
+        - |
+          echo "##############################################";
+          echo $KAFKA_SERVER;
+          echo $KAFKA_SOURCE_TOPIC;
+          echo $KAFKA_TARGET_TOPIC;
+          python3 twitter_data_converter.py;
+      env:
+        - name: KAFKA_SERVER
+          value: "XXXXXXXXXXX"
+        - name: KAFKA_SOURCE_TOPIC
+          value: "XXXXXXXXX"
+        - name: KAFKA_TARGET_TOPIC
+          value: "XXXXXXXXX"

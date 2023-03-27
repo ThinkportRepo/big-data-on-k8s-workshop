@@ -1,170 +1,219 @@
 # Kafka Aufgaben
+
 > Diese Aufgaben werden alle im Texteditor oder Terminal von VSCode bearbeitet.  
-VSCode über den Dashboard Link im linken Menu unter Apps öffnen.  
+> VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
 
 ## Architektur
 
-![BigDataLab-Architecture-Kafka](https://user-images.githubusercontent.com/16557412/212681113-6ca20976-9f27-499f-a2d9-3ef8d4b3102d.png)
+![BigDataWorkshop-UseCase-Kafka](https://user-images.githubusercontent.com/16557412/227127231-f741be8f-67e4-42a2-be36-6fb5b9e24040.png)
 
+## 1. Kafka Topics
 
-## 1. Kafka Connector zu Twitter API
+In den Kafka Topics werden die einzelnen Streaming Nachrichten hineingeschrieben, gespeichert und wieder ausgelesen. Die Topics können via CLI, grafischer Oberfläche oder mit Kubernetes Resource Definitionen verwaltet werden.
 
-### Aufgabe 1) Kafka Connector zum streamen der Twitterdaten erstellen  
+### Aufgabe 1) Erstelle ein Topic über die graphische Oberfläche
 
-Kakfa Connect bietet vordefinierte Mikroservice für typische Datenquellen (Sources) und Datenziele ((Sinks) die nur noch konfiguriert werden müssen. Dies erstpart die Arbeit ein eigenes Java/Python Programm zu schreiben, was die Daten von der Twitter API ziehen und nach Kafka schreiben würde.
+Es gibt mehrere graphische Oberflächen um Kafka zu konfigurieren. Wir verwenden hier die [UI von Confluent, dem Anbieter der Kafka Enterprise Version](https://docs.confluent.io/platform/current/control-center/index.html).
 
-Schau Dir in Kubernetes zunächst nochmal alle Service an, die im Kafka Namespace laufen:
+Gehe über das Dashboard auf die Kafka UI und suche dort den Punkt um ein Topic zu erstellen. Erstelle dann ein Topic mit dem Namen `test`, publiziere dort eine Nachricht, z.B. `"Hallo nach Kafka"` und verifizieren, dass diese Nachricht auch angekommen ist.
 
-```bash
-kubectl get pod -n kafka
+### Aufgabe 2) Verwende die Kakfa CLI zum managen, senden und empfangen von Nachrichten
 
+Kafka kann auch über eigene CLI Tools bedient werden. Neben dem anzeigen und erstellen von Topics können dort auch Daten nach Kafka geschrieben und gelesen werden. Die CLI eignet sich vor allem bei der Fehlersuche und beim Automatisieren.
+
+Um die CLI verwenden zu können muss die Kubernetes interne Adresse des Kafka Clusters angegebgen werden (`bootstrap-server`). Suche diese zunächst in den Servicen des Kafka Namespaces
+
+```
 kubectl get services -n kafka
 ```
 
-Jeder Pod in Kubernetes, also auch der Kafka Connect Pod kann über seinen Service und die URL Definition  
-`<service-name>.<namespace>.svc.cluster.local` innerhalb Kubernetes angesprochen werden. 
-Kafka Connect wird über eine REST API angesteuert und konfiguriert. Eine einfache Abfrage ist die bestehenden Connectoren zu listen.   
-Frage die bestehenden Connectoren über das Terminal mit folgendem Befehl ab. Trage hierzu den richtigen Namen für den *Service* und *Namespace* ein, den du in der vorherigen Aufgabe gefunden hast.
+Und verwende dann folgenden Befehl im VS Code Terminal um alle bereits existierenden Topics anzuzeigen
 
-```bash
-curl http://<service-name>.<namespace>.svc.cluster.local:8083/connectors/
+```
+kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port>
+
+# checke ob die Konfigurationen angewendet wurden
+kafka-topics.sh --describe --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name>
 ```
 
+Nachrichten können nun mit einem Producer Script direkt in das Topic geschrieben werden.
+Verwende folgenden Befehl um eine weitere Nachricht in das Topic `test` zu schreiben.
+
+```
+kafka-console-producer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
+```
+
+Das Consumer Programm kann über `strg+c` gestoppt werden.
+
+Lausche anschließend auf das Topic mit der Flag alle Nachrichten seit Beginn anzuzeigen um zu sehen ob die Nachricht ankam. Verifizieren die Nachricht ebenfalls in der UI
+
+```
+kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
+```
+
+mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit der Flag `--max-messages 5` kann die Ausgaben der Nachrichten limitiert werden. Das Consumer Programm kann über `strg+c` gestoppt werden.
+
+Lösche das Topic nun und überprüfe mit dem `list` Befehl op es auch tatsächlich entfernt wurde.
+
+```
+kafka-topics.sh --delete --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic test
+```
+
+<details>
+<summary>Lösung</summary>
+Der korrekte Service für die Kafka Broker (den Boostrapserver) ist `kafka`
+Damit lautet die volle Kubernetes interne DNS-Adresse des Bootstrap servers
+  
+```shell
+kafka.kafka.svc.cluster.local:9092
+```
+Und die Befehle der Aufgabe sind folglich
+
+```shell
+# list topics
+kafka-topics.sh --list --bootstrap-server kafka.kafka.svc.cluster.local:9092
+
+# describe topic details
+
+kafka-topics.sh --describe --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
+
+# publish to topic
+
+kafka-console-producer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
+
+# subscribe to topic
+
+kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test --from-beginning
+
+# delete topic
+
+kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
+
+```
+
+</details>
+
+### Aufgabe 3) Erstelle ein Topic für die Twitter Daten mit einer Kubernetes Custom Resource Definition
+
+Der Kafka Operator ermöglicht es ein Kafka Topic als Kubernetes Resource, also mit einer Yaml Konfiguration zu managen. Dass hat den großen Vorteil, dass sämtliche Topics und ihre Konfiguration als versionierbarer Code gespeichert und jederzeit wieder reproduziert werden können sowie keine langen CLI Befehle zum Topic management verwendet werden müssen.
+
+Im Ordner `/3_Kafka/Producer/` befindet sich die Datei `TOPIC_twitter-raw.yaml`.
+Öffne diese Datei und füge den Topic Namen `twitter_raw` ein.
+
+Erstelle das Topic in Kafka anschließend durch
+
+```
+
+kubectl apply -f TOPIC_twitter-raw.yaml
+
+```
+
+und überprüfe ob das Topic in Kubernetes als Custom Resource erzeugt wurde
+
+```
+
+kubectl get topic
+
+# oder
+
+kubectl get kafkatopics
+
+```
+
+Überprüfe zusätzlich über die Kafka UI oder CLI ob das Topic tatsächlich auch in Kafka mit den in Yaml spezifizierten Parametern erzeugt wurde.
 
 <details>
 <summary>Lösung</summary>
 
-```bash
-curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
+```yaml
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  # name des Topics
+  name: twitter-raw
+  namespace: kafka
+spec:
+  # Anzahl Replica
+  replicas: 2
+  # Anzahl Partitionen
+  partitionCount: 2
+  configs:
+    # wie lange sollen Messages gespeichert werden (1Tag)
+    retention.ms: "86400000"
+    # wieviel Bytes an Messages sollen maximal gespeichert werden (100MB)
+    retention.bytes: "10000000"
+    # was soll mit den alten Nachrichten passieren wenn den Retention Bedinung überschritten wird (löschen)
+    cleanup.policy: "delete"
 ```
+
+und
+
+```
+# list topics
+kafka-topics.sh --list --bootstrap-server kafka.kafka.svc.cluster.local:9092
+
+# describe topic details
+
+kafka-topics.sh --describe --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+```
+
 </details>
 
+## 2. Kafka Producer
 
-Der Connector wird über ein JSON definiert. Dieses muss nun zunächst mit den korrekten Twitter Daten ausgefüllt werden.  
-Lege eine neue JSON Datei `twitter_connector.json` im Verzeichnis `exercises/3_Kafka/` an, kopiere folgende Konfiguration in die Datei und ersetzte die Felder, die ein XXXXX enthalten mit den korrekten Werten und Zugangsdaten. Die Zugangsdaten werden dir in Rahmen des Workshops zur Verfügung gestellt.
+Seit Februar 2023 ist die offizielle Twitter API nicht mehr kostenlos verfügbar. Aus diesem Grund verwenden wir Mock Producer der die Daten für das weitere Lab erzeugt.
 
-**Weitere Parameter:**
-**Topics:** `twitter-raw`  
-**Filter Keyword:** `BigData`  
+### Aufgabe 4) Starte den Twitter Daten Producer als Kubernetes Pod
 
-```json
-{
-  "connector.class": "com.github.jcustenborder.kafka.connect.twitter.TwitterSourceConnector",
-  "tasks.max": "1",
+Der Daten Producer läuft als Deloyment in Kubernetes und schreibt die Daten in das Topic `twitter-raw`
 
-  "log.cleanup.policy": "delete",
-  "log.retention.hours": "24",
-  "log.retention.bytes": "10000000",
-
-  "topic.creation.default.replication.factor": 1,
-  "topic.creation.default.partitions": 2,
-  "topic.creation.default.cleanup.policy": "delete",
-  "topic.creation.default.retention.ms": "86400000",
-  "topic.creation.default.retention.bytes": "10000000",
-
-  "topics": "XXXXX",
-  "process.deletes": "true",
-  "filter.keywords": "XXXXX",
-  "kafka.status.topic": "twitter-raw",
-  "kafka.delete.topic": "twitter-raw-deletions",
-  "twitter.oauth.accessTokenSecret": "XXXXX",
-  "twitter.oauth.consumerSecret": "XXXXX",
-  "twitter.oauth.accessToken": "XXXXX",
-  "twitter.oauth.consumerKey": "XXXXX",
-  "key.converter": "org.apache.kafka.connect.json.JsonConverter",
-  "value.converter": "org.apache.kafka.connect.json.JsonConverter"
-}
+Ersetze das richtige Kafka Topic in der Konfigurations Yaml `3_Kafka/Producer/DEPLOY_twitter_data_producer.yaml` und starte den Pod mit
 
 ```
-
-Die API des Kafka Connector Pods wird über den `curl` Befehle gesteuert.
-Erstelle mit folgenden Befehlen einen neuen Connector und prüfe ob er erfolgreich erstellt und konfiguriert wurde
-```bash
-# Erstelle einen neuen Connector aus dem twitter_connector.json
-curl -i -X PUT -H  "Content-Type:application/json" http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config -d @twitter_connector.json
-
-# Prüfe ob der neue Connector erstellt wurde
-curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/
-
-
-# Überprüfe die Konfiguration des neuen Connectors
-curl http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream/config
-
-# Wenn ein Fehler beim Konfigurieren unterlaufen ist, kann der Connector gelöscht werden
-curl -X DELETE http://kafka-cp-kafka-connect.kafka.svc.cluster.local:8083/connectors/twitter-stream
-
-# für die Fehlersuche können die Logs des Kafka Connect Pods hilfreich sein
-kubectl logs <kafka-connect-pod> -n kafka -f
+kubectl apply -f DEPLOY_twitter_data_producer.yaml
 ```
 
-
-
-## 2. Kafka Topics 
-
-### Aufgabe 2) überprüfe ob das Topic erstellt wurde und ob Daten geschrieben werden 
-
-
-Im Terminal folgenden Befehlen prüfen, ob das Topic für die Twitter Rohdaten erstellt wurde. Hierzu zunächst wieder den Service Namen des Kafka Brokers herrausfinden.
-
-```
-kubectl get po -n kafka
-
-kubectl get services -n kafka
-```
-Anschließend können die Kafka Tpoics mit folgendem Shell Befehl angezeigt werden (korrekten Werte für Host und Port einfügen)
-```
-kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port>
-```
-
-Wenn das Topic erzeugt wurde, kann sich auf das Topic subscribed werden. Jetzt sollten nach und nach Twitternachrichten zu sehen sein.
- 
-```
-kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
-
-```
-mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit der Flag `--max-messages 5` kann die Ausgaben der Nachrichten limitiert werden
-
+Überprüfe mit einem Tool deiner Wahl ob die Daten im Topic ankommen
 
 <details>
 <summary>Lösungen</summary>
 
 ```bash
-kafka-topics.sh --list --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092
-  
-kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning
+kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning --max-messages 10
 
 ```
+
 </details>
 
+## 3. Stream Processing
 
+Sobald die Daten in einem Topic sind sollen sie üblicherweise transformiert werden und verschiedenen Systemen wieder in weiteren Topics zu Verfügung gestellt werden. Dies nennt man Stream Processing. Eine typische Architektur ist es dafür Container basierte Mikroservices zu verwenden. Diese laufen evenfalls auf Kubernetes und können bei hoher Last einfach horizontal skalliert werden. Da nicht alle Daten aus dem Twitter Stream benötigt werden, wird jetzt eine Streaming App gestartet, die die Daten reduziert und nur einige Attribute in das nächste Topic weiter reicht.
 
-## 3. Streaming App (Mikroservice)
+### Aufgabe 5) erstelle ein neues Topic für die reduzierten Daten
 
-### Aufgabe 3) erstelle manuell ein neues Topic für die reduzierten Daten
-
-
-Erstelle zunächst ein neues Topic mit der Kafka CKU folgenden Konfigurationen:
+Erstelle zunächst ein neues Topic via Custom Resource Definition mit folgenden Parametern:
 
 **name:** `twitter-table`  
 **partition:** `2`  
 **replication:** `2`  
 **retention-time:** `86400000` (1 Tag in ms)  
-**cleanup policy:** `delete`  
-**retention-bytes:** `10000000`  
+**retention-bytes:** `10000000`
+**cleanup policy:** `delete`
+
+Erstelle hierfür eine neue Yaml Datei in `3_Kafka/2_Converter/TOPIC_twitter-table.yaml` mit den passenden Parametern. Verwende als Vorlage die Yaml Datei für das `twitter-raw` Topic (`3_Kafka/1_Producer/TOPIC_twitter-raw.yaml`)
+
+Prüfe ob das Topic richtig erstellt wurde.<br>
 
 ```
-kafka-topics.sh --create --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --partitions <partition-number> --replication-factor <replication-number> --config retention.ms=<retention-time> --config cleanup.policy=<policy> --config retention.bytes=<retention-bytes>
-```
+kubectl get topics
 
-Schau ob das Topic richtig erstellt wurde.<br>
+# und/oder via cli
 
-```
 kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port>
 
 # checke ob die Konfigurationen funktioniert haben
 kafka-topics.sh --describe --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name>
 ```
-
 
 Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu löschen.
 
@@ -172,18 +221,48 @@ Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu lösche
 kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table
 ```
 
-und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt. 
+und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.
+
+<details>
+<summary>Lösung</summary>
+Die Topic Definition sollte folgendermaßen aussehen
+
+```yaml
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  # name des Topics
+  name: twitter-table
+  namespace: kafka
+spec:
+  # Anzahl Replica
+  replicas: 2
+  # Anzahl Partitionen
+  partitionCount: 2
+  configs:
+    # wie lange sollen Messages gespeichert werden (1Tag)
+    retention.ms: "86400000"
+    # wieviel Bytes an Messages sollen maximal gespeichert werden (100MB)
+    retention.bytes: "10000000"
+    # was soll mit den alten Nachrichten passieren wenn den Retention Bedinung überschritten wird (löschen)
+    cleanup.policy: "delete"
+```
+
+</details>
 
 ### Aufgabe 4) starte eine containerisierte Streaming App (Mikroservice in Python/Java)
-Die Streaming App (Mikroservice) ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/Stream-Mikroservice/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/Stream-Mikroservice/pod_twitter_data_converter.yaml` 
- 
-Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/Stream-Mikroservice/` gehen)
+
+Der Microservice für das Stream Processing, also die Anwendung welche die Daten aus dem `twitter-raw` Topic ausliest, vereinfacht und weiter nach `twitter-table` schreibt, ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/2_Converter/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/2_Converter/pod_twitter_data_converter.yaml`.
+
+Ersetzte hier zunächst die `XXXXXXXX` mit den korrekten Werten und starte den Pod in Kubernetes.
+
+Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/2_Converter/` gehen)
 
 ```
 kubectl apply -f pod_twitter_data_converter.yaml
 ```
 
-Anschlißend überprüfe ob der Pod erfolgreich gestartartet ist und Twitterdaten verarbeitet.  
+Anschlißend überprüfe ob der Pod erfolgreich gestartartet ist und Twitterdaten verarbeitet.
 
 ```
 kubectl get pod -n <namespace>
@@ -191,7 +270,8 @@ kubectl get pod -n <namespace>
 kubectl logs <pod-name> -n <namespace> -f
 
 ```
-Die Flag `-f` gibt fortlaufend die logs aus. Beende die *Float* Ansicht auf die Logs mit `strg+c`
+
+Die Flag `-f` gibt fortlaufend die logs aus. Beende die _Float_ Ansicht auf die Logs mit `strg+c`
 
 Prüfe anschließend ob die reduzierten Daten auch im neuen Kafka Topic ankommen
 
@@ -199,5 +279,37 @@ Prüfe anschließend ob die reduzierten Daten auch im neuen Kafka Topic ankommen
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
 ```
 
+<details>
+<summary>Lösung</summary>
+Die Pod Definition sollte folgendermaßen aussehen
 
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: twitter-data-converter
+  namespace: kafka
+spec:
+  containers:
+    - name: python
+      image: thinkportgmbh/workshops:twitter-data-converter
+      imagePullPolicy: Always
+      command:
+        - sh
+        - "-c"
+        - |
+          echo "##############################################";
+          echo $KAFKA_SERVER;
+          echo $KAFKA_SOURCE_TOPIC;
+          echo $KAFKA_TARGET_TOPIC;
+          python3 twitter_data_converter.py;
+      env:
+        - name: KAFKA_SERVER
+          value: "kafka.kafka.svc.cluster.local:9092"
+        - name: KAFKA_SOURCE_TOPIC
+          value: "twitter-raw"
+        - name: KAFKA_TARGET_TOPIC
+          value: "twitter-table"
+```
 
+</details>

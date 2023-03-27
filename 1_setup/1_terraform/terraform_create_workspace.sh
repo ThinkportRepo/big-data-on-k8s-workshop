@@ -2,7 +2,7 @@
 
 IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
-pwd=$PWD
+pwd=$PWD/aks
 
 rg="big-data-k8s-workshop"
 
@@ -19,7 +19,7 @@ then
       create_rg=$new_rg
     fi
 
-    az group create --location westeurope --resource-group $create_rg --tags 'created-by=Alex Ortner' 'ttl=30-03-2023' 'project=Big Data Workshop'
+    az group create --location westeurope --resource-group $create_rg --tags 'created-by=Alex Ortner' 'ttl=30-05-2023' 'project=Big Data Workshop'
 else
     echo "++ Skip "
 fi

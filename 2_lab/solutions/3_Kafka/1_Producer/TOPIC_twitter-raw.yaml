@@ -1,0 +1,18 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: KafkaTopic
+metadata:
+  # name des Topics
+  name: twitter-raw
+  namespace: kafka
+spec:
+  # Anzahl Replica
+  replicas: 2
+  # Anzahl Partitionen
+  partitionCount: 2
+  configs:
+    # wie lange sollen Messages gespeichert werden (1Tag)
+    retention.ms: "86400000"
+    # wieviel Bytes an Messages sollen maximal gespeichert werden (100MB)
+    retention.bytes: "10000000"
+    # was soll mit den alten Nachrichten passieren wenn den Retention Bedinung überschritten wird (löschen)
+    cleanup.policy: "delete"

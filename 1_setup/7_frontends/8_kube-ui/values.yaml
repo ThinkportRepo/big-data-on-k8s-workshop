@@ -175,7 +175,9 @@ ingress:
 
   ## Kubernetes Dashboard Ingress annotations
   annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  #  kubernetes.io/ingress.class: addon-http-application-routing
   #   kubernetes.io/ingress.class: nginx
   #   kubernetes.io/tls-acme: 'true'
 
@@ -216,7 +218,7 @@ ingress:
   ## Must be provided if Ingress is enabled
   ##
   hosts:
-    - kube.4c13e49defa742168ff1.northeurope.aksapp.io
+    #- kube.4c13e49defa742168ff1.northeurope.aksapp.io
   ## Kubernetes Dashboard Ingress TLS configuration
   ## Secrets must be manually created in the namespace
   ##

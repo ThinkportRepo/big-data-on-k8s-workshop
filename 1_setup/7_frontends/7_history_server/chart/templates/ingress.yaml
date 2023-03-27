@@ -6,7 +6,8 @@ metadata:
   labels:
     {{- include "spark-history-server.labels" . | nindent 4 }}
   annotations:
-    kubernetes.io/ingress.class: addon-http-application-routing
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
   namespace: {{ .Values.namespace }}
 spec:
   rules:

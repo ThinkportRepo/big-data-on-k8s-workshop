@@ -102,17 +102,15 @@
           image="kafka_logo.png"
           :status_color="appStatusColor('kafka')"></Card
       ></v-col>
-    </v-row>
 
-    <v-row><v-divider></v-divider> </v-row>
-    <v-row>
       <v-col cols="mb-4" v-if="show_kubernetes">
         <Card
           title="Kubernetes UI"
           text="Kubernetes Cluster Overview"
           url_label="Open K8S"
-          subdomain="k8s"
-          image="kubernetes_logo.png"></Card
+          subdomain="headlamp"
+          image="kubernetes_logo.png"
+          :status_color="appStatusColor('headlamp')"></Card
       ></v-col>
       <v-col cols="mb-4" v-if="show_grafana">
         <Card
@@ -150,7 +148,7 @@ export default {
     show_trino: true,
     show_kafka: true,
     show_minio: true,
-    show_kubernetes: false,
+    show_kubernetes: true,
     show_grafana: false,
   }),
   created() {

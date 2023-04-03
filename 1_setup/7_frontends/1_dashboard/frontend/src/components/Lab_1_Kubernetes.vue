@@ -6,6 +6,8 @@
 
 <script>
 import VueShowdown from "vue-showdown";
+// import md_kubernetes from "raw-loader!../../../../../../2_lab/exercises/1_Kubernetes/README.md";
+// import exampleText from "../../../../../../2_lab/exercises/1_Kubernetes/README.md";
 
 export default {
   name: "Lab_1_Kubernetes",
@@ -13,23 +15,35 @@ export default {
   data: function () {
     return {
       fileContent: null,
-      fileToRender:
+      fileGithubPath:
         "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/1_Kubernetes/README.md",
+      fileLocalPath: "../../../../../../2_lab/exercises/1_Kubernetes/README.md",
       rawContent: null,
     };
   },
   created: function () {
-    //  const fileToRender = `./assets/documentation/general/welcome.md`;
-    //const rawContent = ""; // Read the file content using fileToRender
-    // this.fileContent = "### marked(rawContent) should get executed";
-    this.getContent();
+    // use this function to load data from github
+    //this.getContent();
+    // use this approach with raw loader to read data from local pvc mount
+    this.getContentPvc();
   },
   methods: {
+    getContentPvc() {
+      let path =
+        process.env.VUE_APP_GIT_DOKU_BASE_PATH +
+        "2_lab/exercises/1_Kubernetes/README.md";
+      console.log(path);
+      let test = "'@/components/Kubernetes.md";
+      console.log(test);
+      this.fileContent = require(test).default;
+      console.log(this.fileContent);
+    },
+
     getContent() {
       this.fileContent = "pulling Readme from Github ... ";
 
       var options = {
-        url: this.fileToRender,
+        url: this.fileGithubPath,
         method: "GET",
       };
       this.$http(options).then(
@@ -42,37 +56,37 @@ export default {
         (response) => {
           // error callback
           console.log(response);
-          this.fileContent = "An error ocurred";
+          this.fileContent = "File not Found! An error ocurred!";
         }
       );
     },
   },
 };
 </script>
-<style scoped>
+<style>
 .custom {
   color: red;
   background-color: blue;
 }
-
-img {
-  padding-left: 50px;
+h1 {
+  padding-bottom: 0.4em;
 }
 h2 {
-  padding-bottom: 30px;
-  padding-top: 20px;
+  padding-bottom: 0.4em;
+  padding-top: 0.3em;
 }
 /* CSS Simple Pre Code */
 pre {
   background: #333;
   border: 1px solid #ddd;
-  border-left: 5px solid #f36d33;
+  border-left: 5px solid #00bcd4;
   color: #666;
   page-break-inside: avoid;
   font-family: monospace;
   font-size: 15px;
   line-height: 1.6;
   margin-bottom: 1.6em;
+  margin-top: 1.6em;
   max-width: 100%;
   overflow: auto;
   padding: 1em 1.5em;

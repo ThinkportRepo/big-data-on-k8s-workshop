@@ -4,7 +4,7 @@ let socket = undefined;
 const localIP = "localhost";
 const networkIP = "backend.REPLACE_K8S_HOST";
 const port = 3030;
-const networkConnection = true;
+const networkConnection = process.env.VUE_APP_SOCKET_NETWORK_CONNECTION;
 
 function initialiseSocket() {
   const url = networkConnection

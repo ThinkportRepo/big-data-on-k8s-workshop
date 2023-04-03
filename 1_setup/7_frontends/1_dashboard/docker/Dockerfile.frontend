@@ -6,6 +6,7 @@ COPY frontend/ .
 RUN npm run build
 
 FROM nginx as production-stage
+RUN apt-get update && apt-get install git -y
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app
 COPY docker/nginx.frontend.conf /etc/nginx/nginx.conf

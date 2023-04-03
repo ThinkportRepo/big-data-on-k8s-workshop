@@ -312,4 +312,8 @@ spec:
           value: "twitter-table"
 ```
 
+```
+kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+```
+
 </details>

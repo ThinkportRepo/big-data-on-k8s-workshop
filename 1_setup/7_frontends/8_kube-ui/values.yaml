@@ -42,9 +42,9 @@ labels: {}
 ## Additional container arguments
 ##
 extraArgs:
-  #  - --enable-skip-login
+  - --enable-skip-login
   - --enable-insecure-login
-#  - --system-banner="Welcome to Kubernetes"
+  - --system-banner="Kubernetes UI for Big Data Lab"
 
 ## Additional container environment variables
 ##
@@ -218,7 +218,7 @@ ingress:
   ## Must be provided if Ingress is enabled
   ##
   hosts:
-    #- kube.4c13e49defa742168ff1.northeurope.aksapp.io
+    - kubernetes.trainer.lab.bigdata.workshop.thinkport.cloud
   ## Kubernetes Dashboard Ingress TLS configuration
   ## Secrets must be manually created in the namespace
   ##

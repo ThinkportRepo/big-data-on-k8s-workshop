@@ -26,7 +26,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content class="ma-0">
-            <v-list-item-title>REPLACE_LAB_USER</v-list-item-title>
+            <v-list-item-title>{{ test }}</v-list-item-title>
             <v-list-item-subtitle>Practice Lab</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -196,7 +196,7 @@
           <v-list-item
             v-if="show_kubernetes"
             class="pl-5 ml-5"
-            href="http://k8s.REPLACE_K8S_HOST"
+            href="http://headlamp.REPLACE_K8S_HOST"
             target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/kubernetes_logo.png" />
@@ -328,8 +328,9 @@ export default {
     show_trino: true,
     show_kafka: true,
     show_minio: true,
-    show_kubernetes: false,
+    show_kubernetes: true,
     show_grafana: false,
+    test: process.env.VUE_APP_REPLACE_LAB_USER,
   }),
   watch: {
     group() {

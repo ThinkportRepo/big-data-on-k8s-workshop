@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{.Values.name}}
+  namespace: {{.Values.namespace}}
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  rules:
+    - host: {{.Values.host}}
+      http:
+        paths:
+          - backend:
+              service:
+                name: headlamp
+                port:
+                  number: 80
+            path: /
+            pathType: Prefix

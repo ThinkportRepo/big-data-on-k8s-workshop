@@ -1,0 +1,9 @@
+# Default Values
+
+# Kubernetes namespace
+name: "headlamp"
+# Kubernetes namespace
+namespace: "frontend"
+
+# Ingress Hostname
+host: headlamp.student1.lab.bigdata.workshop.thinkport.cloud

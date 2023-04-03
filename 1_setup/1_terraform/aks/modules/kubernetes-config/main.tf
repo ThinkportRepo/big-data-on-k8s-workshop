@@ -474,7 +474,7 @@ resource "kubernetes_config_map" "bashrc" {
     complete -o default -F __start_kubectl k
     alias s3=s3cmd
     alias kn=kubens
-    export KUBECONFIG=/home/coder/kubeconfig
+    export KUBECONFIG=/home/coder/.kube/kubeconfig
     export KUBECACHEDIR=/tmp/kubecache
     export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
     source /usr/share/bash-completion/bash_completion
@@ -556,8 +556,8 @@ resource "kubernetes_job" "gitcloner" {
               "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
               "mkdir /workshop/exercises;",
               "mkdir /workshop/solutions;",
-              "ln -s /workshop/git/2_lab/exercises /workshop;",
-              "ln -s /workshop/git/2_lab/solutions /workshop;"
+              "cp -r /workshop/git/2_lab/exercises/ /workshop/;",
+              "cp -r /workshop/git/2_lab/solutions/ /workshop/"
               ])
             ]
               env {
@@ -859,6 +859,24 @@ resource "helm_release" "history" {
   }
   timeout = 600
 }
+
+resource "helm_release" "headlamp" {
+  depends_on = [
+    kubernetes_job.init
+  ]
+  namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+  chart = "../../7_frontends/9_headlamp"
+  name = "headlamp"
+    values = [
+    "${file("../../7_frontends/9_headlamp/values.yaml")}"
+  ]
+  set {
+    name = "host"
+    value = "headlamp.${var.ClusterDNS}"
+  }
+  timeout = 600
+}
+
 
 #resource "helm_release" "k8sdashboard" {
 #  name = "kubernetes-dashboard"

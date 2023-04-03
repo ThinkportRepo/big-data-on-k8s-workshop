@@ -324,6 +324,11 @@ function parseFrontend(message, response) {
     restarts: 0,
     pod: "",
   };
+  message.frontend.heatlamp = {
+    status: "Missing",
+    restarts: 0,
+    pod: "",
+  };
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
 
@@ -382,6 +387,14 @@ function parseFrontend(message, response) {
         pod: item.metadata.name,
       };
     }
+
+    if (item.metadata.name.includes("headlamp")) {
+      message.frontend.headlamp = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+    }
   }
 
   if (
@@ -391,7 +404,8 @@ function parseFrontend(message, response) {
     message.frontend.jupyter.status == "Running" &&
     message.frontend.zeppelin.status == "Running" &&
     message.frontend.sqlpad.status == "Running" &&
-    message.frontend.metabase.status == "Running"
+    message.frontend.metabase.status == "Running" &&
+    message.frontend.headlamp.status == "Running"
   ) {
     message.frontend.status = "Running";
   }
@@ -445,6 +459,7 @@ socketio.on("connection", (socket) => {
           message = parseMinio(message, res_minio);
           message = parseSpark(message, res_spark);
           message = parseFrontend(message, res_frontend);
+          //console.log(message);
 
           socket.emit("cluster", message);
         })

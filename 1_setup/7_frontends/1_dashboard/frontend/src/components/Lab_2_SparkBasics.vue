@@ -1,11 +1,22 @@
 <template>
   <v-container>
-    <VueShowdown :markdown="fileContent" flavor="github"></VueShowdown>
+    <v-progress-linear
+      v-if="serverOutputStatus"
+      indeterminate
+      color="cyan"
+      height="25"
+      >loading Basic Spark exercises ...</v-progress-linear
+    >
+    <VueShowdown
+      v-else
+      :markdown="fileContent.sparkbasics"
+      flavor="github"></VueShowdown>
   </v-container>
 </template>
 
 <script>
 import VueShowdown from "vue-showdown";
+import * as socketio from "@/plugins/socketio";
 
 export default {
   name: "Lab_2_SparkBasics",
@@ -13,39 +24,18 @@ export default {
   data: function () {
     return {
       fileContent: null,
-      fileToRender:
-        "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/2_Spark_Basics/README.md",
-      rawContent: null,
+      serverOutputStatus: true,
     };
   },
-  created: function () {
-    //  const fileToRender = `./assets/documentation/general/welcome.md`;
-    //const rawContent = ""; // Read the file content using fileToRender
-    // this.fileContent = "### marked(rawContent) should get executed";
-    this.getContent();
-  },
-  methods: {
-    getContent() {
-      this.fileContent = "pulling Readme from Github ... ";
 
-      var options = {
-        url: this.fileToRender,
-        method: "GET",
-      };
-      this.$http(options).then(
-        (response) => {
-          // get body data
-
-          this.fileContent = response.body;
-          console.log(this.fileContent);
-        },
-        (response) => {
-          // error callback
-          console.log(response);
-          this.fileContent = "An error ocurred";
-        }
-      );
-    },
+  mounted() {
+    socketio.addEventListener({
+      type: "lab",
+      callback: (message) => {
+        this.fileContent = message;
+        this.serverOutputStatus = false;
+      },
+    });
   },
 };
 </script>

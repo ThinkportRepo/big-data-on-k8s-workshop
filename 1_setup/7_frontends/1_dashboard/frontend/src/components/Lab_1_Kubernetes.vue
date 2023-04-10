@@ -1,13 +1,23 @@
 <template>
   <v-container>
-    <VueShowdown :markdown="fileContent" flavor="github"></VueShowdown>
+    <v-progress-linear
+      v-if="serverOutputStatus"
+      indeterminate
+      color="cyan"
+      height="25"
+      >loading Kubernetes exercises ...</v-progress-linear
+    >
+
+    <VueShowdown
+      v-else
+      :markdown="fileContent.kubernetes"
+      flavor="github"></VueShowdown>
   </v-container>
 </template>
 
 <script>
 import VueShowdown from "vue-showdown";
-// import md_kubernetes from "raw-loader!../../../../../../2_lab/exercises/1_Kubernetes/README.md";
-// import exampleText from "../../../../../../2_lab/exercises/1_Kubernetes/README.md";
+import * as socketio from "@/plugins/socketio";
 
 export default {
   name: "Lab_1_Kubernetes",
@@ -15,51 +25,17 @@ export default {
   data: function () {
     return {
       fileContent: null,
-      fileGithubPath:
-        "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/1_Kubernetes/README.md",
-      fileLocalPath: "../../../../../../2_lab/exercises/1_Kubernetes/README.md",
-      rawContent: null,
+      serverOutputStatus: true,
     };
   },
-  created: function () {
-    // use this function to load data from github
-    //this.getContent();
-    // use this approach with raw loader to read data from local pvc mount
-    this.getContentPvc();
-  },
-  methods: {
-    getContentPvc() {
-      let path =
-        process.env.VUE_APP_GIT_DOKU_BASE_PATH +
-        "2_lab/exercises/1_Kubernetes/README.md";
-      console.log(path);
-      let test = "'@/components/Kubernetes.md";
-      console.log(test);
-      this.fileContent = require(test).default;
-      console.log(this.fileContent);
-    },
-
-    getContent() {
-      this.fileContent = "pulling Readme from Github ... ";
-
-      var options = {
-        url: this.fileGithubPath,
-        method: "GET",
-      };
-      this.$http(options).then(
-        (response) => {
-          // get body data
-
-          this.fileContent = response.body;
-          console.log(this.fileContent);
-        },
-        (response) => {
-          // error callback
-          console.log(response);
-          this.fileContent = "File not Found! An error ocurred!";
-        }
-      );
-    },
+  mounted() {
+    socketio.addEventListener({
+      type: "lab",
+      callback: (message) => {
+        this.fileContent = message;
+        this.serverOutputStatus = false;
+      },
+    });
   },
 };
 </script>

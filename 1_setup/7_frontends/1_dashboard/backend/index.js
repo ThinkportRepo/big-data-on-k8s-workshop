@@ -1,4 +1,5 @@
 const express = require("express");
+const fs = require("fs");
 const https = require("https");
 const axios = require("axios");
 const http = require("http").Server(express);
@@ -14,45 +15,177 @@ const socketio = require("socket.io")(http, {
 });
 const port = 3030;
 
-function parseKafka(message, response) {
-  message.kafka = {};
-  message.kafka.status = "Error";
-  message.kafka.broker0 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.kafka.broker1 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.kafka.broker2 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.kafka.schemaRegistry = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.kafka.kafkaConnect = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.kafka.ksqlServer = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.kafka.zookeeper = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
+let kubectl_error = false;
+// Message Definition
 
+let message = {
+  kafka: {
+    status: "Error",
+    broker0: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    broker1: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    broker2: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    schemaRegistry: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    kafkaConnect: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    ksqlServer: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    zookeeper: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+  },
+  trino: {
+    status: "Error",
+    hive: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    postgres: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    coordinator: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    worker1: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    worker2: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+  },
+  minio: {
+    status: "Error",
+    minio1: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    minio2: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+  },
+  spark: {
+    status: "Error",
+    operator: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    history: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+  },
+  frontend: {
+    status: "Error",
+    dashboard: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    terminal: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    vscode: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    jupyter: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    zeppelin: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    sqlpad: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    metabase: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    heatlamp: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    prometheus: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    grafana: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    headlamp: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+  },
+  monitoring: {
+    status: "Error",
+    prometheus: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    grafana: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+  },
+  eventTime: 1681070161563,
+};
+
+function parseKafka(message, response) {
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
     //console.log(item.metadata.name);
@@ -127,18 +260,6 @@ function parseKafka(message, response) {
 }
 
 function parseHive(message, response) {
-  message.trino = {};
-  message.trino.status = "Error";
-  message.trino.hive = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.trino.postgres = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
     if (item.metadata.name == "hive-metastore-0") {
@@ -160,21 +281,6 @@ function parseHive(message, response) {
 }
 
 function parseTrino(message, response) {
-  message.trino.coordinator = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.trino.worker1 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.trino.worker2 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
   j = 1;
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
@@ -211,18 +317,7 @@ function parseTrino(message, response) {
 
 function parseMinio(message, response) {
   j = 1;
-  message.minio = {};
-  message.minio.status = "Error";
-  message.minio.minio1 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.minio.minio2 = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
+
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
 
@@ -245,18 +340,6 @@ function parseMinio(message, response) {
 }
 
 function parseSpark(message, response) {
-  message.spark = {};
-  message.spark.status = "Error";
-  message.spark.operator = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.spark.history = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
     if (
@@ -287,48 +370,6 @@ function parseSpark(message, response) {
 }
 
 function parseFrontend(message, response) {
-  message.frontend = {};
-  message.frontend.status = "Error";
-  message.frontend.dashboard = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.terminal = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.vscode = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.jupyter = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.zeppelin = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.sqlpad = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.metabase = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
-  message.frontend.heatlamp = {
-    status: "Missing",
-    restarts: 0,
-    pod: "",
-  };
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
 
@@ -413,10 +454,19 @@ function parseFrontend(message, response) {
   return message;
 }
 
+//function which return Promise
+const read = (path, type) =>
+  new Promise((resolve, reject) => {
+    fs.readFile(path, type, (err, file) => {
+      if (err) reject(err);
+      resolve(file);
+    });
+  });
+
 socketio.on("connection", (socket) => {
   setInterval(function () {
     //console.log("###################################################");
-    let message = {};
+
     message.eventTime = Date.now();
 
     prom_kafka = axios.get(
@@ -461,12 +511,60 @@ socketio.on("connection", (socket) => {
           message = parseFrontend(message, res_frontend);
           //console.log(message);
 
-          socket.emit("cluster", message);
+          //socket.emit("cluster", message);
         })
       )
+      .then(async () => {
+        let markdown = {};
+        let basePath = "../../../../";
+        markdown.kubernetes = await read(
+          basePath + "2_lab/exercises/1_Kubernetes/README.md",
+          "utf8"
+        );
+        markdown.kafka = await read(
+          basePath + "2_lab/exercises/3_Kafka/README.md",
+          "utf8"
+        );
+        markdown.sparkbasics = await read(
+          basePath + "2_lab/exercises/2_Spark_Basics/README.md",
+          "utf8"
+        );
+        markdown.sparkstreaming = await read(
+          basePath + "2_lab/exercises/4_Spark_Streaming/README.md",
+          "utf8"
+        );
+        markdown.sparksql = await read(
+          basePath + "2_lab/exercises/5_Spark_SQL/README.md",
+          "utf8"
+        );
+        markdown.trino = await read(
+          basePath + "2_lab/exercises/6_Trino/README.md",
+          "utf8"
+        );
+        markdown.metabase = await read(
+          basePath + "2_lab/exercises/7_Metabase/README.md",
+          "utf8"
+        );
+        socket.emit("lab", markdown);
+      })
       .catch((errors) => {
-        console.log(errors);
+        //console.log(errors);
+        kubectl_error = true;
+      })
+      .finally(() => {
+        if (kubectl_error == true) {
+          console.log("Kubectl connection error");
+          socket.emit("cluster", message);
+        } else {
+          console.log("Connected to Cluster");
+          socket.emit("cluster", message);
+        }
       });
+    //let kubernetesMD = read_markdown();
+
+    //console.log(kubernetesMD);
+    console.log("running every 3s ...");
+    //socket.emit("lab", kubernetesMD);
   }, 3000);
 });
 

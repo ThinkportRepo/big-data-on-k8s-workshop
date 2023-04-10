@@ -1,6 +1,6 @@
 https://artifacthub.io/packages/helm/bitnami/cassandra
 
-helm repo add my-repo https://charts.bitnami.com/bitnami
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helm install cassandra my-repo/cassandra --set dbUser.user=trainadm,dbUser.password=train@thinkport -n nosql
 
 cqlsh -u trainadm -p train@thinkport cassandra.nosql.svc.cluster.local 9042

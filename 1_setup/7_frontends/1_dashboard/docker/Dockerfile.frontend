@@ -1,8 +1,16 @@
 FROM node:14 as build-stage
+RUN apt-get update && apt-get install git
+RUN git clone https://alexortner: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@github.com/ThinkportRepo/big-data-on-k8s-workshop.git
 WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ .
+WORKDIR /app/frontend/src
+# copy all Markdown files over to app/frontend/src/markdown
+RUN mkdir markdown
+RUN cp /big-data-on-k8s-workshop/2_lab/exercises/1_Kubernetes/README.md /app/frontend/src/markdown/1_Kubernetes.md
+WORKDIR /app
+
 RUN npm run build
 
 FROM nginx as production-stage

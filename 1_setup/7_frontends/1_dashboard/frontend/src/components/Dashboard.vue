@@ -34,14 +34,18 @@
           image="jupyter_logo.png"
           :status_color="appStatusColor('jupyter')"></Card
       ></v-col>
+
       <v-col cols="mb-4" v-if="show_zeppelin">
         <Card
           title="Zeppelin"
           text="Notebook for Scala, Java, Sql"
           url_label="Open Zeppelin"
           subdomain="zeppelin"
-          image="zeppelin_logo.png"></Card
+          image="zeppelin_logo.png"
+          :status_color="appStatusColor('zeppelin')"></Card
       ></v-col>
+    </v-row>
+    <v-row>
       <v-col cols="mb-4" v-if="show_sqlpad">
         <Card
           title="SQL Pad"
@@ -51,9 +55,6 @@
           image="sql_logo.png"
           :status_color="appStatusColor('sqlpad')"></Card
       ></v-col>
-    </v-row>
-
-    <v-row>
       <v-col cols="mb-4" v-if="show_metabase">
         <Card
           title="Metabase"
@@ -63,6 +64,7 @@
           image="metabase_logo.png"
           :status_color="appStatusColor('metabase')"></Card
       ></v-col>
+
       <v-col cols="mb-4" v-if="show_minio">
         <Card
           title="Minio UI"
@@ -72,6 +74,8 @@
           image="minio_logo.png"
           :status_color="appStatusColor('minio')"></Card
       ></v-col>
+    </v-row>
+    <v-row>
       <v-col cols="mb-4" v-if="show_trino">
         <Card
           title="Trino UI"
@@ -81,8 +85,7 @@
           image="trino2_logo.png"
           :status_color="appStatusColor('trino')"></Card
       ></v-col>
-    </v-row>
-    <v-row>
+
       <v-col cols="mb-4" v-if="show_spark">
         <Card
           title="Spark UI"
@@ -103,24 +106,34 @@
           :status_color="appStatusColor('kafka')"></Card
       ></v-col>
     </v-row>
-
-    <v-row><v-divider></v-divider> </v-row>
     <v-row>
       <v-col cols="mb-4" v-if="show_kubernetes">
         <Card
           title="Kubernetes UI"
           text="Kubernetes Cluster Overview"
           url_label="Open K8S"
-          subdomain="k8s"
-          image="kubernetes_logo.png"></Card
+          subdomain="headlamp"
+          image="kubernetes_logo.png"
+          :status_color="appStatusColor('headlamp')"></Card
       ></v-col>
+      <v-col cols="mb-4" v-if="show_prometheus">
+        <Card
+          title="Prometheus UI"
+          text="Analytics & monitoring "
+          url_label="Open Prometheus"
+          subdomain="prometheus"
+          image="prometheus_logo.png"
+          :status_color="appStatusColor('prometheus')"></Card
+      ></v-col>
+
       <v-col cols="mb-4" v-if="show_grafana">
         <Card
           title="Grafana UI"
-          text="Analytics & monitoring "
+          text="Monitoring Dasahboard"
           url_label="Open Grafana"
           subdomain="grafana"
-          image="grafana_logo.jpeg"></Card
+          image="grafana_logo.jpeg"
+          :status_color="appStatusColor('grafana')"></Card
       ></v-col>
     </v-row>
   </v-container>
@@ -137,21 +150,22 @@ export default {
   },
 
   data: () => ({
-    serverOutput: {kafka: {status: "error"}, spark: {status: "error"}},
+    serverOutput: {},
     serverOutputStatus: true,
     host: "VUE_APP_K8S_HOST",
     show_terminal: false,
     show_vscode: true,
     show_jupyter: true,
-    show_zeppelin: false,
+    show_zeppelin: true,
     show_sqlpad: true,
     show_metabase: true,
     show_spark: true,
     show_trino: true,
     show_kafka: true,
     show_minio: true,
-    show_kubernetes: false,
-    show_grafana: false,
+    show_kubernetes: true,
+    show_grafana: true,
+    show_prometheus: true,
   }),
   created() {
     //this.getApplicationInfo();
@@ -167,7 +181,6 @@ export default {
       },
     });
   },
-  computed: {},
   methods: {
     appStatusColor(app_key) {
       let status = "";
@@ -182,7 +195,6 @@ export default {
       } else {
         status = this.serverOutput.frontend[app_key].status;
       }
-
       if (status == "Running") {
         return "green";
       } else {

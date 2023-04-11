@@ -1,7 +1,6 @@
 FROM node:14
 WORKDIR /app
 
-
 COPY backend/package*.json ./
 
 RUN apt-get update && apt-get install curl -y

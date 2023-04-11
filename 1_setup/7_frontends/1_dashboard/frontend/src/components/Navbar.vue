@@ -196,7 +196,7 @@
           <v-list-item
             v-if="show_kubernetes"
             class="pl-5 ml-5"
-            href="http://k8s.REPLACE_K8S_HOST"
+            href="http://headlamp.REPLACE_K8S_HOST"
             target="_blank">
             <v-list-item-avatar tile size="30">
               <img src="@/assets/kubernetes_logo.png" />
@@ -209,6 +209,7 @@
               >
             </v-list-item-content>
           </v-list-item>
+
           <v-list-item
             v-if="show_grafana"
             class="pl-5 ml-5"
@@ -223,6 +224,22 @@
               <v-list-item-subtitle>Monitoring Dashboards</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+
+          <v-list-item
+            v-if="show_prometheus"
+            class="pl-5 ml-5"
+            href="http://prometheus.REPLACE_K8S_HOST"
+            target="_blank">
+            <v-list-item-avatar tile size="30">
+              <img src="@/assets/prometheus_logo.png" />
+            </v-list-item-avatar>
+
+            <v-list-item-content>
+              <v-list-item-title>Prometheus</v-list-item-title>
+              <v-list-item-subtitle>Monitoring & Alerting</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item
             v-if="show_minio"
             class="pl-5 ml-5"
@@ -256,34 +273,74 @@
             </v-list-item-content>
           </template>
 
-          <v-list-item class="pl-5 ml-5" router to="/lab-kubernetes"
+          <v-list-item
+            v-if="show_exercise_1_kubernetes"
+            class="pl-5 ml-5"
+            router
+            to="/lab-kubernetes"
             >1. Kubernetes</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-spark-basics"
+          <v-list-item
+            v-if="show_exercise_2_sparkbasics"
+            class="pl-5 ml-5"
+            router
+            to="/lab-spark-basics"
             >2. Spark Basics</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-kafka"
+          <v-list-item
+            v-if="show_exercise_3_kafka"
+            class="pl-5 ml-5"
+            router
+            to="/lab-kafka"
             >3. Kafka</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-spark-streaming"
+          <v-list-item
+            v-if="show_exercise_4_spark_streaming"
+            class="pl-5 ml-5"
+            router
+            to="/lab-spark-streaming"
             >4. Spark Streaming</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-spark-sql"
+          <v-list-item
+            v-if="show_exercise_5_spark_sql"
+            class="pl-5 ml-5"
+            router
+            to="/lab-spark-sql"
             >5. Spark SQL</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-trino"
+          <v-list-item
+            v-if="show_exercise_6_trino"
+            class="pl-5 ml-5"
+            router
+            to="/lab-trino"
             >6. Trino</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-ksql"
+          <v-list-item
+            v-if="show_exercise_7_ksql"
+            class="pl-5 ml-5"
+            router
+            to="/lab-ksql"
             >7. KSQL</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-visualisation"
+          <v-list-item
+            v-if="show_exercise_8_metabase"
+            class="pl-5 ml-5"
+            router
+            to="/lab-visualisation"
             >8. Metabase</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-monitoring"
+          <v-list-item
+            v-if="show_exercise_9_monitoring"
+            class="pl-5 ml-5"
+            router
+            to="/lab-monitoring"
             >9. Prometheus & Grafana</v-list-item
           >
-          <v-list-item class="pl-5 ml-5" router to="/lab-sheduling"
+          <v-list-item
+            v-if="show_exercise_10_sheduling"
+            class="pl-5 ml-5"
+            router
+            to="/lab-sheduling"
             >10. Airflow</v-list-item
           >
         </v-list-group>
@@ -328,8 +385,19 @@ export default {
     show_trino: true,
     show_kafka: true,
     show_minio: true,
-    show_kubernetes: false,
-    show_grafana: false,
+    show_kubernetes: true,
+    show_prometheus: true,
+    show_grafana: true,
+    show_exercise_1_kubernetes: true,
+    show_exercise_2_sparkbasics: true,
+    show_exercise_3_kafka: true,
+    show_exercise_4_spark_streaming: true,
+    show_exercise_5_spark_sql: true,
+    show_exercise_6_trino: true,
+    show_exercise_7_ksql: false,
+    show_exercise_8_metabase: false,
+    show_exercise_9_monitoring: false,
+    show_exercise_10_sheduling: false,
   }),
   watch: {
     group() {

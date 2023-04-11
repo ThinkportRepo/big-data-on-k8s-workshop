@@ -1,11 +1,23 @@
 <template>
   <v-container>
-    <VueShowdown :markdown="fileContent" flavor="github"></VueShowdown>
+    <v-progress-linear
+      v-if="serverOutputStatus"
+      indeterminate
+      color="cyan"
+      height="25"
+      >loading Kubernetes exercises ...</v-progress-linear
+    >
+
+    <VueShowdown
+      v-else
+      :markdown="fileContent.kubernetes"
+      flavor="github"></VueShowdown>
   </v-container>
 </template>
 
 <script>
 import VueShowdown from "vue-showdown";
+import * as socketio from "@/plugins/socketio";
 
 export default {
   name: "Lab_1_Kubernetes",
@@ -13,66 +25,44 @@ export default {
   data: function () {
     return {
       fileContent: null,
-      fileToRender:
-        "https://raw.githubusercontent.com/ThinkportRepo/big-data-on-k8s-workshop/main/2_lab/exercises/1_Kubernetes/README.md",
-      rawContent: null,
+      serverOutputStatus: true,
     };
   },
-  created: function () {
-    //  const fileToRender = `./assets/documentation/general/welcome.md`;
-    //const rawContent = ""; // Read the file content using fileToRender
-    // this.fileContent = "### marked(rawContent) should get executed";
-    this.getContent();
-  },
-  methods: {
-    getContent() {
-      this.fileContent = "pulling Readme from Github ... ";
-
-      var options = {
-        url: this.fileToRender,
-        method: "GET",
-      };
-      this.$http(options).then(
-        (response) => {
-          // get body data
-
-          this.fileContent = response.body;
-          console.log(this.fileContent);
-        },
-        (response) => {
-          // error callback
-          console.log(response);
-          this.fileContent = "An error ocurred";
-        }
-      );
-    },
+  mounted() {
+    socketio.addEventListener({
+      type: "lab",
+      callback: (message) => {
+        this.fileContent = message;
+        this.serverOutputStatus = false;
+      },
+    });
   },
 };
 </script>
-<style scoped>
+<style>
 .custom {
   color: red;
   background-color: blue;
 }
-
-img {
-  padding-left: 50px;
+h1 {
+  padding-bottom: 0.4em;
 }
 h2 {
-  padding-bottom: 30px;
-  padding-top: 20px;
+  padding-bottom: 0.4em;
+  padding-top: 0.3em;
 }
 /* CSS Simple Pre Code */
 pre {
   background: #333;
   border: 1px solid #ddd;
-  border-left: 5px solid #f36d33;
+  border-left: 5px solid #00bcd4;
   color: #666;
   page-break-inside: avoid;
   font-family: monospace;
   font-size: 15px;
   line-height: 1.6;
   margin-bottom: 1.6em;
+  margin-top: 1.6em;
   max-width: 100%;
   overflow: auto;
   padding: 1em 1.5em;

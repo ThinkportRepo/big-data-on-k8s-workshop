@@ -2,9 +2,10 @@
 
 Die Dashboard App ist ein Frontend um die verschiedenen UI der Big Data Anwendungen die auf Kubernetes laufen zu öffnen.
 Die App hat im Wesentlichen 3 Funktionalitäten
-* Links auf die UIs
-* Live Status der Pods (via Backend und Kube Proxy im Sidecar)
-* Rendering der Markdown Dateien aus Github für die Lab Instructions
+
+- Links auf die UIs
+- Live Status der Pods (via Backend und Kube Proxy im Sidecar)
+- Rendering der Markdown Dateien aus Github für die Lab Instructions
 
 ## Docker Image
 
@@ -25,9 +26,10 @@ docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/w
 docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/workshops:kubeproxy -f docker/Dockerfile.sidecar .
 
 # testen auf docker
-docker run  -e K8S_HOST=k8s-cluster.io -p 8081:80 thinkportgmbh/workshops:dashboard
+# docker run --mount source=[volume_name],destination=[path_in_container] [docker_image]
+docker run   -e K8S_HOST=k8s-cluster.io -p 8081:80 thinkportgmbh/workshops:dashboard
 
-docker run  -e K8S_HOST=k8s-cluster.io -p 3030:3030 thinkportgmbh/workshops:backend
+docker run  -v /Users/alor/All/git/big-data-on-k8s-workshop/:/workshop/git/" -e K8S_HOST=k8s-cluster.io -p 3030:3030 thinkportgmbh/workshops:backend
 
 
 # öffnen unter http://localhost:8081
@@ -46,22 +48,27 @@ helm upgrade --install -f values.yaml  dashboard -n frontend .
 
 ![frontendArchitecutr drawio](https://user-images.githubusercontent.com/16557412/210658017-6423e9a7-5d88-4a0d-8cdb-b08ad777a431.png)
 
-Das Frontend ist eine Vue bzw. Vuetify App die via Websocket (socket.io) auf ein Backend zugreift und von dort die Kubernetes API abfragt. 
+Das Frontend ist eine Vue bzw. Vuetify App die via Websocket (socket.io) auf ein Backend zugreift und von dort die Kubernetes API abfragt.
 Das Backend ist nötig, da wegen CORS Policy kein Zugriff direkt aus dem Frontend auf die Kubernetes API möglich ist.
-Um die ganze Authentifizierung via Token auf die Kubernetes API zu vermeiden wird kubectl proxy in einem sidecar Container verwendet (in der Kubernetes Doku empfohlenes Vorgehen). 
+Um die ganze Authentifizierung via Token auf die Kubernetes API zu vermeiden wird kubectl proxy in einem sidecar Container verwendet (in der Kubernetes Doku empfohlenes Vorgehen).
 
-
-
-Inspiriert von 
+Inspiriert von
 https://medium.com/@barnie_M/accessing-kubernetes-api-from-a-pod-using-kubectl-proxy-sidecar-fbb85781969f
 
 ## Verzeichnisstruktur
-##### /backend
-einfacher Express Server, der die Kubernetes API abfragt
-##### /frontend
-Vue App
-##### /docker
-Docker files für das Frontend, Backend und das Sidecar sowie startup Scripte, die die Variablen für jeden Cluster substituieren
-##### /helm
-Helm Chart um alles zu deployen
 
+##### /backend
+
+einfacher Express Server, der die Kubernetes API abfragt
+
+##### /frontend
+
+Vue App
+
+##### /docker
+
+Docker files für das Frontend, Backend und das Sidecar sowie startup Scripte, die die Variablen für jeden Cluster substituieren
+
+##### /helm
+
+Helm Chart um alles zu deployen

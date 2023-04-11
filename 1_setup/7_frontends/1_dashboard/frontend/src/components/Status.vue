@@ -236,6 +236,27 @@
                         </v-icon>
                       </td>
                     </tr>
+                    <tr>
+                      <td>Kubernetes UI</td>
+                      <td>{{ serverOutput.frontend.headlamp.pod }}</td>
+                      <td>spark</td>
+                      <td>{{ serverOutput.frontend.headlamp.restarts }}</td>
+                      <td>{{ serverOutput.frontend.headlamp.status }}</td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.frontend.headlamp.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.frontend.headlamp.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
                   </tbody>
                 </template>
               </v-simple-table>

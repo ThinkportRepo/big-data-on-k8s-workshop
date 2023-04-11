@@ -6,7 +6,7 @@ ls
 NEWPATH="https://dashboard."$K8S_HOST
 echo $NEWPATH
 sed -i "s|http://localhost:8080|${NEWPATH}|g" index.js
-sed -i "s|../../../../|/workshop/git|g" index.js
+sed -i "s|../../../../|/workshop/git/|g" index.js
 
 # Starting NGINX
 node index.js

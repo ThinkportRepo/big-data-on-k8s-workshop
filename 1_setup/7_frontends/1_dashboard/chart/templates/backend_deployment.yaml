@@ -32,7 +32,7 @@ spec:
           image: thinkportgmbh/workshops:kubeproxy
           ports:
             - containerPort: 8081
-    volumes:
+      volumes:
       - name: workshop
         persistentVolumeClaim:
           claimName: workshop

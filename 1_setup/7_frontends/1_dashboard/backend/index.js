@@ -514,7 +514,19 @@ socketio.on("connection", (socket) => {
           //socket.emit("cluster", message);
         })
       )
-      .then(async () => {
+      .catch((errors) => {
+        //console.log(errors);
+        kubectl_error = true;
+      })
+      .finally(async () => {
+        if (kubectl_error == true) {
+          console.log("Kubectl connection error");
+          socket.emit("cluster", message);
+        } else {
+          console.log("Connected to Cluster");
+          socket.emit("cluster", message);
+        }
+
         let markdown = {};
         let basePath = "../../../../";
         markdown.kubernetes = await read(
@@ -546,19 +558,6 @@ socketio.on("connection", (socket) => {
           "utf8"
         );
         socket.emit("lab", markdown);
-      })
-      .catch((errors) => {
-        //console.log(errors);
-        kubectl_error = true;
-      })
-      .finally(() => {
-        if (kubectl_error == true) {
-          console.log("Kubectl connection error");
-          socket.emit("cluster", message);
-        } else {
-          console.log("Connected to Cluster");
-          socket.emit("cluster", message);
-        }
       });
     //let kubernetesMD = read_markdown();
 

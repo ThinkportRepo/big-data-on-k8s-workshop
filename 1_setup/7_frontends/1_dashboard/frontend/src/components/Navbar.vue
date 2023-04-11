@@ -26,7 +26,7 @@
           </v-list-item-avatar>
 
           <v-list-item-content class="ma-0">
-            <v-list-item-title>{{ test }}</v-list-item-title>
+            <v-list-item-title>REPLACE_LAB_USER</v-list-item-title>
             <v-list-item-subtitle>Practice Lab</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
@@ -398,7 +398,6 @@ export default {
     show_exercise_8_metabase: false,
     show_exercise_9_monitoring: false,
     show_exercise_10_sheduling: false,
-    test: process.env.VUE_APP_REPLACE_LAB_USER,
   }),
   watch: {
     group() {

@@ -5,11 +5,6 @@ WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ .
-WORKDIR /app/frontend/src
-# copy all Markdown files over to app/frontend/src/markdown
-RUN mkdir markdown
-RUN cp /big-data-on-k8s-workshop/2_lab/exercises/1_Kubernetes/README.md /app/frontend/src/markdown/1_Kubernetes.md
-WORKDIR /app
 
 RUN npm run build
 

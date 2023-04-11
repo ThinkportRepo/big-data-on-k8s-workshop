@@ -2,7 +2,7 @@
 ####Namespaces & Secrets####
 ############################
 locals {
-  namespaces = toset([ "default", "minio", "hive", "kafka", "spark", "trino", "frontend", "ingress" ])
+  namespaces = toset([ "default", "minio", "hive", "kafka", "spark", "trino", "frontend", "ingress", "nosql", "monitoring", "sheduling" ])
 }
 resource "kubernetes_namespace" "ns" {
   for_each = setsubtract(local.namespaces, ["default"])
@@ -262,7 +262,6 @@ resource "helm_release" "minio" {
 ##################
 #### Hive      ###
 ##################
-
 resource "helm_release" "hive" {
   depends_on = [
     helm_release.minio
@@ -324,7 +323,9 @@ resource "helm_release" "kafka-resources" {
 #     name = kubernetes_secret.dockerhub["spark"].metadata.0.name
 #   }
 # }
-
+##################
+#### Spark     ###
+##################
 resource "helm_release" "spark" {
   depends_on = [
     helm_release.minio,
@@ -355,6 +356,9 @@ resource "helm_release" "spark" {
   }
 }
 
+##################
+#### Trino     ###
+##################
 resource "helm_release" "trino" {
   depends_on = [
     helm_release.minio,
@@ -372,6 +376,23 @@ resource "helm_release" "trino" {
     name = "host"
     value = "trino.${var.ClusterDNS}"
   }
+  timeout = 600
+}
+
+###################
+#### Cassandra  ###
+###################
+resource "helm_release" "cassandra" {
+  depends_on = [
+    helm_release.nginx_ingress
+  ]
+  name = "cassandra"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart = "cassandra"
+  namespace = kubernetes_namespace.ns["nosql"].metadata.0.name
+  values = [
+    "${file("../../9_cassandra/values.yaml")}"
+  ]
   timeout = 600
 }
 

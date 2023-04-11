@@ -575,10 +575,10 @@ resource "kubernetes_job" "gitcloner" {
               "rm -rf /workshop/exercises;",
               "rm -rf /workshop/solutions;",
               "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
-              "mkdir /workshop/exercises;",
-              "mkdir /workshop/solutions;",
-              "cp -r /workshop/git/2_lab/exercises/ /workshop/;",
-              "cp -r /workshop/git/2_lab/solutions/ /workshop/"
+              #"mkdir /workshop/exercises;",
+              #"mkdir /workshop/solutions;",
+              "ln -s /workshop/git/2_lab/exercises /workshop;",
+              "ln -s /workshop/git/2_lab/solutions /workshop;"
               ])
             ]
               env {

@@ -17,5 +17,5 @@ helm upgrade --install -f values.yaml -n monitoring prometheus-stack prometheus-
 - also stored in: k get secret kube-prometheus-grafana -o yaml
 
 ### Dashboards
-- included from https://github.com/dotdc/grafana-dashboards-kubernetes (corresponding post https://medium.com/@dotdc/a-set-of-modern-grafana-dashboards-for-kubernetes-4b989c72a4b2)
+- included from https://github.com/dotdc/grafana-dashboards-kubernetes (corresponding post https://0xdc.me/blog/a-set-of-modern-grafana-dashboards-for-kubernetes/)
 

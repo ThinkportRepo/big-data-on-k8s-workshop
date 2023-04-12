@@ -913,3 +913,37 @@ resource "helm_release" "headlamp" {
 #  }
 #  timeout = 600
 #}
+
+################################
+#### Promotheus and Grafana  ###
+################################
+
+resource "helm_release" "prometheus-resources" {
+  depends_on = [
+       kubernetes_namespace.ns["monitoring"]
+  ]
+  name = "prometheus-stack"
+  namespace = kubernetes_namespace.ns["monitoring"].metadata.0.name
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  values = [
+    "${file("../../11_prometheus_grafana/values.yaml")}"
+  ]
+  set {
+    name = "alertmanager.ingress.hosts[0]"
+    value = "prometheus.${var.ClusterDNS}"
+  }
+  set {
+    name = "grafana.ingress.hosts[0]"
+    value = "grafana.${var.ClusterDNS}"
+  }
+  set {
+    name = "grafana.adminUser"
+    value = "trainadm"
+  }
+  set {
+    name = "grafana.adminPassword"
+    value = "train@thinkport"
+  }
+  timeout = 600
+}

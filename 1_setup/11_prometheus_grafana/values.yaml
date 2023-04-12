@@ -276,7 +276,7 @@ alertmanager:
     ## Hosts must be provided if Ingress is enabled.
     ##
     hosts: 
-      - prometheus.trainer.lab.bigdata.workshop.thinkport.cloud
+      - prometheus.0d266633af344b99889f.westeurope.aksapp.io
     ## Paths to use for ingress rules - one path should match the alertmanagerSpec.routePrefix
     ##
     paths: []
@@ -806,7 +806,7 @@ grafana:
     ## Must be provided if Ingress is enable.
     ##
     hosts:
-      - grafana.trainer.lab.bigdata.workshop.thinkport.cloud
+      - grafana.0d266633af344b99889f.westeurope.aksapp.io
 
     ## Path for grafana ingress
     path: /

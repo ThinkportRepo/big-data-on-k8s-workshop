@@ -542,3 +542,106 @@ from data.twitter
 group by date, hour
 order by date, hour
 ```
+## 5. Daten aus dem Cassandra-Catalog lesen
+
+Eine neue Connection erstellen:
+
+```
+Name: Cassandra
+Driver: Trino
+Host: trino.trino.svc.cluster.local
+Port: 8080
+Database User: trino
+Catalog: cassandra
+```
+
+Ein Keyspace ist ein äußerstes Objekt in einem Cassandra-Cluster, das steuert, wie Daten auf den Nodes repliziert werden.
+Die Tabellen, die wir benötigen, werden im `countries` Keyspace erstellt und daher über das Muster `<keyspace>.<table>` aufgerufen, zum Beispiel `countries.country_population`.
+
+### 1. Cassandra Tables
+
+Schau dir die verfügbaren Tabellen in der Datenbank 
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+show tables from countries;
+```
+</details>
+</p>
+
+Schau dir mal die `country_population` Tabelle und mit dem Befehl `describe` auch die Informationen über die Tabelle.
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT * FROM
+  countries.country_population
+  ;
+```
+
+```
+describe countries.country_population;
+```
+</details>
+</p>
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT 
+    c.name as country_name,
+    c.population,
+    c.pct_under_20,
+    COUNT(*) as big_data_tag_count
+FROM delta.data.twitter twit
+  cross join unnest(hashtags) AS twit (tags)
+  JOIN cassandra.countries.country_population c ON twit.user_location = c.name
+WHERE 
+    twit.tags LIKE 'BigData'
+GROUP BY 
+    c.name, c.population, c.pct_under_20
+ORDER BY 
+   big_data_tag_count DESC;
+```
+</details>
+</p>
+
+## 2. Business Case - Analyze Tweets zusammen mit Länderdaten 
+
+Business Case: Verstehen, welche Länder mit einem höheren Anteil junger Menschen (unter 20 Jahren) Interesse an einer bestimmten Technologie zeigen (basierend auf einem Hashtag, z. B. "#BigData"), um die Marketingmaßnahmen entsprechend zu optimieren.
+
+
+1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der country_population Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird die `unnest` Funktion für die Hashtags benötigt. 
+2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt 
+
+<details>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT 
+    c.name as country_name,
+    c.population,
+    c.pct_under_20,
+    COUNT(*) as big_data_tag_count,
+    SUM(twit.retweet_count) AS total_retweets,
+    ROUND(AVG(twit.retweet_count)) AS avg_retweets_per_tweet
+FROM delta.data.twitter twit
+  cross join unnest(hashtags) AS twit (tags)
+  JOIN countries.country_population c ON twit.user_location = c.name
+WHERE 
+    twit.tags LIKE 'BigData' AND c.pct_under_20 > 20 
+GROUP BY 
+    c.name, c.population, c.pct_under_20
+ORDER BY 
+   big_data_tag_count DESC;
+```
+</details>
+</p>

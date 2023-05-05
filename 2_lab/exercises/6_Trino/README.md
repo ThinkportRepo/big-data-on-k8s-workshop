@@ -390,6 +390,52 @@ Die Tabellen, die wir benötigen, werden im `countries` Keyspace erstellt und da
 
 ### 1. Cassandra Tables
 
+Erstelle eine `countries` Keyspace und eine `country_population` Tabelle. Gebe dabei die Spalten `id`, `name`, `code`, `population`, `pct_under_20`, `pct_urban`, `pct_working_age`.
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+CREATE KEYSPACE IF NOT EXISTS <keyspace_name> 
+    WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
+
+CREATE TABLE IF NOT EXISTS <keyspace_name>.<table_name> ([schema]);
+```
+</details>
+</p>
+
+Füge Daten in die Tabelle ein
+
+<details>
+<summary>Tipp</summary>
+<p>
+
+```
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (1, 'USA', 'US', 329484123, 24, 83, 64);
+
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (2, 'Brazil', 'BR', 212559409, 28, 88, 69);
+
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (3, 'Spain', 'ES', 47351567, 19, 80, 66);
+
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (4, 'Germany', 'DE', 83240525, 18, 76, 64);
+
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (5, 'United Kingdom', 'UK', 67215293, 23, 83, 63);
+
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (6, 'India', 'IN', 1380004385, 34, 35, 69);
+
+INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
+VALUES (7, 'France', 'FR', 67391582, 23, 82, 61);
+```
+</details>
+</p>
+
 Schau dir die verfügbaren Tabellen in der Datenbank 
 
 <details>

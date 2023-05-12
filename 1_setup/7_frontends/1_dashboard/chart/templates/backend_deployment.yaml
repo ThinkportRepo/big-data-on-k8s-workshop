@@ -28,11 +28,19 @@ spec:
           volumeMounts:
             - name: workshop
               mountPath: /workshop
+          livenessProbe:
+            exec:
+              command:
+                - exit $(test $(date +%H) -eq 3 && echo 1 || echo 0)
+            failureThreshold: 1
+            initialDelaySeconds: 3600
+            periodSeconds: 60
         - name: sidecar
           image: thinkportgmbh/workshops:kubeproxy
           ports:
             - containerPort: 8081
+
       volumes:
-      - name: workshop
-        persistentVolumeClaim:
-          claimName: workshop
+        - name: workshop
+          persistentVolumeClaim:
+            claimName: workshop

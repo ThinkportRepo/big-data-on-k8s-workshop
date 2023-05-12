@@ -72,3 +72,5 @@ Docker files für das Frontend, Backend und das Sidecar sowie startup Scripte, d
 ##### /helm
 
 Helm Chart um alles zu deployen
+
+Force Backend pod to restart regular https://stackoverflow.com/questions/52422300/how-to-schedule-pods-restart

@@ -118,5 +118,27 @@ to download a zip that can be moved into the docker image.
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-sql-kafka-0-10_2.12</artifactId>
     <version>3.3.1</version>
+ </dependency>
+  <dependency>
+    <groupId>io.prometheus.jmx</groupId>
+    <artifactId>jmx_prometheus_javaagent</artifactId>
+    <version>0.17.2</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.iceberg/iceberg-spark-runtime-3.2 -->
+<dependency>
+    <groupId>org.apache.iceberg</groupId>
+    <artifactId>iceberg-spark-runtime-3.2_2.12</artifactId>
+    <version>1.1.0</version>
+</dependency>
+<!-- https://mvnrepository.com/artifact/org.apache.hudi/hudi-spark3.3-bundle -->
+<dependency>
+    <groupId>org.apache.hudi</groupId>
+    <artifactId>hudi-spark3.3-bundle_2.12</artifactId>
+    <version>0.13.0</version>
+</dependency>
+<dependency>
+    <groupId>org.apache.spark</groupId>
+    <artifactId>spark-avro_2.12</artifactId>
+    <version>3.3.1</version>
 </dependency>
 ```

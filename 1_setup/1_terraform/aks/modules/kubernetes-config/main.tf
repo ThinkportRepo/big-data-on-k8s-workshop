@@ -575,10 +575,10 @@ resource "kubernetes_job" "gitcloner" {
               "rm -rf /workshop/exercises;",
               "rm -rf /workshop/solutions;",
               "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
-              "mkdir /workshop/exercises;",
-              "mkdir /workshop/solutions;",
-              "cp -r /workshop/git/2_lab/exercises/ /workshop/;",
-              "cp -r /workshop/git/2_lab/solutions/ /workshop/"
+              #"mkdir /workshop/exercises;",
+              #"mkdir /workshop/solutions;",
+              "ln -s /workshop/git/2_lab/exercises /workshop;",
+              "ln -s /workshop/git/2_lab/solutions /workshop;"
               ])
             ]
               env {
@@ -913,3 +913,37 @@ resource "helm_release" "headlamp" {
 #  }
 #  timeout = 600
 #}
+
+################################
+#### Promotheus and Grafana  ###
+################################
+
+resource "helm_release" "prometheus-resources" {
+  depends_on = [
+       kubernetes_namespace.ns["monitoring"]
+  ]
+  name = "prometheus-stack"
+  namespace = kubernetes_namespace.ns["monitoring"].metadata.0.name
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+  values = [
+    "${file("../../11_prometheus_grafana/values.yaml")}"
+  ]
+  set {
+    name = "alertmanager.ingress.hosts[0]"
+    value = "prometheus.${var.ClusterDNS}"
+  }
+  set {
+    name = "grafana.ingress.hosts[0]"
+    value = "grafana.${var.ClusterDNS}"
+  }
+  set {
+    name = "grafana.adminUser"
+    value = "trainadm"
+  }
+  set {
+    name = "grafana.adminPassword"
+    value = "train@thinkport"
+  }
+  timeout = 600
+}

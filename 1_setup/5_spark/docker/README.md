@@ -101,7 +101,7 @@ to download a zip that can be moved into the docker image.
 <dependency>
     <groupId>io.delta</groupId>
     <artifactId>delta-core_2.12</artifactId>
-    <version>2.1.1</version>
+    <version>2.3.0</version>
 </dependency>
 <dependency>
     <groupId>org.postgresql</groupId>

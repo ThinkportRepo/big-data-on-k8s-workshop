@@ -17,6 +17,8 @@ spec:
     "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
     "spark.eventLog.enabled": "true"
     "spark.eventLog.dir": "file:/spark-logs"
+    "spark.ui.prometheus.enabled": "true"
+    "spark.executor.processTreeMetrics.enabled": "true"
   # s3 connection configuration
   hadoopConf:
     "fs.s3a.endpoint": "minio.minio.svc.cluster.local:9000"

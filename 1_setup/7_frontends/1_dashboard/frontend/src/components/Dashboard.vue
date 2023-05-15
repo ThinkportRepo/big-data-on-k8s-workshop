@@ -119,7 +119,7 @@
       <v-col cols="mb-4" v-if="show_prometheus">
         <Card
           title="Prometheus UI"
-          text="Analytics & monitoring "
+          text="Alerts & Monitoring "
           url_label="Open Prometheus"
           subdomain="prometheus"
           image="prometheus_logo.png"
@@ -129,7 +129,7 @@
       <v-col cols="mb-4" v-if="show_grafana">
         <Card
           title="Grafana UI"
-          text="Monitoring Dasahboard"
+          text="Monitoring Dashboard"
           url_label="Open Grafana"
           subdomain="grafana"
           image="grafana_logo.jpeg"
@@ -192,6 +192,10 @@ export default {
         status = this.serverOutput.kafka.status;
       } else if (app_key == "spark") {
         status = this.serverOutput.spark.status;
+      } else if (app_key == "prometheus") {
+        status = this.serverOutput.monitoring.status;
+      } else if (app_key == "grafana") {
+        status = this.serverOutput.monitoring.grafana.status;
       } else {
         status = this.serverOutput.frontend[app_key].status;
       }

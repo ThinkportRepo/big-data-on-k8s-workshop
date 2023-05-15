@@ -53,21 +53,27 @@ RUN git clone https://github.com/ahmetb/kubectx /opt/kubectx && \
     ~/.fzf/install
 
 # install spark client
-RUN curl -L https://dlcdn.apache.org/spark/spark-3.3.1/spark-3.3.1-bin-hadoop3.tgz -o spark-3.3.1-bin-hadoop3.tgz && \
-    tar -xvf spark-3.3.1-bin-hadoop3.tgz && \
-    rm -f spark-3.3.1-bin-hadoop3.tgz && \
-    mv spark-3.3.1-bin-hadoop3 /opt/spark
+RUN curl -L https://dlcdn.apache.org/spark/spark-3.3.2/spark-3.3.2-bin-hadoop3.tgz -o spark-3.3.2-bin-hadoop3.tgz && \
+    tar -xvf spark-3.3.2-bin-hadoop3.tgz && \
+    rm -f spark-3.3.2-bin-hadoop3.tgz && \
+    mv spark-3.3.2-bin-hadoop3 /opt/spark
 ENV SPARK_HOME=/opt/spark
 ENV PATH="${PATH}:/opt/spark/bin"
 
 # install kafka client
-RUN curl -L https://downloads.apache.org/kafka/3.3.1/kafka_2.12-3.3.1.tgz -o kafka_2.12-3.3.1.tgz && \
-    tar -xvf kafka_2.12-3.3.1.tgz && \
-    rm -f kafka_2.12-3.3.1.tgz && \
-    mv kafka_2.12-3.3.1 /opt/kafka
+RUN curl -L https://downloads.apache.org/kafka/3.3.2/kafka_2.12-3.3.2.tgz -o kafka_2.12-3.3.2.tgz && \
+    tar -xvf kafka_2.12-3.3.2.tgz && \
+    rm -f kafka_2.12-3.3.2.tgz && \
+    mv kafka_2.12-3.3.2 /opt/kafka
 ENV KAFKA_HOME=/opt/kafka
 ENV PATH="${PATH}:/opt/kafka/bin"
 
+# install cassandra client
+RUN curl -L https://downloads.datastax.com/enterprise/cqlsh-5.1.tar.gz -o cqlsh-5.1.tar.gz && \
+    tar -xvf cqlsh-5.1.tar.gz && \
+    rm cqlsh-5.1.tar.gz && \
+    mv cqlsh-5.1.34 /opt/cqlsh
+ENV PATH="${PATH}:/opt/cqlsh/bin"
 
 
 
@@ -101,7 +107,8 @@ ENV PASSWORD=${PASSWORD:-P@ssw0rd}
 
 RUN echo "source <(kubectl completion bash)" >> /home/coder/.bashrc && \
     echo 'export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "' >> /home/coder/.bashrc
-RUN source /usr/share/bash-completion/bash_completion
+#RUN source /usr/share/bash-completion/bash_completion
+
 
 WORKDIR /home/coder
 

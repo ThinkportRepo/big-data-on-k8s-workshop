@@ -4,7 +4,7 @@ IFS=$'\n'       # make newlines the only separator
 set -f          # disable globbing
 pwd=$PWD/aks
 
-rg="big-data-k8s-workshop"
+rg="bigdata-k8s-workshop"
 
 read -p '++ Should a new Azure resource group be created (yes/no): ' c_rg
 

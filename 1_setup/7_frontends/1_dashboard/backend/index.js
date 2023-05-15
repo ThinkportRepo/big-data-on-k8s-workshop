@@ -176,6 +176,41 @@ let message = {
       restarts: 0,
       pod: "",
     },
+    operator: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    metrics: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    alertmanager: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    nodeexporter1: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    nodeexporter1: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    nodeexporter2: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
+    nodeexporter3: {
+      status: "Missing",
+      restarts: 0,
+      pod: "",
+    },
     grafana: {
       status: "Missing",
       restarts: 0,
@@ -369,6 +404,72 @@ function parseSpark(message, response) {
   return message;
 }
 
+function parseMonitoring(message, response) {
+  j = 1;
+  for (var i = 0; i < response.data.items.length; i++) {
+    item = response.data.items[i];
+    if (
+      item.metadata.name.includes(
+        "prometheus-prometheus-stack-kube-prom-prometheus"
+      )
+    ) {
+      message.monitoring.prometheus = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+    }
+    if (item.metadata.name.includes("kube-prom-operator")) {
+      message.monitoring.operator = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+    }
+    if (item.metadata.name.includes("alertmanager")) {
+      message.monitoring.alertmanager = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+    }
+    if (item.metadata.name.includes("kube-state-metrics")) {
+      message.monitoring.metrics = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+    }
+    if (item.metadata.name.includes("prometheus-node-exporter")) {
+      message.monitoring["nodeexporter" + j] = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+      j++;
+    }
+    if (item.metadata.name.includes("grafana")) {
+      message.monitoring.grafana = {
+        status: item.status.phase,
+        restarts: item.status.containerStatuses[0].restartCount,
+        pod: item.metadata.name,
+      };
+    }
+  }
+  if (
+    message.monitoring.prometheus.status == "Running" &&
+    message.monitoring.operator.status == "Running" &&
+    message.monitoring.alertmanager.status == "Running" &&
+    message.monitoring.metrics.status == "Running" &&
+    message.monitoring.nodeexporter1.status == "Running" &&
+    message.monitoring.nodeexporter2.status == "Running" &&
+    message.monitoring.grafana.status == "Running"
+  ) {
+    message.monitoring.status = "Running";
+  }
+  return message;
+}
+
 function parseFrontend(message, response) {
   for (var i = 0; i < response.data.items.length; i++) {
     item = response.data.items[i];
@@ -482,6 +583,9 @@ socketio.on("connection", (socket) => {
     prom_spark = axios.get(
       "http://localhost:8001/api/v1/namespaces/spark/pods/"
     );
+    prom_monitoring = axios.get(
+      "http://localhost:8001/api/v1/namespaces/monitoring/pods/"
+    );
     prom_frontend = axios.get(
       "http://localhost:8001/api/v1/namespaces/frontend/pods/"
     );
@@ -493,6 +597,7 @@ socketio.on("connection", (socket) => {
         prom_trino,
         prom_minio,
         prom_spark,
+        prom_monitoring,
         prom_frontend,
       ])
       .then(
@@ -502,12 +607,14 @@ socketio.on("connection", (socket) => {
           const res_trino = responses[2];
           const res_minio = responses[3];
           const res_spark = responses[4];
-          const res_frontend = responses[5];
+          const res_monitoring = responses[5];
+          const res_frontend = responses[6];
           message = parseKafka(message, res_kakfa);
           message = parseHive(message, res_hive);
           message = parseTrino(message, res_trino);
           message = parseMinio(message, res_minio);
           message = parseSpark(message, res_spark);
+          message = parseMonitoring(message, res_monitoring);
           message = parseFrontend(message, res_frontend);
           //console.log(message);
 
@@ -523,7 +630,7 @@ socketio.on("connection", (socket) => {
           console.log("Kubectl connection error");
           socket.emit("cluster", message);
         } else {
-          console.log("Connected to Cluster");
+          //console.log("Connected to Cluster");
           socket.emit("cluster", message);
         }
 
@@ -562,7 +669,7 @@ socketio.on("connection", (socket) => {
     //let kubernetesMD = read_markdown();
 
     //console.log(kubernetesMD);
-    console.log("running every 3s ...");
+    //console.log("running every 3s ...");
     //socket.emit("lab", kubernetesMD);
   }, 3000);
 });

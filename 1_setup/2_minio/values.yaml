@@ -229,7 +229,7 @@ consoleIngress:
     # nginx.ingress.kubernetes.io/whitelist-source-range: 0.0.0.0/0
   path: /
   hosts:
-    - minio.4c13e49defa742168ff1.northeurope.aksapp.io
+    - minio.student13.lab.bigdata.workshop.thinkport.cloud
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

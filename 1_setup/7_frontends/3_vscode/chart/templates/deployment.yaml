@@ -50,8 +50,8 @@ spec:
             - name: vscode
               mountPath: /home/coder/.local/share/code-server/User/settings.json
               subPath: settings.json
-            - name: kubeconfig
-              mountPath: /home/coder/.kube
+            #- name: kubeconfig
+            #  mountPath: /home/coder/.kube
       volumes:
         - name: workshop
           persistentVolumeClaim:

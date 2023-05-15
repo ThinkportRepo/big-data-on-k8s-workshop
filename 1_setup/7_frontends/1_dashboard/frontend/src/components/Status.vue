@@ -681,6 +681,216 @@
               </v-simple-table>
             </v-expansion-panel-content>
           </v-expansion-panel>
+          <v-expansion-panel>
+            <v-expansion-panel-header disable-icon-rotate>
+              <span class="text-h6">Monitoring</span>
+              <template v-slot:actions>
+                <v-icon :color="appStatusColor(serverOutput.monitoring.status)">
+                  {{ appStatusIcon(serverOutput.monitoring.status) }}
+                </v-icon>
+              </template>
+            </v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-simple-table>
+                <template v-slot:default>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Resource</th>
+                      <th class="text-left">Pod</th>
+                      <th class="text-left">Namespace</th>
+                      <th class="text-left">Restarts</th>
+                      <th class="text-left">Status</th>
+                      <th class="text-right"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Prometheus Operator</td>
+                      <td>{{ serverOutput.monitoring.operator.pod }}</td>
+                      <td>monitoring</td>
+                      <td>{{ serverOutput.monitoring.operator.restarts }}</td>
+                      <td>{{ serverOutput.monitoring.operator.status }}</td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.operator.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.operator.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Prometheus</td>
+                      <td>{{ serverOutput.monitoring.prometheus.pod }}</td>
+                      <td>monitoring</td>
+                      <td>{{ serverOutput.monitoring.prometheus.restarts }}</td>
+                      <td>{{ serverOutput.monitoring.prometheus.status }}</td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.prometheus.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.prometheus.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Metrics Server</td>
+                      <td>{{ serverOutput.monitoring.metrics.pod }}</td>
+                      <td>monitoring</td>
+                      <td>{{ serverOutput.monitoring.metrics.restarts }}</td>
+                      <td>{{ serverOutput.monitoring.metrics.status }}</td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.metrics.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.metrics.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Alert Manager</td>
+                      <td>{{ serverOutput.monitoring.alertmanager.pod }}</td>
+                      <td>monitoring</td>
+                      <td>
+                        {{ serverOutput.monitoring.alertmanager.restarts }}
+                      </td>
+                      <td>{{ serverOutput.monitoring.alertmanager.status }}</td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.alertmanager.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.alertmanager.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Grafana</td>
+                      <td>{{ serverOutput.monitoring.grafana.pod }}</td>
+                      <td>monitoring</td>
+                      <td>{{ serverOutput.monitoring.grafana.restarts }}</td>
+                      <td>{{ serverOutput.monitoring.grafana.status }}</td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.grafana.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.grafana.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Node Exporter 1</td>
+                      <td>{{ serverOutput.monitoring.nodeexporter1.pod }}</td>
+                      <td>monitoring</td>
+                      <td>
+                        {{ serverOutput.monitoring.nodeexporter1.restarts }}
+                      </td>
+                      <td>
+                        {{ serverOutput.monitoring.nodeexporter1.status }}
+                      </td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.nodeexporter1.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.nodeexporter1.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Node Exporter 2</td>
+                      <td>{{ serverOutput.monitoring.nodeexporter2.pod }}</td>
+                      <td>monitoring</td>
+                      <td>
+                        {{ serverOutput.monitoring.nodeexporter2.restarts }}
+                      </td>
+                      <td>
+                        {{ serverOutput.monitoring.nodeexporter2.status }}
+                      </td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.nodeexporter2.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.nodeexporter2.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>Node Exporter 3</td>
+                      <td>{{ serverOutput.monitoring.nodeexporter3.pod }}</td>
+                      <td>monitoring</td>
+                      <td>
+                        {{ serverOutput.monitoring.nodeexporter3.restarts }}
+                      </td>
+                      <td>
+                        {{ serverOutput.monitoring.nodeexporter3.status }}
+                      </td>
+                      <td class="text-right">
+                        <v-icon
+                          :color="
+                            appStatusColor(
+                              serverOutput.monitoring.nodeexporter3.status
+                            )
+                          ">
+                          {{
+                            appStatusIconTable(
+                              serverOutput.monitoring.nodeexporter3.status
+                            )
+                          }}
+                        </v-icon>
+                      </td>
+                    </tr>
+                  </tbody>
+                </template>
+              </v-simple-table>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
         </v-expansion-panels>
       </v-col>
     </v-row>

@@ -248,6 +248,7 @@ resource "helm_release" "minio" {
   name = "minio"
   repository = "https://charts.min.io/"
   chart = "minio"
+  version = "5.0.7"
   namespace = kubernetes_namespace.ns["minio"].metadata.0.name
   values = [
     "${file("../../2_minio/values.yaml")}"
@@ -495,10 +496,12 @@ resource "kubernetes_config_map" "bashrc" {
     complete -o default -F __start_kubectl k
     alias s3=s3cmd
     alias kn=kubens
+    alias cqlsh='cqlsh -u trainadm -p train@thinkport'
     export KUBECONFIG=/home/coder/.kube/kubeconfig
     export KUBECACHEDIR=/tmp/kubecache
     export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
     source /usr/share/bash-completion/bash_completion
+    export PATH="/opt/cqlsh/bin:$PATH"
     EOT
   }
 }
@@ -577,8 +580,12 @@ resource "kubernetes_job" "gitcloner" {
               "git clone https://oauth2:$${GITHUB_TOKEN}@github.com/$${GITHUB_REPOSITORY} /workshop/git;",
               #"mkdir /workshop/exercises;",
               #"mkdir /workshop/solutions;",
-              "ln -s /workshop/git/2_lab/exercises /workshop;",
-              "ln -s /workshop/git/2_lab/solutions /workshop;"
+              #"cp -r /workshop/git/2_lab/exercises/ /workshop/;",
+              #"cp -r /workshop/git/2_lab/solutions/ /workshop/"
+              #"ln -s /workshop/git/2_lab/exercises /workshop;",
+              #"ln -s /workshop/git/2_lab/solutions /workshop;"
+              # local: ln -s /home/coder/git/2_lab/exercises/ /home/coder/
+              # local: ln -s /home/coder/git/2_lab/solutions/ /home/coder/
               ])
             ]
               env {
@@ -655,16 +662,18 @@ resource "kubernetes_job" "init" {
                 "echo Github User: $GITHUB_REPOSITORY;",
                 "echo ls /workshop/;",
                 "ls /workshop/;",
-                "echo ls /workshop/exercises/;",
-                "ls /workshop/exercises/;",
-                "echo ls /workshop/solutions;",
-                "ls /workshop/git/2_lab/data/;",
                 "echo kubectl get po;",
                 "kubectl get po;",
+                "echo \"############################################\";",
+                "echo copy data to s3://data;",
                 "s3cmd mb s3://data;",
                 "s3cmd ls;",
                 "s3cmd put /workshop/git/2_lab/data/ s3://data/ -r;",
                 "s3cmd ls s3://data;",
+                "echo \"############################################\";",
+                "echo copy config into place;",
+                "mkdir /workshop/.kube;",
+                "cp /config/kubeconfig /workshop/.kube/kubeconfig;",
                 "echo \"############################################\";"]
                 )
             ]
@@ -696,13 +705,19 @@ resource "kubernetes_job" "init" {
                 name = "workshop"
               }
               volume_mount {
-                mount_path = "/config/"
+                mount_path = "/config/kubeconfig"
                 name = "kubeconfig"
+                sub_path = "kubeconfig"
               }
               volume_mount {
-                mount_path = "/home/coder/.s3cfg"
+                mount_path = "/config/.s3cfg"
                 name = "s3cmd"
                 sub_path = ".s3cfg"
+              }
+              volume_mount {
+                mount_path = "/config/bashrc"
+                name = "bashrc"
+                sub_path = "bashrc"
               }
         }
         volume {
@@ -715,6 +730,12 @@ resource "kubernetes_job" "init" {
           name = "s3cmd"
           config_map {
             name = "s3cmd"
+          } 
+        }
+        volume {
+          name = "bashrc"
+          config_map {
+            name = "bashrc"
           } 
         }
         volume {
@@ -733,6 +754,7 @@ resource "kubernetes_job" "init" {
     update = "2m"
   }
 }
+
 
 resource "helm_release" "dashboard" {
   depends_on = [

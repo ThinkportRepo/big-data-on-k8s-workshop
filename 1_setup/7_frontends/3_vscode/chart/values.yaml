@@ -4,7 +4,7 @@
 namespace: "frontend"
 
 # Image
-image: "thinkportgmbh/workshops:vscode"
+image: "thinkportgmbh/workshops:vscode2"
 
 # Basic Authentication Username
 user: "trainadm"

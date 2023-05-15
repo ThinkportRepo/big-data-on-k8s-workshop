@@ -98,7 +98,7 @@ kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 -
 Der Kafka Operator ermöglicht es ein Kafka Topic als Kubernetes Resource, also mit einer Yaml Konfiguration zu managen. Dass hat den großen Vorteil, dass sämtliche Topics und ihre Konfiguration als versionierbarer Code gespeichert und jederzeit wieder reproduziert werden können sowie keine langen CLI Befehle zum Topic management verwendet werden müssen.
 
 Im Ordner `/3_Kafka/Producer/` befindet sich die Datei `TOPIC_twitter-raw.yaml`.
-Öffne diese Datei und füge den Topic Namen `twitter_raw` ein.
+Öffne diese Datei und füge den Topic Namen `twitter-raw` ein.
 
 Erstelle das Topic in Kafka anschließend durch
 
@@ -179,7 +179,7 @@ kubectl apply -f DEPLOY_twitter_data_producer.yaml
 <summary>Lösungen</summary>
 
 ```bash
-kafka-console-consumer.sh --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning --max-messages 10
+kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-raw --from-beginning --max-messages 10
 
 ```
 
@@ -218,7 +218,7 @@ kafka-topics.sh --describe --bootstrap-server <service-name>.<namespace>.svc.clu
 Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu löschen.
 
 ```
-kafka-topics.sh --delete --bootstrap-server kafka-cp-kafka.kafka.svc.cluster.local:9092 --topic twitter-table
+kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-table
 ```
 
 und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.
@@ -259,7 +259,7 @@ Ersetzte hier zunächst die `XXXXXXXX` mit den korrekten Werten und starte den P
 Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst in das Verzeichnis `exercices/3_Kafka/2_Converter/` gehen)
 
 ```
-kubectl apply -f pod_twitter_data_converter.yaml
+kubectl apply -f POD_twitter_data_converter.yaml
 ```
 
 Anschlißend überprüfe ob der Pod erfolgreich gestartartet ist und Twitterdaten verarbeitet.

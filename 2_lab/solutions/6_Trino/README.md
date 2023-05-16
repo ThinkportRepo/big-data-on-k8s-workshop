@@ -14,8 +14,8 @@ Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`, also im Buc
 
 Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein und gehe oben Links auf das Dropdown "New connection".
 
-
 Eine neue Connection erstellen mit:
+
 ```
 Name: Delta
 Driver: Trino
@@ -26,9 +26,7 @@ Catalog: delta
 Schema: data
 ```
 
-
 Connection zuerst mit dem Button Test prüfen und dann speichern
-
 
 Eventuell tauchen links noch keine Schema auf. Schau mit folgenden Befehlen was bei Trino verfügbar ist. <br>
 
@@ -91,6 +89,7 @@ EXPLAIN SELECT * FROM data.twitter;
 ## 3. Aufgaben in SQL formulieren
 
 Die folgenden Aufgaben können mit Hilfe von SQL-Abfragen gelöst werden. <br>
+
 > Die Trino Dokumentation kann dabei sehr gut behilflich sein. <br> https://trino.io/docs/current/index.html
 
 ### 1. Datensatzes
@@ -542,6 +541,7 @@ from data.twitter
 group by date, hour
 order by date, hour
 ```
+
 ## 5. Daten aus dem Cassandra-Catalog lesen
 
 Eine neue Connection erstellen:
@@ -559,6 +559,7 @@ Ein Keyspace ist ein äußerstes Objekt in einem Cassandra-Cluster, das steuert,
 Die Tabellen, die wir benötigen, werden im `countries` Keyspace erstellt und daher über das Muster `<keyspace>.<table>` aufgerufen, zum Beispiel `countries.country_population`.
 
 ### 1. Cassandra Tables
+
 Erstelle eine `countries` Keyspace und eine `country_population` Tabelle. Gebe dabei die Spalten `id`, `name`, `code`, `population`, `pct_under_20`, `pct_urban`, `pct_working_age`.
 
 <details>
@@ -566,11 +567,12 @@ Erstelle eine `countries` Keyspace und eine `country_population` Tabelle. Gebe d
 <p>
 
 ```
-CREATE KEYSPACE IF NOT EXISTS countries 
+CREATE KEYSPACE IF NOT EXISTS countries
     WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 
 CREATE TABLE IF NOT EXISTS countries.country_population (id int PRIMARY KEY, name text, code text, population bigint, pct_under_20 int, pct_urban int, pct_working_age int);
 ```
+
 </details>
 </p>
 
@@ -602,10 +604,11 @@ VALUES (6, 'India', 'IN', 1380004385, 34, 35, 69);
 INSERT INTO countries.country_population (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
 VALUES (7, 'France', 'FR', 67391582, 23, 82, 61);
 ```
+
 </details>
 </p>
 
-Schau dir die verfügbaren Tabellen in der Datenbank 
+Schau dir die verfügbaren Tabellen in der Datenbank
 
 <details>
 <summary>Lösung</summary>
@@ -614,6 +617,7 @@ Schau dir die verfügbaren Tabellen in der Datenbank
 ```
 show tables from countries;
 ```
+
 </details>
 </p>
 
@@ -632,6 +636,7 @@ SELECT * FROM
 ```
 describe countries.country_population;
 ```
+
 </details>
 </p>
 
@@ -640,7 +645,7 @@ describe countries.country_population;
 <p>
 
 ```
-SELECT 
+SELECT
     c.name as country_name,
     c.population,
     c.pct_under_20,
@@ -648,30 +653,30 @@ SELECT
 FROM delta.data.twitter twit
   cross join unnest(hashtags) AS twit (tags)
   JOIN cassandra.countries.country_population c ON twit.user_location = c.name
-WHERE 
+WHERE
     twit.tags LIKE 'BigData'
-GROUP BY 
+GROUP BY
     c.name, c.population, c.pct_under_20
-ORDER BY 
+ORDER BY
    big_data_tag_count DESC;
 ```
+
 </details>
 </p>
 
-## 2. Business Case - Analyze Tweets zusammen mit Länderdaten 
+## 2. Business Case - Analyze Tweets zusammen mit Länderdaten
 
 Business Case: Verstehen, welche Länder mit einem höheren Anteil junger Menschen (unter 20 Jahren) Interesse an einer bestimmten Technologie zeigen (basierend auf einem Hashtag, z. B. "#BigData"), um die Marketingmaßnahmen entsprechend zu optimieren.
 
-
-1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der country_population Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird die `unnest` Funktion für die Hashtags benötigt. 
-2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt 
+1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der country_population Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird die `unnest` Funktion für die Hashtags benötigt.
+2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt
 
 <details>
 <summary>Lösung</summary>
 <p>
 
 ```
-SELECT 
+SELECT
     c.name as country_name,
     c.population,
     c.pct_under_20,
@@ -681,12 +686,13 @@ SELECT
 FROM delta.data.twitter twit
   cross join unnest(hashtags) AS twit (tags)
   JOIN countries.country_population c ON twit.user_location = c.name
-WHERE 
-    twit.tags LIKE 'BigData' AND c.pct_under_20 > 20 
-GROUP BY 
+WHERE
+    twit.tags LIKE 'BigData' AND c.pct_under_20 > 20
+GROUP BY
     c.name, c.population, c.pct_under_20
-ORDER BY 
+ORDER BY
    big_data_tag_count DESC;
 ```
+
 </details>
 </p>

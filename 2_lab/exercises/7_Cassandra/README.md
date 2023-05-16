@@ -41,7 +41,7 @@ Diese Daten werden mit einem Jupyter Notebook erzeugt und nach Cassandra geschri
 
 Öffne hierzu das Notebook in `git/2_lab/exercises/Insert_Country_Data_Cassandra.ipynb` und finde und ergänze die richtige Kubernetes interne Adresse des Cassandra Clusters (wie das Patern geht wurde bereits in den Kafka Aufgaben viel geübt)
 
-Führe die Zellen aus und überprüfe mit der CQL-Shell ob die Daten korrekt in die Datenbank geschrieben wurden
+Führe die Zellen aus und überprüfe mit der CQL-Shell ob die Daten korrekt in die Datenbank geschrieben wurden.
 
 ### 3) Mit Trino auf Cassandra zugreifen
 
@@ -103,19 +103,24 @@ Für diese Aufgabe müssen die Delta Daten mit den Twitter Daten gejoint werden 
 ```
 SELECT a.user_location as "country", a.population, a.gdp_per_capita as "gdp" , count(*) as "TweetCount" FROM
 (
-    SELECT delta.user_name,delta.created_at,delta.user_location,delta.language, cassandra.population, cassandra.gdp_per_capita FROM delta.data.twitter delta
-    LEFT JOIN (
-        SELECT
-        code,
-        population,
-        json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
-        FROM cassandra.countries.country_population
-    ) cassandra
-    ON delta.language=cassandra.code
-    ) a
+SELECT delta.user_name,delta.created_at,delta.user_location,delta.language, cassandra.population, cassandra.gdp_per_capita FROM delta.data.twitter delta
+LEFT JOIN (
+    SELECT
+    name,
+    code,
+    population,
+    json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
+    FROM cassandra.countries.country_population
+) cassandra
+ON delta.user_location=cassandra.name
+) a
 GROUP BY a.user_location, a.population, a.gdp_per_capita
 ORDER BY a.population
 ```
 
 </details>
 </p>
+
+### 6) Bonus: Visualisiere diesen Query in Metabase
+
+Dazu muss zunächst Metabase korrekt mit Trino verbunden werden wie in den Metabase Aufgaben beschrieben

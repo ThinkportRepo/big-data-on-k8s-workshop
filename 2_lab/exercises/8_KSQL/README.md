@@ -100,9 +100,9 @@ CREATE TABLE twitter_country AS
 ```
 
 ```
-select select * from twitter_country;
+SELECT * FROM twitter_country;
 
-select select * from twitter_country emit changes;
+SELECT * FROM twitter_country emit changes;
 ```
 
 Probiere die Tabelle zu sortieren, geht das überhaubt bei einme Stream, wenn ja wie würde das aussehen?

@@ -14,8 +14,8 @@ Die Dateien liegen als Delta Datei in s3 unter `s3://twitter/delta`, also im Buc
 
 Öffne den SQL Browser SQLPad und logge dich mit den Standard Credentials ein und gehe oben Links auf das Dropdown "New connection".
 
-
 Eine neue Connection erstellen:
+
 ```
 Name: Delta
 Driver: Trino
@@ -27,7 +27,6 @@ Schema: data
 ```
 
 Connection zuerst mit dem Button Test prüfen und dann speichern.
-
 
 Eventuell tauchen links noch keine Schema auf. Schau mit folgenden Befehlen was bei Trino verfügbar ist. <br>
 
@@ -87,12 +86,13 @@ EXPLAIN SELECT * FROM data.twitter;
 
 ---
 
-## 3. Aufgaben in SQL formulieren
+## 3. SQL Aufgaben
 
 Die folgenden Aufgaben können mit Hilfe von SQL-Abfragen gelöst werden. <br>
+
 > Die Trino Dokumentation kann dabei sehr gut behilflich sein. <br> https://trino.io/docs/current/index.html
 
-### 1. Datensatzes
+### 3.1 Daten
 
 Schau dir den Datensatz einmal genau an. Welche Spalten gibt es? Welche Datentypen sind vorhanden?<br>
 
@@ -111,7 +111,7 @@ language: varchar
 hashtags: array(varchar)
 ```
 
-### 2. Tweets
+### 3.2 Tweets
 
 Schau dir mal **1-2 Tweets** und die dazugehörigen **Hashtags** an.
 
@@ -132,9 +132,7 @@ limit
 </details>
 </p>
 
-
-
-### 3. Tweets pro Stunde
+### 3.3 Tweets pro Stunde
 
 Schreibe eine Abfrage, die die **Anzahl** der **Tweets pro Stunde** zählt.
 
@@ -156,7 +154,7 @@ order by date, <stunde>;
 </details>
 </p>
 
-### 4. Top 10 User nach Tweet-Anzahl
+### 3.4 Top 10 User nach Tweet-Anzahl
 
 Schreibe eine Abfrage, die die **Top User** nach ihrer **Anzahl an Tweets** ausgibt. Bedenke dabei, deine Ausgabe auf **10** Einträge zu limitieren.
 
@@ -181,8 +179,7 @@ limit
 </details>
 </p>
 
-
-### 5. Unnest
+### 3.5 Unnest
 
 Für die folgenden Aufgaben wird die `unnest` Funktion benötigt. Schreibe eine Abfrage die das Hashtag-array mit `unnest` teilt.
 Gebe dabei die Spalten `user_name`, `tweet_id` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen aus.
@@ -206,13 +203,9 @@ limit
 </details>
 </p>
 
-
-### 6. Top 5 Hashtags der Top 10 User
+### 3.6 Top 5 Hashtags der Top 10 User
 
 Schreibe eine Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt.
-
-
-
 
 <details>
 <summary>Tipp</summary>
@@ -249,7 +242,7 @@ LIMIT
 </details>
 </p>
 
-### 7. Top 10 Influencer
+### 3.7 Top 10 Influencer
 
 Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower** zählt und sortiert anzeigt.
 
@@ -274,7 +267,7 @@ limit
 </details>
 </p>
 
-### 8. Anzahl der Tweets der Top 10 Influencer
+### 3.8 Anzahl der Tweets der Top 10 Influencer
 
 Schreibe eine Abfrage, die die **Top 10 Influencer**, ihre Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll es sortiert nach den Anzahl ihrer Follower sein.
 
@@ -311,7 +304,7 @@ LIMIT
 
 ---
 
-## 4. Schreiben mit Trino
+## 3.9 Schreiben mit Trino
 
 Ziel ist, wir schreiben ein Aggregat als csv Datei nach s3.
 
@@ -371,8 +364,12 @@ from data.twitter
 group by date, hour
 order by date, hour
 ```
+
 ---
-## 5. Daten aus dem Cassandra-Katalog lesen
+
+## 4. NoSQL Cassandra anbinden
+
+--> Bitte in die Cassandra Aufgabe wechseln
 
 Eine neue Connection erstellen:
 
@@ -397,11 +394,12 @@ Erstelle eine `countries` Keyspace und eine `country_population` Tabelle. Gebe d
 <p>
 
 ```
-CREATE KEYSPACE IF NOT EXISTS <keyspace_name> 
+CREATE KEYSPACE IF NOT EXISTS <keyspace_name>
     WITH REPLICATION = { 'class' : 'SimpleStrategy', 'replication_factor' : 1 };
 
 CREATE TABLE IF NOT EXISTS <keyspace_name>.<table_name> ([schema]);
 ```
+
 </details>
 </p>
 
@@ -433,10 +431,11 @@ VALUES (6, 'India', 'IN', 1380004385, 34, 35, 69);
 INSERT INTO <keyspace_name>.<table_name> (id, name, code, population, pct_under_20, pct_urban, pct_working_age)
 VALUES (7, 'France', 'FR', 67391582, 23, 82, 61);
 ```
+
 </details>
 </p>
 
-Schau dir die verfügbaren Tabellen in der Datenbank 
+Schau dir die verfügbaren Tabellen in der Datenbank
 
 <details>
 <summary>Tipp</summary>
@@ -445,6 +444,7 @@ Schau dir die verfügbaren Tabellen in der Datenbank
 ```
 show tables from <keyspace>;
 ```
+
 </details>
 </p>
 
@@ -459,38 +459,39 @@ SELECT * FROM
   <keyspace>.<table>
   ;
 ```
+
 </details>
 </p>
 
-## 2. Business Case - Analyze Tweets zusammen mit Länderdaten 
+## 2. Business Case - Analyze Tweets zusammen mit Länderdaten
 
 Business Case: Verstehen, welche Länder mit einem höheren Anteil junger Menschen (unter 20 Jahren) Interesse an einer bestimmten Technologie zeigen (basierend auf einem Hashtag, z. B. "#BigData"), um die Marketingmaßnahmen entsprechend zu optimieren.
 
-
-1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der country_population Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird die `unnest` Funktion für die Hashtags benötigt. 
-2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt 
+1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der country_population Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird die `unnest` Funktion für die Hashtags benötigt.
+2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt
 
 <details>
 <summary>Tipp</summary>
 <p>
 
 ```
-SELECT 
+SELECT
     <country_table>.name as country_name,
     <country_table>.population,
     <country_table>.pct_under_20,
     COUNT(*) as big_data_tag_count,
     SUM(<twitter_table>.retweet_count) AS total_retweets,
     ROUND(AVG(<twitter_table>.retweet_count)) AS avg_retweets_per_tweet
-FROM <twitter_table> 
+FROM <twitter_table>
   cross join unnest(hashtags) AS <twitter_table> (tags)
   JOIN <country_table> ON <twitter_table>.user_location = <country_table>.name
-WHERE 
-    <twitter_table>.tags LIKE <'hashtag'> AND <country_table>.pct_under_20 > 20 
-GROUP BY 
+WHERE
+    <twitter_table>.tags LIKE <'hashtag'> AND <country_table>.pct_under_20 > 20
+GROUP BY
     <country_table>.name, <country_table>.population, <country_table>.pct_under_20
-ORDER BY 
+ORDER BY
    big_data_tag_count DESC;
 ```
+
 </details>
 </p>

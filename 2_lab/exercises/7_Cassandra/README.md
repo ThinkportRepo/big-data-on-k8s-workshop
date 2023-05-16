@@ -59,7 +59,7 @@ Catalog: cassandra
 Schema:
 ```
 
-### 4) Nosql (JSON) Struktur auslesen
+### 4) Nosql (JSON) Struktur in Spaltenform bringen
 
 Ziel am Ende ist es den Wert `gdp_per_capita` soweit verfügbar aus der JSON Spalte `economic_indicators` and die Twitter Daten zu joinen.
 Hierfür muss zunächst der korrekte Wert aus der JSON Struktur extrahiert werden. Trino bietet hierzu einige Funktionen an.
@@ -71,7 +71,7 @@ SELECT * FROM countries.country_population
 
 # dann die Funktion richtig verwenden
 SELECT json_code(<richtigen Code einsetzen>) AS gdp_per_capita FROM countries.country_population
-
+```
 
 <details>
 <summary>Lösung</summary>
@@ -80,13 +80,42 @@ SELECT json_code(<richtigen Code einsetzen>) AS gdp_per_capita FROM countries.co
 ```
 
 select
-code,
-population,
-json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita  
+  code,
+  population,
+  json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
 from countries.country_population
 
 ```
 
 </details>
 </p>
+
+### 5) Joine die Twitter Daten mit den Cassandra Daten via Trino
+
+Aufgabe: Gibt es eine Korrelation zwischen der Anzahl der Bewohner eines Staates (population) und der Anzahl der Tweets?
+
+Für diese Aufgabe müssen die Delta Daten mit den Twitter Daten gejoint werden durch Verwendung einer Subquery Struktur
+
+<details>
+<summary>Lösung</summary>
+<p>
+
 ```
+SELECT a.user_location as "country", a.population, a.gdp_per_capita as "gdp" , count(*) as "TweetCount" FROM
+(
+    SELECT delta.user_name,delta.created_at,delta.user_location,delta.language, cassandra.population, cassandra.gdp_per_capita FROM delta.data.twitter delta
+    LEFT JOIN (
+        SELECT
+        code,
+        population,
+        json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
+        FROM cassandra.countries.country_population
+    ) cassandra
+    ON delta.language=cassandra.code
+    ) a
+GROUP BY a.user_location, a.population, a.gdp_per_capita
+ORDER BY a.population
+```
+
+</details>
+</p>

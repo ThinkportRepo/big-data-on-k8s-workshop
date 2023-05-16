@@ -1,6 +1,5 @@
 # use spark python base layer
-#FROM svr-nexus01.local.parcit:8124/repository/dm-docker/spark-poc/spark-py:pybase
-FROM thinkportgmbh/workshops:spark-3.3.1
+FROM thinkportgmbh/workshops:spark-3.3.2
 
 ARG WORKDIR=/jupyter
 

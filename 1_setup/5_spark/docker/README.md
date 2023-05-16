@@ -5,19 +5,19 @@
 to build run
 
 ```
-docker build -t thinkportgmbh/workshops:spark-3.3.1 -f Dockerfile.hive .
+docker build -t thinkportgmbh/workshops:spark-3.3.2 -f Dockerfile.hive .
 ```
 
 to push run
 
 ```
-docker push  thinkportgmbh/workshops:spark-3.3.1
+docker push  thinkportgmbh/workshops:spark-3.3.2
 ```
 
 to build and push the arm64 image on a Mac Book with m1 chip (arm64) build the image via crossbuild
 
 ```
-docker buildx build --push --platform linux/amd64,linux/arm64 --tag thinkportgmbh/workshops:spark-3.3.1  -f Dockerfile.spark .
+docker buildx build --push --platform linux/amd64,linux/arm64 --tag thinkportgmbh/workshops:spark-3.3.2  -f Dockerfile.spark .
 ```
 
 ## Official Docker image (since 2022)
@@ -25,7 +25,8 @@ docker buildx build --push --platform linux/amd64,linux/arm64 --tag thinkportgmb
 as of 2022 there is now an official spark image available for each version
 
 ```
-docker pull apache/spark-py:3.3.1
+docker pull apache/spark-py:v3.3.2
+
 ```
 
 ## Find all correkt Maven dependencies
@@ -33,7 +34,7 @@ docker pull apache/spark-py:3.3.1
 The best way to get all the correct dependencies is either to use regular spark submit or the following online tool
 We need the follwong dependecies
 Check first Spark AND Scala Version that was downloaded
-For Spark 3.3.1 default is Scala 2.12 and default Hadoop is 3.x
+For Spark 3.3.2 default is Scala 2.12 and default Hadoop is 3.x
 
 ### Delta.io
 
@@ -47,7 +48,7 @@ Go to maven (https://mvnrepository.com/artifact/io.delta/delta-core_2.12/2.1.1) 
 <dependency>
     <groupId>io.delta</groupId>
     <artifactId>delta-core_2.12</artifactId>
-    <version>2.1.1</version>
+    <version>2.3.2</version>
 </dependency>
 
 ```
@@ -88,7 +89,7 @@ In order to connect to Spark we need to to add the Kafka dependencies
  <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-sql-kafka-0-10_2.12</artifactId>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
 </dependency>
 ```
 
@@ -111,13 +112,13 @@ to download a zip that can be moved into the docker image.
  <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-hadoop-cloud_2.12</artifactId>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
     <scope>provided</scope>
   </dependency>
   <dependency>
     <groupId>org.apache.spark</groupId>
     <artifactId>spark-sql-kafka-0-10_2.12</artifactId>
-    <version>3.3.1</version>
+    <version>3.3.2</version>
  </dependency>
   <dependency>
     <groupId>io.prometheus.jmx</groupId>
@@ -127,8 +128,8 @@ to download a zip that can be moved into the docker image.
 <!-- https://mvnrepository.com/artifact/org.apache.iceberg/iceberg-spark-runtime-3.2 -->
 <dependency>
     <groupId>org.apache.iceberg</groupId>
-    <artifactId>iceberg-spark-runtime-3.2_2.12</artifactId>
-    <version>1.1.0</version>
+    <artifactId>iceberg-spark-runtime-3.3_2.12</artifactId>
+    <version>1.2.1</version>
 </dependency>
 <!-- https://mvnrepository.com/artifact/org.apache.hudi/hudi-spark3.3-bundle -->
 <dependency>

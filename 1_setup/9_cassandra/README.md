@@ -25,6 +25,17 @@ DESCRIBE SCHEMA
 DESCRIBE KEYSPACES;
 ```
 
+## Cassandra CLI installation in VSCode
+
+1. download cqlsh from Website https://downloads.datastax.com/#cqlsh
+2. upload via git into Pod
+3. copy from git into /opt/
+4. untar via tar -xzvf cqlsh-5.1.tar.gz
+5. rm .tar.gz
+6. mv tar -xzvf cqlsh-5.1.tar.gz cqlsh
+7. add to Path
+8. start via cqlsh -u trainadm -p train@thinkport cassandra.nosql.svn.cluster.local
+
 ## Trino Configuration via SQLPAD
 
 Mit Trino Treiber und Catalog Cassandra

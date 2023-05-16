@@ -10,7 +10,7 @@
 # - Network, s3
 
 
-FROM apache/spark-py:3.3.1
+FROM apache/spark-py:v3.3.2
 WORKDIR /
 
 # Reset to root to run installation tasks

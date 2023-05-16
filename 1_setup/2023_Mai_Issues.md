@@ -18,22 +18,9 @@
 7. Jupyter Image neu bauen mit Cassandra driver+
 8. Delta Driver für Spark Image checken, versionen falsch?
 
-student10 - garnicht v
-student11 - spark fehlt
-student1 - geht nicht home leer
+Cost Explorer
 
-s3 ls problem
-1 -
-2 fixed
-3 fixed
-4 fixed
-5 fixed
-6 fixed
-7 fixed
-8 fixed
-9 fixed
-10 -
-11 fixed
-12 fixed
-13 fixed
-14
+9. Versionsfehler von Kafka-Client in dem Spark-Streaming Notebook?
+   Überhaubt alle Versionen überprüfen und auf neueste und fixed Versions bringen, damit nicht immer wieder Fehler kommen
+
+10. Spark Delta Version falsch, Kafka Version für Spark falsch

@@ -19,7 +19,7 @@
       <v-col cols="mb-4" v-if="show_vscode">
         <Card
           title="VSCode"
-          text="Visual Studio Code Editor"
+          text="Editor and Terminal"
           url_label="Open VSCode"
           subdomain="vscode"
           image="vscode_logo.png"
@@ -28,7 +28,7 @@
       <v-col cols="mb-4" v-if="show_jupyter">
         <Card
           title="Jupyter"
-          text="Notebook for Python & PySpark"
+          text="Spark with Python & SQL"
           url_label="Open Jupyter"
           subdomain="jupyter"
           image="jupyter_logo.png"
@@ -38,7 +38,7 @@
       <v-col cols="mb-4" v-if="show_zeppelin">
         <Card
           title="Zeppelin"
-          text="Notebook for Scala, Java, Sql"
+          text="Spark with Scala & SQL"
           url_label="Open Zeppelin"
           subdomain="zeppelin"
           image="zeppelin_logo.png"
@@ -49,7 +49,7 @@
       <v-col cols="mb-4" v-if="show_sqlpad">
         <Card
           title="SQL Pad"
-          text="SQL Browser for running SQL queries and visualizing results "
+          text="SQL Editor & Trino access "
           url_label="Open SQLPad"
           subdomain="sqlpad"
           image="sql_logo.png"
@@ -58,7 +58,7 @@
       <v-col cols="mb-4" v-if="show_metabase">
         <Card
           title="Metabase"
-          text="BI Tool for dashboards and data visualization"
+          text="BI tool for data visualization"
           url_label="Open Metabase"
           subdomain="metabase"
           image="metabase_logo.png"
@@ -68,7 +68,7 @@
       <v-col cols="mb-4" v-if="show_minio">
         <Card
           title="Minio UI"
-          text="s3 compatiple object storage"
+          text="s3 Data Lake"
           url_label="Open Minio"
           subdomain="minio"
           image="minio_logo.png"
@@ -79,7 +79,7 @@
       <v-col cols="mb-4" v-if="show_trino">
         <Card
           title="Trino UI"
-          text="Overview and performance analysis of Trino queries"
+          text="Trino Query Monitoring"
           url_label="Open Trino UI"
           subdomain="trino"
           image="trino2_logo.png"
@@ -89,7 +89,7 @@
       <v-col cols="mb-4" v-if="show_spark">
         <Card
           title="Spark UI"
-          text="Spark history server for all running and completed jobs"
+          text="Spark history server"
           url_label="Open SparkUI"
           subdomain="spark"
           image="spark_logo.png"
@@ -196,11 +196,15 @@ export default {
         status = this.serverOutput.monitoring.status;
       } else if (app_key == "grafana") {
         status = this.serverOutput.monitoring.grafana.status;
+      } else if (app_key == "zeppelin") {
+        status = "Deactivated";
       } else {
         status = this.serverOutput.frontend[app_key].status;
       }
       if (status == "Running") {
         return "green";
+      } else if (status == "Deactivated") {
+        return "grey";
       } else {
         return "red";
       }

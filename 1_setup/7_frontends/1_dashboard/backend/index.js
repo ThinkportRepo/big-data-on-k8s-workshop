@@ -134,7 +134,7 @@ let message = {
       pod: "",
     },
     zeppelin: {
-      status: "Missing",
+      status: "Deactivated",
       restarts: 0,
       pod: "",
     },
@@ -544,7 +544,7 @@ function parseFrontend(message, response) {
     message.frontend.terminal.status == "Running" &&
     message.frontend.vscode.status == "Running" &&
     message.frontend.jupyter.status == "Running" &&
-    message.frontend.zeppelin.status == "Running" &&
+    //message.frontend.zeppelin.status == "Running" &&
     message.frontend.sqlpad.status == "Running" &&
     message.frontend.metabase.status == "Running" &&
     message.frontend.headlamp.status == "Running"

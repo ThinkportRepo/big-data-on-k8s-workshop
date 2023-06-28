@@ -118,6 +118,7 @@
                         </v-icon>
                       </td>
                     </tr>
+                    <!--
                     <tr>
                       <td>Zeppelin</td>
                       <td>{{ serverOutput.frontend.zeppelin.pod }}</td>
@@ -139,6 +140,7 @@
                         </v-icon>
                       </td>
                     </tr>
+                    -->
                     <tr>
                       <td>SQLPad</td>
                       <td>{{ serverOutput.frontend.sqlpad.pod }}</td>

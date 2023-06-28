@@ -18,3 +18,5 @@ for i in $(cat < "$1"); do
   cd "$pwd" && terraform workspace select $i && terraform state rm module.kubernetes-config && terraform destroy --auto-approve 2>&1 && terraform workspace select default && terraform workspace delete $i | tee "logs/${i}_destroy.log"
   sleep 5
 done
+
+cd .. 

@@ -1,0 +1,2 @@
+- Jupyter Notebooks haben falsche Version von Spark. Alles auf spark-3.3.2 nachziehen
+- wundert mich, weil ich dachte ich habe alles auf Spark 3.3.4 gehoben

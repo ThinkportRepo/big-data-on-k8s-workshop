@@ -5,7 +5,7 @@
    TODO: Überoprüfen ob es auch mit aktueller Version funktionert
 
 2. Zertifikat für Student10 fehlt (PRIO 1)
-   TODO: Zertifikat neu erstellen, alle neu oder einzelnes neu
+   DONE: Zertifikat neu erstellen, alle neu oder einzelnes neu
 
 3. kn geht nicht wegen Schreibrechte Problem (PRIO 1)
    DONE: gefixed durch copy nach .kube statt mounten einer configmap (no write on cm)
@@ -15,13 +15,13 @@
    TODO: Überprüfen und fixen
 
 5. Jupyter Image neu bauen mit korrekten Driver Jars und Cassandra Modul (PRIO 1)
-   DONE: alles auf Spark 3.3.4 gehoben, alle Jars angepasst
+   DONE: alles auf Spark 3.3.2 gehoben, alle Jars angepasst
 
 6. Delta Driver für Spark Image checken, versionen falsch? (PRIO 1)
-   DONE: alles auf Spark 3.3.4 gehoben, alle Jars angepasst
+   DONE: alles auf Spark 3.3.2 gehoben, alle Jars angepasst
 
 7. Versionsfehler von Kafka-Client in dem Spark-Streaming Notebook? (PRIO 1)
-   DONE: alles auf Spark 3.3.4 gehoben, alle Jars angepasst
+   DONE: alles auf Spark 3.3.2 gehoben, alle Jars angepasst
 
 8. History Server zu Notebook Spark hinzufügen (PRIO 1)
    TODO: mounten und verproben für SparkSQL Aufgabe
@@ -64,6 +64,19 @@
       - geht cassandra
       - geht ksql
     - Costen Anzeige, Gesamtkosten Worksop, jeder Teilnehmer
+    - Architektur:
+      - Ordner mit Resourcen nur für Admin Cluster
+      - Ingress für Kafka Broker/Rest Endpunkt 9092
+      - Topic für Cluster Infos
+      - Crawler Pod auf jedem Cluster
+      - Pod sendet Status aller Pods an Topic (Python und Sidecar?)
+      - Backend muss Topic aus Rest Endpunkt des Trainer Clusters holen
+      - Auf Trainer Cluster Pod mit AWS CLI und korrekter Authentifizierung um az Status abzurufen
+      - AKS Status an weiteres Topic senden
+      - Alles in zwei Dashboards visualisieren nur für Admins
+    - Vorgehen für PoC:
+      - Checken ob von außen über Ingress und 8080:9092 auf Kafka geschrieben werden kann
+      - Checken vom JavaScript Backend auf den RestEndpunkt zugegriffen werden kann
 
 15. Admin Helper
 
@@ -71,3 +84,14 @@
     - spezielles kubectl command auf allen Clustern ausführen (delete po)
 
 16. alle Branches platt machen, neuen dev aus checken
+
+chfolgend sende ich Ihnen die Teilnehmerliste für das Seminar Big Data Praxis Vertiefung vom 15.05.-16.05.23 für DB Systel, Trainer Alex Ortner.
+
+Performance Tuning Case
+
+Datenquelle eventuell
+https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page
+Fake Datenset: https://medium.com/@danny.bharat/polars-and-spark-100-million-row-dataset-18fd29f46d2c
+Join Optimierung: https://medium.com/@guediagael/optimizing-pyspark-dataframe-joins-for-large-data-sets-e63eed349bcd
+Partitionierung https://medium.com/data-engineer-things/supercharging-performance-with-partitioning-in-databricks-and-spark-part-1-3-aebcfb48c3b
+Salting: https://towardsdev.com/salting-for-data-skew-58fa59d65def

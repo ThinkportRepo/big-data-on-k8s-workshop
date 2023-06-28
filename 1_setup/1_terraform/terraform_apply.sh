@@ -9,3 +9,5 @@ for i in $(cat < "$1"); do
   cd "$pwd" && terraform workspace select $i && terraform apply --auto-approve 2>&1 | tee "../logs/${i}_plan.log"
   sleep 5
 done
+
+cd ..

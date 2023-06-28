@@ -7,10 +7,10 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "thinkportgmbh/workshops:spark-3.3.1"
+  image: "thinkportgmbh/workshops:spark-3.3.2"
   imagePullPolicy: IfNotPresent # or Always
   # Python Script/Java Jar that should be submitted
-  mainApplicationFile: 
+  mainApplicationFile:
   sparkVersion: "3.3.1"
   # extra Spark configurations
   sparkConf:
@@ -18,8 +18,8 @@ spec:
   # s3 connection configuration
   hadoopConf:
     "fs.s3a.endpoint":
-    "fs.s3a.access.key": 
-    "fs.s3a.secret.key": 
+    "fs.s3a.access.key":
+    "fs.s3a.secret.key":
     "fs.s3a.path.style.access": "true"
     "fs.s3.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
     "fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider"

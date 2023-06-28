@@ -7,7 +7,7 @@ spec:
   type: Python
   pythonVersion: "3"
   mode: cluster
-  image: "thinkportgmbh/workshops:spark-3.3.1"
+  image: "thinkportgmbh/workshops:spark-3.3.2"
   imagePullPolicy: IfNotPresent # or Always
   # Python Script/Java Jar that should be submitted
   mainApplicationFile: s3a://<bucket>/<python-script>.py

@@ -72,7 +72,6 @@ executor:
 
 <details>
 <summary>Lösung </summary>
- 
 
 ```yaml
 # Pfad zum Python Script in S3
@@ -126,5 +125,9 @@ Wenn du möchtest kannst du dir eine AVRO Datei herunterladen und anschauen, bed
 ```
 s3 get s3://twitter/avro/part-<individueller-string>.avro .
 ```
+
+### Aufgabe 4) SparkApp im Spark History Server analysieren
+
+Gehe auf die Spark UI (History Server) und finde schaue dir die Metriken unter `Show incomplete applications` an. Insbesondere den Tab für `SQL / Dataframe` und `Structured Streaming`
 
 Super, die Spark Streaming Aufgabe hast du erfolgreich gemeistert.

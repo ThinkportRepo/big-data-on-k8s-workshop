@@ -10,6 +10,7 @@ import Lab_3_Kafka from "@/components/Lab_3_Kafka.vue";
 import Lab_4_SparkStreaming from "@/components/Lab_4_SparkStreaming.vue";
 import Lab_5_SparkSQL from "@/components/Lab_5_SparkSQL.vue";
 import Lab_6_Trino from "@/components/Lab_6_Trino.vue";
+import Lab_7_Cassandra from "@/components/Lab_7_Cassandra.vue";
 
 Vue.use(VueRouter);
 
@@ -75,6 +76,14 @@ const routes = [
     name: "Lab_6_Trino",
     components: {
       default: Lab_6_Trino,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/lab-cassandra",
+    name: "Lab_7_Cassandra",
+    components: {
+      default: Lab_7_Cassandra,
       navigation: Navbar,
     },
   },

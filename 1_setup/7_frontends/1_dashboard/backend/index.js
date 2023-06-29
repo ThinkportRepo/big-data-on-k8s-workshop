@@ -660,8 +660,8 @@ socketio.on("connection", (socket) => {
           basePath + "2_lab/exercises/6_Trino/README.md",
           "utf8"
         );
-        markdown.metabase = await read(
-          basePath + "2_lab/exercises/7_Metabase/README.md",
+        markdown.cassandra = await read(
+          basePath + "2_lab/exercises/7_Cassandra/README.md",
           "utf8"
         );
         socket.emit("lab", markdown);

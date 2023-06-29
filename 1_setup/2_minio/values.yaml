@@ -403,6 +403,13 @@ buckets:
     # set objectlocking for
     # bucket [true|false] NOTE: versioning is enabled by default if you use locking
     objectlocking: false
+  - name: fileformats
+    policy: none
+    purge: false
+    versioning: false
+    # set objectlocking for
+    # bucket [true|false] NOTE: versioning is enabled by default if you use locking
+    objectlocking: false
 
 ## Additional Annotations for the Kubernetes Job makeBucketJob
 makeBucketJob:

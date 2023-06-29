@@ -1,4 +1,4 @@
-# Aufgaben zu Trino
+# Trino Aufgaben
 
 Trino kann über Connectoren auf eine Vielzahl von Datenquellen zugreifen.
 Für dieses Lab ist ein Connector für Delta Files auf s3 eingerichtet.<br>

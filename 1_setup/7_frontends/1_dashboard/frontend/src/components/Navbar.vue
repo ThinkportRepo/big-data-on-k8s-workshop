@@ -316,18 +316,18 @@
             >6. Trino</v-list-item
           >
           <v-list-item
-            v-if="show_exercise_7_ksql"
+            v-if="show_exercise_7_cassandra"
+            class="pl-5 ml-5"
+            router
+            to="/lab-cassandra"
+            >7. Cassandra</v-list-item
+          >
+          <v-list-item
+            v-if="show_exercise_8_ksql"
             class="pl-5 ml-5"
             router
             to="/lab-ksql"
             >7. KSQL</v-list-item
-          >
-          <v-list-item
-            v-if="show_exercise_8_metabase"
-            class="pl-5 ml-5"
-            router
-            to="/lab-visualisation"
-            >8. Metabase</v-list-item
           >
           <v-list-item
             v-if="show_exercise_9_monitoring"
@@ -394,8 +394,8 @@ export default {
     show_exercise_4_spark_streaming: true,
     show_exercise_5_spark_sql: true,
     show_exercise_6_trino: true,
-    show_exercise_7_ksql: false,
-    show_exercise_8_metabase: false,
+    show_exercise_7_cassandra: true,
+    show_exercise_8_ksql: false,
     show_exercise_9_monitoring: false,
     show_exercise_10_sheduling: false,
   }),

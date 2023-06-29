@@ -3,6 +3,9 @@
 Trino kann über Connectoren auf eine Vielzahl von Datenquellen zugreifen.
 Für dieses Lab ist ein Connector für Delta Files auf s3 eingerichtet.<br>
 
+![TrinoAufgabe](https://github.com/ThinkportRepo/big-data-on-k8s-workshop/assets/16557412/caba02be-8d2c-45c2-b2ad-1443ff7a2021)
+
+
 In einem s3 Bucket können verschiedene Tabellen abgelegt werden.
 Eine Sammlung von Tabellen entspricht einem Schema.
 

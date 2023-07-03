@@ -110,32 +110,17 @@ Achte insbesondere darauf welche Zeilenanzahl Aufgrund der Metadaten geschätzt 
 
 Führe die Queries anschließend ohne `EXPLAIN` aber mit einem `SELECT COUNT(*) FROM ...` aus und vergleiche ob die Abschätzung der Zeilen gut war.
 
-## 5. SQL Analysen
+## 5. SQL Analysen auf Dateien
 
 Die folgenden Aufgaben können mit Hilfe von Standard SQL-Abfragen gelöst werden. <br>
 
 Details zu den SQL Befehlen finden sich in der Trino und Connector Dokumentation<br> https://trino.io/docs/current/index.html
 
-Relvante SQL Funktionen für die folgenden Aufgaben:
-
-```
-
-# Datetime Funktionen
-
-Datum aus Timestame extrahieren = date(<timestamp>)
-Stunde, Monat, Jahr aus Timestamp extrahieren = hour(<timestamp>), month(<timestamp>), year(<timestamp>)
-
-# Array Feld in einzelne Zeilen exploden
-
-select tags from <dataset> cross join unnest(<hashtags-array>) AS t (tags)
-
-```
-
 ### 3.1 Daten
 
-Untersuche zunächst den Datensatz um klar zu sein welche Spalten gibt es und welche Datentypen sie haben<br>
+Untersuche zunächst den Datensatz um klar zu sein welche Spalten es gibt und welche Datentypen sie haben<br>
 
-Das Schema steht im SQL Pad links an der Seite.
+Die Datetypen stehen z.B. an linken Seite im Schema Explorer
 
 ```
 
@@ -171,6 +156,19 @@ SELECT * FROM data.twitter limit 5
 
 Schreibe eine Group By Abfrage, um die **Anzahl** der **Tweets pro Stunde** zu zählen.
 
+```
+Beispiel Ausgabe:
++------------+------+---------------+
+| Day        | Hour | TweetsPerHour |
++============+======+===============+
+| 2023-08-01 | 14   | 684           |
++------------+------+---------------+
+| 2023-08-01 | 15   | 394           |
++------------+------+---------------+
+| 2023-08-01 | 16   | 705           |
++------------+------+---------------+
+```
+
 <details hidden>
 <summary>Lösung</summary>
 <p>
@@ -185,6 +183,19 @@ SELECT date(created_at) as "date", hour(date) as hour, count(*) as "count" FROM 
 ### 3.4 Top 10 User nach Tweet-Anzahl
 
 Schreibe eine Abfrage, die die **Top 10 User** nach ihrer **Anzahl an Tweets** ausgibt.
+
+```
+Beispiel Ausgabe:
++--------+--------------+
+| User   | NumberTweets |
++========+==============+
+| Mary   | 81           |
++--------+--------------+
+| David  | 76           |
++--------+--------------+
+| Travis | 69           |
++--------+--------------+
+```
 
 <details hidden>
 <summary>Lösung</summary>
@@ -201,26 +212,48 @@ SELECT user, count(*) as "numberOfTweets" FROM data.twitter group by user order 
 ### 3.5 Array Zerlegung
 
 Schreibe ein SQL Query um das **Hashtags** Array in einzelne Zeilen zu exploden.
-Für diese Aufgaben wird die `unnest` Funktion benötigt (https://trino.io/docs/current/sql/select.html#unnest).
+Für diese Aufgaben wird die `UNNEST` Funktion benötigt (https://trino.io/docs/current/sql/select.html#unnest).
 
-Gebe dabei die Spalten `user_name`, `tweet_id` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen aus.
+Gebe dabei die Spalten `user`, `tweet_id`, `hashtags` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen und ihne Duplikate aus.
+
+```
+Beispiel Ausgabe:
++--------+---------+---------+---------------+
+| User   | TweetId | Tag     | Hashtags      |
++========+=========+=========+===============+
+| Willie | 1       | BigData | [BigData, ML] |
++--------+---------+---------+---------------+
+| Willie | 6       | ML      | [BigData, ML] |
++--------+---------+---------+---------------+
+| James  | 2       | Cloud   | [Cloud]       |
++--------+---------+---------+---------------+
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+<p>
+UNNEST wird am besten zusammen mit einem CROSS JOIN verwendet werden. In der Dokumentation finden sich einige Beispiele dazu.
+```
+SELECT student, score
+FROM (
+   VALUES
+      ('John', ARRAY[7, 10, 9]),
+      ('Mary', ARRAY[4, 8, 9])
+) AS tests (student, scores)
+CROSS JOIN UNNEST(scores) AS t(score);
+```
+
+</details>
+</p>
+
+Speichere dir diesen Querie ab, er kann dir später zum nachschauen nochmal nützlich sein
 
 <details hidden>
-<summary>Tipp</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
-
-select
-<user>,
-<tweet>,
-tags
-from
-<dataset>
-cross join unnest(<hashtags-array>) AS t (tags)
-limit
-20;
-
+SELECT user, tweet_id, tags FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags);
 ```
 
 </details>
@@ -228,47 +261,59 @@ limit
 
 ### 3.6 Top 5 Hashtags der Top 10 User
 
-Schreibe eine komplexe SQL Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt.
+Schreibe eine komplexere SQL Abfrage, die die **Top 5 der Hashtags** der **10 User** mit den **meisten Tweets** ausgibt.
 
-<details>
-<summary>Tipp</summary>
+```
+# Beispiel Ausgabe:
++--------+-----------------+--------------+
+| User   | tags            | anzahlTweets |
++========+=================+==============+
+| Timmy  | BigData         | 127          |
++--------+-----------------+--------------+
+| Esther | BigData         | 114          |
++--------+-----------------+--------------+
+| Angie  | MachineLearning | 102          |
++--------+-----------------+--------------+
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
 <p>
-Eine Möglichkeit ist es einen Cross Join um das <b>Hastag Array</b> zu unnesten mit einem inner Join zu kombinieren und darum ein Group By zu setzten (<a href="https://trino.io/docs/current/sql/select.html#cross-join">https://trino.io/docs/current/sql/select.html#cross-join</a>)
+kombiniere die Abfragen der beiden vorherigen Aufgabe mit einem JOIN oder einem WHERE IN Statement
 </details>
 </p>
 </details>
 
 <details hidden>
-<summary>Tipp</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
 
-SELECT
-tags,
-count(<tweet>)
-FROM
-twitter
-CROSS JOIN UNNEST(<hashtags-array>) AS t (tags)
-INNER JOIN (
-SELECT
-<user> AS user,
-max(<follower>) as follower
-FROM
-<data>
-GROUP BY
-<user>
-ORDER BY
-max(<follower>) desc
-LIMIT
-<number>
-) ON <dataset>.<user> = user
-GROUP BY
-tags
-ORDER BY
-count(<tweet>) desc
-LIMIT
-<number>;
+# Mit WHERE IN CLAUSE
+
+-- 2) Hashtags auflösen (Aufgabe 2) und mit der WHERE IN Clause auf die 10 TOP User einschränken
+SELECT user, tags, count(_) as anzahl_tweets FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags)
+where user in (
+SELECT a.user FROM
+(
+-- 1) Zunächst mal die 10 User mit den meisten Tweets finden (Aufgabe 1)
+SELECT user, count(_) as anzahl_tweets FROM data.twitter a group by user order by count(_) desc limit 10
+) a
+)
+-- 3) Top 5 wählen
+group by user, tags order by count(_) desc limit 5
+
+-- MIT LEFT JOIN
+SELECT b.tags,a.user, count(_) as "anzahl_tweets" FROM
+(
+SELECT user, count(_) as anzahl_tweets FROM data.twitter a group by user order by count(_) desc limit 10
+) a
+LEFT JOIN (
+SELECT user, tags FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags)
+) b ON b.user=a.user
+group by a.user,b.tags
+order by count(_) desc limit 5
 
 ```
 
@@ -277,58 +322,83 @@ LIMIT
 
 ### 3.7 Top 10 Influencer
 
-Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower** zählt und sortiert anzeigt.
+Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower** ausgibt.
+
+```
+# Beispiel Ausgabe:
++------+----------------+
+| User | numberFollower |
++======+================+
+| Tim  | 1399           |
++------+----------------+
+| Jana | 800            |
++------+----------------+
+| Max  | 10             |
++------+----------------+
 
 ```
 
-select
-<user>,
-max(<follower>) as follower
-from
-<dataset>
+<details hidden>
+<summary>Lösung</summary>
+<p>
+SELECT
+  user,
+  max(follower) as "numberFollower"
+FROM
+  data.twitter
 group by
-<user>
+  user
 order by
-max(<follower>) desc
+  max(follower) desc
 limit
-<number>;
-
-```
+  10
 
 </details>
 </p>
 
-### 3.7 Anzahl der Tweets der Top 10 Influencer
+### 3.7 Anzahl der Tweets der Top 10 Influencer (Bonus Aufgabe)
 
-Schreibe eine Abfrage, die die **Top 10 Influencer**, ihre Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll es sortiert nach den Anzahl ihrer Follower sein.
+Schreibe eine Abfrage, die die **Top 10 Influencer**, die Anzal ihrer Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll das Ergebnis nach Anzahl der Follower sortiert sein.
+
+```
+Beispiel Ausgabe:
++--------+-----------------+--------------+
+| User   | numberFollowers | numberTweets |
++========+=================+==============+
+| Gracie | 4599            | 124          |
++--------+-----------------+--------------+
+| Julia  | 3459            | 320          |
++--------+-----------------+--------------+
+| James  | 1245            | 59           |
++--------+-----------------+--------------+
+```
 
 <details hidden>
-<summary>Tipp</summary>
+<summary>Lösung</summary>
 <p>
 
 ```
-
 SELECT
-<user>,
-max(<follower>) AS number_of_followers,
-max(numberOfTweets) AS number_of_Tweets
+a.user,
+max(a.follower) AS numberFollowers,
+max(b.numberOfTweets) AS numberTweets
 FROM
-twitter
+data.twitter a
 LEFT JOIN (
 select
-<user> AS user,
-count(<tweet>) as numberOfTweets
+user AS user,
+count(*) as numberOfTweets
 from
-<dataset>
+data.twitter
 group by
-<user>
-) ON user = <user>
+user
+) b ON a.user = b.user
 GROUP BY
-<user>
+a.user
 ORDER BY
-max(<follower>) DESC
+max(a.follower) DESC
 LIMIT
-<number>;
+5;
 
 ```
 
@@ -344,17 +414,17 @@ Im Folgenden soll das Ergebniss einer SQL Abfrage als CSV Datei gespeichert werd
 
 ### 4. Schema im Hive Connector auf Bucket anlegen
 
-Um CSV Dateien anleigen zu können wird der Hive Connector verwended. Das Schema soll auf das gleiche Bucket `twitter` wie der Delta Connector zeigen. Die Tabelle wird dann in einem anderen Prefix erstellt
+Um CSV Dateien anleigen zu können wird der Hive Connector verwended. Das Schema soll auf das gleiche Bucket `twitter` wie der Delta Connector zeigen. Die Tabelle wird dann in einem anderen Prefix erstellt.
+Erstelle zunächst ein neues Schema für den Hive Connector
 
 ```
-
 CREATE SCHEMA hive.export WITH (location = 's3a://twitter/')
-
 ```
 
 ### 4. CSV Tabelle erstellen
 
-Im Folgenden erstellen wir eine neue Tabelle auf den Pfad `s3a://twitter/csv/` mit den Tabelleneigenschaften des darunter angefügten SELECT Statements.
+Im Folgenden wird eine neue Tabelle auf den Pfad `s3a://twitter/csv/` mit den Tabelleneigenschaften (Spaltennamen, Typen) des darunter angefügten SELECT Statements erstellt.
+Die Tabelle soll außerdem nach `hour` partitioniert werden.
 
 ```
 
@@ -366,7 +436,7 @@ external_location = 's3a://twitter/csv/',
 partitioned_by = ARRAY['hour']
 )
 AS
-select date, count(\*) as total, hour
+select date, count(*) as total, hour
 from
 (
 select date(created_at) as "date", hour(created_at) as "hour"
@@ -377,20 +447,16 @@ order by date, hour
 
 ```
 
-Prüfe ob die Tabelle erstellt wurde
+Prüfe ob die Tabelle erstellt und mit Daten gefüllt wurde
 
 ```
-
-select \* from hive.export.csv
-
+select * from hive.export.csv
 ```
 
 und ob das Prefix jetzt auf s3 existiert (im Terminal)
 
 ```
-
 s3 ls s3://twitter/csv/
-
 ```
 
 Um weitere Zeilen aus dem gleichen SELECT Statement hinzuzufügen folgendes INSERT Statemnet verwenden.
@@ -398,7 +464,7 @@ Um weitere Zeilen aus dem gleichen SELECT Statement hinzuzufügen folgendes INSE
 ```
 
 INSERT INTO hive.export.csv
-select date, count(\*) as total, hour
+select date, count(*) as total, hour
 from
 (
 select date(created_at) as "date", hour(created_at) as "hour"
@@ -406,41 +472,177 @@ from data.twitter
 )
 group by date, hour
 order by date, hour
-
 ```
 
----
+Ergebnisse von Analysen können also wieder in Dateien abgespeichert und zur weiteren Verwendung gesichert werden.
 
-## 4. Cassandra Connector konfigurieren
+Prinzipiell lassen sich damit auch ganze ETL Strecken schreiben. Allerdings ist dies wesentlich aufwendiger als in Spark. Zum einen können komplexe Pipelines nicht in der Ausführungsabfolge aneinander gehängt werden sondern müssen als genested SQL Queries mit Subqueries geschrieben werden und das automatisierte Shedulen, Monitoren und Überwachen ist wesentlich aufwendiger zu implementieren.
 
-Um die noSQL Datenbank Cassandra in Trino einzubinden muss wieder der entsprechende Connector konfiguriert werden. Füge über das Dropdown Menu "New connection" eine weitere Verbindung hinzu.
+## 4. Cassandra Abfragen
+
+Trino ist eine Multisource Query Engine, die nicht nur auf Datei basierten Daten SQL ausführen kann sondern
+auch Connetoren auf viel andere Systeme wie RDBMS, noSQL, Kafka, ElasticSearch anbietet und deren spezifische Abfragensprache in SQL übersetzt.
+
+### 4.1 Cassandra Connector konfigurieren
+
+Um die noSQL Datenbank Cassandra in Trino einzubinden muss wieder der entsprechende Connector konfiguriert werden. Füge über das Dropdown Menu "New connection" eine weitere Verbindung mit folgenden Parametern hinzu.
 
 ```
-
 Name: Cassandra
 Driver: Trino
 Host: trino.trino.svc.cluster.local
 Port: 8080
 Database User: trino
 Catalog: cassandra
-
 ```
 
 Der Keyspace (das Schema pendant) und die Tabelle wurde bereits in der Cassandra Aufgabe angelegt. Deswegen sollte in der linken Leiste bereits das Schema `countries` zu sehen sein und der Zugriff auf die Tabelle direkt funktionieren.
 
 ```
-
 show tables from <keyspace>;
-
 ```
 
 Lese die Daten mit dem richtigen Select Statement aus.
 
-## 2. Joine die Delta Daten von s3 mit den Cassandra Daten
+### 4.2 JSON Struktur in Spaltenform bringen
 
-**Aufgabe**: Verstehen, welche Länder mit einem höheren Anteil junger Menschen (unter 20 Jahren) Interesse an einer bestimmten Technologie zeigen (basierend auf einem Hashtag, z. B. "#BigData"), um die Marketingmaßnahmen entsprechend zu optimieren.
+Ziel am Ende ist es den Wert `gdp_per_capita` soweit verfügbar aus der JSON Spalte `economic_indicators` and die Twitter Daten zu joinen. Hierfür muss zunächst der korrekte Wert aus der JSON Struktur extrahiert werden. Trino bietet hierzu einige Funktionen an. Verwende die Funktion `json_value` (Doku: https://trino.io/docs/current/functions/json.html#json-value) um den Wert als `int` in einer Spalte anzuzeigen.
 
-1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der country_population Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird die `unnest` Funktion für die Hashtags benötigt.
+```
+# Ergänze die Funktion korrekt
+select
+  code,
+  population,
+  json_value(
+    economic_indicators,
+    <<RICHTIGEN CODE EINFÜGEN>>
+  ) AS gdp_per_capita
+from
+  cassandra.countries.population
+```
+
+```
+Beispiel Ergebnis:
++------+------------+--------------+
+| Code | Population | gdpPerCapita |
++======+============+==============+
+| DE   | 83240525   | 35480        |
++------+------------+--------------+
+| IN   | 1380004385 | null         |
++------+------------+--------------+
+| ES   | 47351567   | 23450        |
++------+------------+--------------+
+```
+
+<details hidden>
+<summary>Lösung</summary>
+<p>
+```
+select
+  code,
+  population,
+  json_value(
+    economic_indicators,
+    'lax $.gdp_per_capita.value' RETURNING int
+  ) AS gdp_per_capita
+from
+  cassandra.countries.population
+```
+</details>
+</p>
+
+### 4.3. Joine die Delta Tabelle von s3 an die Cassandra Tabelle
+
+Finde einen gemeinsamen Join Key und joine die Cassandra Tabelle mit einem `LEFT JOIN` and die Delta Tabelle
+
+```
+# Delta Tabelle anzeigen
+SELECT * FROM delta.data.twitter
+
+# Cassandra Tabelle anzeigen
+SELECT * FROM cassandra.coutries.population
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+<p>
+Joine die Spalte language an die Spalte code
+</details>
+</p>
+</details>
+
+### 4.4 Populärster Hashtag in Ländern mit junger Bevölkerung
+
+Zeige die Anzahl der Hashtags nach Ländern aber nur für Länder in denen der Anteil der jungen Bevölkerung (unter 20 Jahren) mehr als 20% beträgt
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+<p>
+Hier muss wieder die Hashtags Spalte unnesten werden. 
+Die Spalte under_20 gibt den Prozentualen Anteil der Bevölkerung unter 20 Jahren wieder</details>
+</p>
+</details>
+
+<details hidden>
+<summary>Lösung</summary>
+<p>
+
+```
+SELECT
+  b.language,
+  b.tags,
+  b.HashTagCount,
+  c.under_20
+FROM
+  (
+    SELECT
+      a.language,
+      tags,
+      count(*) as HashTagCount
+    FROM
+      data.twitter a
+      CROSS JOIN UNNEST(hashtags) AS t(tags)
+    group by
+      a.language,
+      tags
+  ) b
+LEFT JOIN (
+SELECT * FROM cassandra.countries.population
+) c
+ON b.language=c.code
+WHERE c.under_20 > 20
+ORDER BY b.HashTagCount desc
+LIMIT 1
+```
+
+</details>
+</p>
+
+### 4.5 Schwere Aufgabe
+
+Aufgabe: Gibt es eine Korrelation zwischen der Anzahl der Bewohner eines Staates (population) und der Anzahl der Tweets?
+
+```
+SELECT a.country as "country", a.population, a.gdp_per_capita as "gdp" , count(*) as "TweetCount" FROM
+(
+SELECT delta.user,delta.date,delta.country,delta.language, cassandra.population, cassandra.gdp_per_capita FROM delta.data.twitter delta
+LEFT JOIN (
+SELECT
+name,
+code,
+population,
+json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
+FROM cassandra.countries.population
+) cassandra
+ON delta.country=cassandra.name
+) a
+GROUP BY a.country, a.population, a.gdp_per_capita
+ORDER BY a.population
+```
+
+### 4.6. Ganz schwere Aufgabe (überarbeiten)
+
+1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der `population` Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird wieder die `unnest` Funktion für die Hashtags benötigt.
 2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt
 
 <details>
@@ -470,99 +672,3 @@ big_data_tag_count DESC;
 
 </details>
 </p>
-
-###
-
-### 4. Mit Trino auf Cassandra zugreifen
-
-Als nächstes legen wir eine Connection auf Trino zu Cassandra an (Unter Verwendung des SQL Browsers SQLPad)
-
-Hierzu in SQL Pad auf `New Connection` gehen und folgendes eintragen
-
-```
-
-Name: Cassandra
-Driver: Trino (NICHT Cassandra, da wir über die Trino Engine auf Cassandra gehen wollen um Multi Source Joins zu machen)
-Host: trino.trino.svc.cluster.local
-Port: 8080
-Database User: trino
-Catalog: cassandra
-Schema:
-
-```
-
-### 4) Nosql (JSON) Struktur in Spaltenform bringen
-
-Ziel am Ende ist es den Wert `gdp_per_capita` soweit verfügbar aus der JSON Spalte `economic_indicators` and die Twitter Daten zu joinen.
-Hierfür muss zunächst der korrekte Wert aus der JSON Struktur extrahiert werden. Trino bietet hierzu einige Funktionen an.
-Verwende die Funktion `json_value` (Doku: https://trino.io/docs/current/functions/json.html#json-value) um den Wert als `int` in einer Spalte anzuzeigen.
-
-```
-
-# erstmal testen ob Daten erreichbar sind
-
-SELECT \* FROM countries.country_population
-
-# dann die Funktion richtig verwenden
-
-SELECT json_code(<richtigen Code einsetzen>) AS gdp_per_capita FROM countries.country_population
-
-```
-
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-
-select
-code,
-population,
-json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
-from countries.country_population
-
-```
-
-</details>
-</p>
-
-### 5) Joine die Twitter Daten mit den Cassandra Daten via Trino
-
-Aufgabe: Gibt es eine Korrelation zwischen der Anzahl der Bewohner eines Staates (population) und der Anzahl der Tweets?
-
-Für diese Aufgabe müssen die Delta Daten mit den Twitter Daten gejoint werden durch Verwendung einer Subquery Struktur
-
-<details>
-<summary>Lösung</summary>
-<p>
-
-```
-
-SELECT a.user_location as "country", a.population, a.gdp_per_capita as "gdp" , count(\*) as "TweetCount" FROM
-(
-SELECT delta.user_name,delta.created_at,delta.user_location,delta.language, cassandra.population, cassandra.gdp_per_capita FROM delta.data.twitter delta
-LEFT JOIN (
-SELECT
-name,
-code,
-population,
-json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
-FROM cassandra.countries.country_population
-) cassandra
-ON delta.user_location=cassandra.name
-) a
-GROUP BY a.user_location, a.population, a.gdp_per_capita
-ORDER BY a.population
-
-```
-
-</details>
-</p>
-
-### 6) Bonus: Visualisiere diesen Query in Metabase
-
-Dazu muss zunächst Metabase korrekt mit Trino verbunden werden wie in den Metabase Aufgaben beschrieben
-
-```
-
-```

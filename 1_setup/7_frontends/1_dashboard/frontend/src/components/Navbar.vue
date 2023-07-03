@@ -309,18 +309,18 @@
             >5. Spark SQL</v-list-item
           >
           <v-list-item
-            v-if="show_exercise_6_trino"
-            class="pl-5 ml-5"
-            router
-            to="/lab-trino"
-            >6. Trino</v-list-item
-          >
-          <v-list-item
-            v-if="show_exercise_7_cassandra"
+            v-if="show_exercise_6_cassandra"
             class="pl-5 ml-5"
             router
             to="/lab-cassandra"
-            >7. Cassandra</v-list-item
+            >6. Cassandra</v-list-item
+          >
+          <v-list-item
+            v-if="show_exercise_7_trino"
+            class="pl-5 ml-5"
+            router
+            to="/lab-trino"
+            >7. Trino</v-list-item
           >
           <v-list-item
             v-if="show_exercise_8_ksql"
@@ -393,8 +393,8 @@ export default {
     show_exercise_3_kafka: true,
     show_exercise_4_spark_streaming: true,
     show_exercise_5_spark_sql: true,
-    show_exercise_6_trino: true,
-    show_exercise_7_cassandra: true,
+    show_exercise_6_cassandra: true,
+    show_exercise_7_trino: true,
     show_exercise_8_ksql: false,
     show_exercise_9_monitoring: false,
     show_exercise_10_sheduling: false,

@@ -9,8 +9,8 @@ import Lab_2_SparkBasics from "@/components/Lab_2_SparkBasics.vue";
 import Lab_3_Kafka from "@/components/Lab_3_Kafka.vue";
 import Lab_4_SparkStreaming from "@/components/Lab_4_SparkStreaming.vue";
 import Lab_5_SparkSQL from "@/components/Lab_5_SparkSQL.vue";
-import Lab_6_Trino from "@/components/Lab_6_Trino.vue";
-import Lab_7_Cassandra from "@/components/Lab_7_Cassandra.vue";
+import Lab_6_Cassandra from "@/components/Lab_6_Cassandra.vue";
+import Lab_7_Trino from "@/components/Lab_7_Trino.vue";
 
 Vue.use(VueRouter);
 
@@ -72,21 +72,22 @@ const routes = [
     },
   },
   {
-    path: "/lab-trino",
-    name: "Lab_6_Trino",
+    path: "/lab-cassandra",
+    name: "Lab_6_Cassandra",
     components: {
-      default: Lab_6_Trino,
+      default: Lab_6_Cassandra,
       navigation: Navbar,
     },
   },
   {
-    path: "/lab-cassandra",
-    name: "Lab_7_Cassandra",
+    path: "/lab-trino",
+    name: "Lab_7_Trino",
     components: {
-      default: Lab_7_Cassandra,
+      default: Lab_7_Trino,
       navigation: Navbar,
     },
   },
+
   // catch all 404 route that are not defined
   {
     path: "/:catchAll(.*)",

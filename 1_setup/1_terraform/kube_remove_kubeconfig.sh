@@ -18,5 +18,5 @@ then
     
 
 else
-    echo "++ Skip deletion of Azure resource group "$rg
+    echo "++ Skip deletion of Kubeconf "$rg
 fi

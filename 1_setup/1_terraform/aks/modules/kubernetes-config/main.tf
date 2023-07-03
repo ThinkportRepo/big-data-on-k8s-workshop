@@ -502,6 +502,17 @@ resource "kubernetes_config_map" "bashrc" {
     export PS1="\[\e]0;\u@\h: \w\a\]\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
     source /usr/share/bash-completion/bash_completion
     export PATH="/opt/cqlsh/bin:$PATH"
+    kafka() {
+      if [[ $@ == "list" ]]; then
+        command kafka-topics.sh --list --bootstrap-server kafka.kafka.svc.cluster.local:9092
+      elif [[ $@ == "show twitter-raw" ]]; then
+        kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+      elif [[ $@ == "show twitter-table" ]]; then
+        kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-table
+      else
+      command echo "unknown command: @"
+      fi
+    };
     EOT
   }
 }

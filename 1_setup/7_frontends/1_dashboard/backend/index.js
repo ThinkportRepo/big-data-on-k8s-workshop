@@ -656,12 +656,12 @@ socketio.on("connection", (socket) => {
           basePath + "2_lab/exercises/5_Spark_SQL/README.md",
           "utf8"
         );
-        markdown.trino = await read(
-          basePath + "2_lab/exercises/6_Trino/README.md",
+        markdown.cassandra = await read(
+          basePath + "2_lab/exercises/6_Cassandra/README.md",
           "utf8"
         );
-        markdown.cassandra = await read(
-          basePath + "2_lab/exercises/7_Cassandra/README.md",
+        markdown.trino = await read(
+          basePath + "2_lab/exercises/7_Trino/README.md",
           "utf8"
         );
         socket.emit("lab", markdown);

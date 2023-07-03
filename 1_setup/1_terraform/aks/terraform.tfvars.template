@@ -8,7 +8,7 @@ Location = "WestEurope"
 NodeCount = 2
 NodeSize = "standard_a4m_v2"
 NodeDiskSize = 50
-HttpApplicationRouting = true
+HttpApplicationRouting = false
 #GitHub specific configuration
 GitHubUsername = "myusername"
 GitHubRepoToken = "github_pat_XXXXXXXXXXXXXX"

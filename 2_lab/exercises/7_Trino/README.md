@@ -623,9 +623,9 @@ FROM delta.data.twitter d
 LEFT JOIN cassandra.countries.population c
 ON d.country=c.name
 WHERE c.name IS NOT NULL
-
-# oder
-
+```
+oder
+```
 SELECT count(\*)
 FROM delta.data.twitter d
 LEFT JOIN cassandra.countries.population c
@@ -759,45 +759,26 @@ corr(tweets,population) as "corr_tweets_population",
 corr(population,gdp) as "corr_population_gdp"
 FROM (
 SELECT
-a.country as "country",
-a.population,
-a.gdp_per_capita as "gdp",
-count(\*) as "tweets"
+a.country as "country", a.population, a.gdp_per_capita as "gdp", count(\*) as "tweets"
 FROM
 (
-SELECT
-d.user,
-d.date,
-d.country,
-d.language,
-c.population,
-c.gdp_per_capita
-FROM
-delta.data.twitter d
+SELECT d.user, d.date, d.country, d.language, c.population, c.gdp_per_capita
+FROM delta.data.twitter d
 LEFT JOIN (
-SELECT
-name,
-code,
-population,
-json_value(
-economic_indicators,
-'lax $.gdp_per_capita.value' RETURNING int
-) AS gdp_per_capita
-FROM
-cassandra.countries.population
+SELECT name,code,population,
+json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
+FROM cassandra.countries.population
 ) c ON d.country = c.name
 ) a
 WHERE a.gdp_per_capita IS NOT NULL AND a.population IS NOT NULL
-GROUP BY
-a.country,
-a.population,
-a.gdp_per_capita
-ORDER BY
-a.population
+GROUP BY a.country, a.population, a.gdp_per_capita
+ORDER BY a.population
 ) f
 
 ```
 </details>
 </p>
+
+The end
 
 ```

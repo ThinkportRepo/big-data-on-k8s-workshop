@@ -60,20 +60,24 @@ CREATE SCHEMA IF NOT EXISTS delta.data WITH (location='s3a://twitter/');
 Da alle Schema Information bereits im Delta Log enthalten sind, kann die Tabellen definition von Trino direkt von dort ausgelesen und im Metastore abgelegt werden. Die bestehende Delta Datei (Prefix, Unterordner) wird mit folgendem Befehl im Metastore registriert:
 
 ```
-CALL delta.system.register_table(schema_name => 'data', table_name => 'twitter', table_location => 's3a://twitter/delta')
+CALL delta.system.register_table(
+  schema_name = > 'data',
+  table_name = > 'twitter',
+  table_location = > 's3a://twitter/delta'
+)
 ```
 
 Teste nun ob das Schema, die Tabelle und die Daten verfügbar sind. <br>
 
 ```
 # Schema anzeigen
-show schemas from delta;
+SHOW schemas FROM delta;
 
 # Tabellen anzeigen
-show tables from delta.data;
+SHOW tables FROM delta.data;
 
 # Inhalt der Tabellen anzeigen
-select * from delta.data.twitter
+SELECT * FROM delta.data.twitter
 ```
 
 ## 3. Metadaten optimieren
@@ -100,15 +104,33 @@ Vergleiche die Query Pläne für folgende Abfragen.
 SELECT * FROM data.twitter;
 
 # Filter auf Partitionierte Spalte
-SELECT * FROM data.twitter where language='DE'
+SELECT * FROM data.twitter WHERE language='DE'
 
 # Filter auf berechnete Spalte
-SELECT * FROM data.twitter where language='DE' and contains(hashtags,'AI')=true
+SELECT * FROM data.twitter WHERE language='DE' AND contains(hashtags,'AI')=true
 ```
 
 Achte insbesondere darauf welche Zeilenanzahl Aufgrund der Metadaten geschätzt wird und wo die Filter in den Query eingehen.
 
 Führe die Queries anschließend ohne `EXPLAIN` aber mit einem `SELECT COUNT(*) FROM ...` aus und vergleiche ob die Abschätzung der Zeilen gut war.
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+<p>
+
+```
+# alle Daten
+EXPLAIN SELECT * FROM data.twitter;
+
+# Filter auf Partitionierte Spalte
+EXPLAIN SELECT * FROM data.twitter WHERE language='DE'
+
+# Filter auf berechnete Spalte
+EXPLAIN SELECT * FROM data.twitter WHERE language='DE' AND contains(hashtags,'AI')=true
+```
+
+</details>
+</p>
 
 ## 5. SQL Analysen auf Dateien
 
@@ -141,12 +163,12 @@ hashtag_count: integer
 
 Schau dir **1-2 Tweets** und die dazugehörigen **Hashtags** an.
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 
 ```
-SELECT * FROM data.twitter limit 5
+SELECT * FROM data.twitter LIMIT 5
 ```
 
 </details>
@@ -169,12 +191,23 @@ Beispiel Ausgabe:
 +------------+------+---------------+
 ```
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 
 ```
-SELECT date(created_at) as "date", hour(date) as hour, count(*) as "count" FROM data.twitter group by date(date),hour(date) order by date(date),hour(date)
+SELECT
+  date(created_at) as "date",
+  hour(date) as hour,
+  count(*) as "count"
+FROM
+  data.twitter
+GROUP BY
+  date(date),
+  hour(date)
+ORDER BY
+  date(date),
+  hour(date)
 ```
 
 </details>
@@ -197,13 +230,22 @@ Beispiel Ausgabe:
 +--------+--------------+
 ```
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 
 ```
-SELECT user, count(*) as "numberOfTweets" FROM data.twitter group by user order by count(*) desc limit 10
-
+SELECT
+  user,
+  count(*) as "numberOfTweets"
+FROM
+  data.twitter
+GROUP BY
+  user
+ORDER BY
+  count(*) desc
+LIMIT
+  10
 ```
 
 </details>
@@ -248,12 +290,18 @@ CROSS JOIN UNNEST(scores) AS t(score);
 
 Speichere dir diesen Querie ab, er kann dir später zum nachschauen nochmal nützlich sein
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 
 ```
-SELECT user, tweet_id, tags FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags);
+SELECT
+  user,
+  tweet_id,
+  tags
+FROM
+  data.twitter
+  CROSS JOIN UNNEST(hashtags) AS t(tags);
 ```
 
 </details>
@@ -284,37 +332,49 @@ kombiniere die Abfragen der beiden vorherigen Aufgabe mit einem JOIN oder einem 
 </p>
 </details>
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 
+Mit einer WHERE IN CLAUSE
+
+```
+SELECT user,tags, count(*) as anzahl_tweets
+FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags)
+where
+  user in (
+    SELECT a.user
+    FROM (
+        SELECT user, count(*) as anzahl_tweets
+        FROM data.twitter a
+        GROUP BY user
+        ORDER BY count(*) DESC
+        LIMIT 10
+      ) a
+  )
+GROUP BY user, tags
+ORDER BY count(*) DESC
+LIMIT 5
 ```
 
-# Mit WHERE IN CLAUSE
+oder alternativ mit einem LEFT JOIN
 
--- 2) Hashtags auflösen (Aufgabe 2) und mit der WHERE IN Clause auf die 10 TOP User einschränken
-SELECT user, tags, count(_) as anzahl_tweets FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags)
-where user in (
-SELECT a.user FROM
+```
+SELECT b.tags,a.user, count(*) AS "anzahl_tweets" FROM
 (
--- 1) Zunächst mal die 10 User mit den meisten Tweets finden (Aufgabe 1)
-SELECT user, count(_) as anzahl_tweets FROM data.twitter a group by user order by count(_) desc limit 10
-) a
-)
--- 3) Top 5 wählen
-group by user, tags order by count(_) desc limit 5
-
--- MIT LEFT JOIN
-SELECT b.tags,a.user, count(_) as "anzahl_tweets" FROM
-(
-SELECT user, count(_) as anzahl_tweets FROM data.twitter a group by user order by count(_) desc limit 10
+  SELECT user, count(*) AS anzahl_tweets
+  FROM data.twitter a
+  GROUP BY user
+  ORDER BY count(*) DESC
+  LIMIT 10
 ) a
 LEFT JOIN (
-SELECT user, tags FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags)
+SELECT user, tags
+FROM data.twitter CROSS JOIN UNNEST(hashtags) AS t(tags)
 ) b ON b.user=a.user
-group by a.user,b.tags
-order by count(_) desc limit 5
-
+GROUP BY a.user,b.tags
+ORDER BY count(*) DESC
+LIMIT 5
 ```
 
 </p>
@@ -338,21 +398,16 @@ Schreibe eine Abfrage, die die **Top 10 Influencer** mit den **meisten Follower*
 
 ```
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
-SELECT
-  user,
-  max(follower) as "numberFollower"
-FROM
-  data.twitter
-group by
-  user
-order by
-  max(follower) desc
-limit
-  10
-
+```
+SELECT user, max(follower) as "numberFollower"
+FROM data.twitter
+GROUP BY user
+ORDER BY max(follower) desc
+LIMIT 10;
+```
 </details>
 </p>
 
@@ -373,32 +428,22 @@ Beispiel Ausgabe:
 +--------+-----------------+--------------+
 ```
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 
 ```
-SELECT
-a.user,
-max(a.follower) AS numberFollowers,
-max(b.numberOfTweets) AS numberTweets
-FROM
-data.twitter a
+SELECT a.user, max(a.follower) AS numberFollowers, max(b.numberOfTweets) AS numberTweets
+FROM data.twitter a
 LEFT JOIN (
-select
-user AS user,
-count(*) as numberOfTweets
-from
-data.twitter
-group by
-user
-) b ON a.user = b.user
-GROUP BY
-a.user
-ORDER BY
-max(a.follower) DESC
-LIMIT
-5;
+  SELECT user AS user, count(*) AS numberOfTweets
+  FROM data.twitter
+  GROUP BY user
+) b
+ON a.user = b.user
+GROUP BY a.user
+ORDER BY max(a.follower) DESC
+LIMIT 5;
 
 ```
 
@@ -427,24 +472,21 @@ Im Folgenden wird eine neue Tabelle auf den Pfad `s3a://twitter/csv/` mit den Ta
 Die Tabelle soll außerdem nach `hour` partitioniert werden.
 
 ```
-
 CREATE TABLE hive.export.csv
 COMMENT 'aggregation'
 WITH (
-format = 'TEXTFILE',
-external_location = 's3a://twitter/csv/',
-partitioned_by = ARRAY['hour']
+  format = 'TEXTFILE',
+  external_location = 's3a://twitter/csv/',
+  partitioned_by = ARRAY['hour']
 )
-AS
-select date, count(*) as total, hour
-from
+AS SELECT date, count(*) as total, hour
+FROM
 (
-select date(created_at) as "date", hour(created_at) as "hour"
-from data.twitter
+  SELECT date(created_at) AS "date", hour(created_at) as "hour"
+  FROM data.twitter
 )
-group by date, hour
-order by date, hour
-
+GROUP BY date, hour
+ORDER BY date, hour
 ```
 
 Prüfe ob die Tabelle erstellt und mit Daten gefüllt wurde
@@ -464,14 +506,14 @@ Um weitere Zeilen aus dem gleichen SELECT Statement hinzuzufügen folgendes INSE
 ```
 
 INSERT INTO hive.export.csv
-select date, count(*) as total, hour
-from
-(
-select date(created_at) as "date", hour(created_at) as "hour"
-from data.twitter
-)
-group by date, hour
-order by date, hour
+SELECT date, count(*) as total, hour
+FROM
+  (
+  SELECT date(created_at) as "date", hour(created_at) as "hour"
+  FROM data.twitter
+  )
+GROUP BY date, hour
+ORDER BY date, hour
 ```
 
 Ergebnisse von Analysen können also wieder in Dateien abgespeichert und zur weiteren Verwendung gesichert werden.
@@ -510,14 +552,14 @@ Ziel am Ende ist es den Wert `gdp_per_capita` soweit verfügbar aus der JSON Spa
 
 ```
 # Ergänze die Funktion korrekt
-select
+SELECT
   code,
   population,
   json_value(
     economic_indicators,
     <<RICHTIGEN CODE EINFÜGEN>>
   ) AS gdp_per_capita
-from
+FROM
   cassandra.countries.population
 ```
 
@@ -534,18 +576,18 @@ Beispiel Ergebnis:
 +------+------------+--------------+
 ```
 
-<details hidden>
-<summary>Lösung</summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 <p>
 ```
-select
+SELECT
   code,
   population,
   json_value(
     economic_indicators,
     'lax $.gdp_per_capita.value' RETURNING int
   ) AS gdp_per_capita
-from
+FROM
   cassandra.countries.population
 ```
 </details>
@@ -560,115 +602,202 @@ Finde einen gemeinsamen Join Key und joine die Cassandra Tabelle mit einem `LEFT
 SELECT * FROM delta.data.twitter
 
 # Cassandra Tabelle anzeigen
-SELECT * FROM cassandra.coutries.population
-```
-
-<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
-<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
-<p>
-Joine die Spalte language an die Spalte code
-</details>
-</p>
-</details>
-
-### 4.4 Populärster Hashtag in Ländern mit junger Bevölkerung
-
-Zeige die Anzahl der Hashtags nach Ländern aber nur für Länder in denen der Anteil der jungen Bevölkerung (unter 20 Jahren) mehr als 20% beträgt
-
-<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
-<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
-<p>
-Hier muss wieder die Hashtags Spalte unnesten werden. 
-Die Spalte under_20 gibt den Prozentualen Anteil der Bevölkerung unter 20 Jahren wieder</details>
-</p>
-</details>
-
-<details hidden>
-<summary>Lösung</summary>
-<p>
-
-```
-SELECT
-  b.language,
-  b.tags,
-  b.HashTagCount,
-  c.under_20
-FROM
-  (
-    SELECT
-      a.language,
-      tags,
-      count(*) as HashTagCount
-    FROM
-      data.twitter a
-      CROSS JOIN UNNEST(hashtags) AS t(tags)
-    group by
-      a.language,
-      tags
-  ) b
-LEFT JOIN (
 SELECT * FROM cassandra.countries.population
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+<p>
+Es gibt zwei mögliche Join Keys. Entweder twitter.language=population.code oder twitter.country=population.name
+</details>
+</p>
+</details>
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+<p>
+Es gibt zwei Möglichkeiten wobei die es mehr Matches twitter.country=population.name git
+```
+SELECT count(*) 
+FROM delta.data.twitter d
+LEFT JOIN cassandra.countries.population c
+ON d.country=c.name
+WHERE c.name IS NOT NULL
+
+# oder
+
+SELECT count(\*)
+FROM delta.data.twitter d
+LEFT JOIN cassandra.countries.population c
+ON d.language=c.code
+WHERE c.code IS NOT NULL
+
+```
+</details>
+</p>
+
+### 4.4 Populärster Hashtag in Ländern mit junger Bevölkerung (Bonus)
+
+Zeige die Anzahl der Hashtags nach Ländern aber nur für Länder in denen der Anteil der jungen Bevölkerung (unter 20 Jahren) mehr als 15% beträgt. Diese Aufgabe ist schwerer.
+
+```
+
+Beispiel Ergebnis:
++---------+---------+--------------+---------+
+| Country | Tags | HashTagCount | Under20 |
++=========+=========+==============+=========+
+| USA | BigData | 990 | 24 |
++---------+---------+--------------+---------+
+| France | BigData | 253 | 23 |
++---------+---------+--------------+---------+
+| India | Cloud | 64 | 34 |
++---------+---------+--------------+---------+
+
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+<p>
+Hier muss wieder die Hashtags Spalte unnesten werden. <br>
+Am besten twitter.country=
+Die Spalte under_20 gibt den Prozentualen Anteil der Bevölkerung unter 20 Jahren wieder.<br>
+Um für jedes dieser Länder den populärsten Hashtag zu finden wird am besten eine Window Function mit rank() oder dens_rank() verwendet (<a href=https://trino.io/docs/current/functions/window.html>https://trino.io/docs/current/functions/window.html</a>)
+</details>
+</p>
+</details>
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+<p>
+
+```
+
+SELECT _ FROM
+(
+SELECT
+b.country,
+b.tags,
+b.HashTagCount,
+c.under_20,
+dense_rank() OVER (PARTITION BY b.country ORDER BY b.HashTagCount desc) AS "rank"
+FROM
+(
+SELECT
+a.country,
+tags,
+count(_) as HashTagCount
+FROM
+data.twitter a
+CROSS JOIN UNNEST(hashtags) AS t(tags)
+group by
+a.country,
+tags
+) b
+LEFT JOIN (
+SELECT \* FROM cassandra.countries.population
 ) c
-ON b.language=c.code
+ON b.country=c.name
 WHERE c.under_20 > 20
-ORDER BY b.HashTagCount desc
-LIMIT 1
+) d
+where rank=1
+order by HashTagCount desc
+
 ```
 
 </details>
 </p>
 
-### 4.5 Schwere Aufgabe
+### 4.5 Korrelation zwischen Anzahl Tweets und Bevökerungs oder Einkommen (Bonus)
 
-Aufgabe: Gibt es eine Korrelation zwischen der Anzahl der Bewohner eines Staates (population) und der Anzahl der Tweets?
+Gibt es eine Korreation der Anzahl von Tweets im Bereich BigData zur Bevölkerungszahl (`population`) oder zum mittleren pro Kopf Einkommen (`gdp_per_capita`)? Also skaliert die Anzahl der Tweets direkt mit der Bevölkerungszahl oder mit eher mit dem Wohlstand?
+Dies ist eine schwere Textaufgabe mit mehreren Lösungsmöglichkeiten.
 
 ```
-SELECT a.country as "country", a.population, a.gdp_per_capita as "gdp" , count(*) as "TweetCount" FROM
+
+Das Ergebnis der Korrelationsanalyse könnte z.B. so aussehen:
++---------------+----------------------+-------------------+
+| corrTweetsGDP | corrTweetsPopulation | corrPopulationGDP |
++===============+======================+===================+
+| 0.75 | 0.89 | 0.97 |
++---------------+----------------------+-------------------+
+
+und die darunter liegende Tabelle:
++---------+------------+-------+------------+
+| Country | Population | GDP | TweetCount |
++=========+============+=======+============+
+| Spain | 47351567 | 23450 | 149 |
++---------+------------+-------+------------+
+| France | 67391582 | 32530 | 179 |
++---------+------------+-------+------------+
+| Germany | 83240525 | 35480 | 426 |
++---------+------------+-------+------------+
+
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+<p>
+Hier geht es um die Tweets und nicht die Hashtags, es muss also kein UNNEST verwendet werden <br>
+<b>Vorgehensweise: </b> <br>
+1) Verjoine die Twitter Tabelle mit der Cassandra Tabelle
+2) Extrahiere die Spalten population und gdp_per_capita
+3) Zähle die Tweets
+4) Verwende die Korrelatiuonsfunktion (corr) korrekt um Korrelationen zu bestimmen
+ (<a href=https://trino.io/docs/current/functions/aggregate.html>https://trino.io/docs/current/functions/aggregate.html</a>)
+</details>
+</p>
+</details>
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+<p>
+```
+
+SELECT
+corr(tweets,gdp) as "corr_tweets_gdp",
+corr(tweets,population) as "corr_tweets_population",
+corr(population,gdp) as "corr_population_gdp"
+FROM (
+SELECT
+a.country as "country",
+a.population,
+a.gdp_per_capita as "gdp",
+count(\*) as "tweets"
+FROM
 (
-SELECT delta.user,delta.date,delta.country,delta.language, cassandra.population, cassandra.gdp_per_capita FROM delta.data.twitter delta
+SELECT
+d.user,
+d.date,
+d.country,
+d.language,
+c.population,
+c.gdp_per_capita
+FROM
+delta.data.twitter d
 LEFT JOIN (
 SELECT
 name,
 code,
 population,
-json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
-FROM cassandra.countries.population
-) cassandra
-ON delta.country=cassandra.name
+json_value(
+economic_indicators,
+'lax $.gdp_per_capita.value' RETURNING int
+) AS gdp_per_capita
+FROM
+cassandra.countries.population
+) c ON d.country = c.name
 ) a
-GROUP BY a.country, a.population, a.gdp_per_capita
-ORDER BY a.population
-```
-
-### 4.6. Ganz schwere Aufgabe (überarbeiten)
-
-1. Joine Twitter Tabelle aus S3 (Delta Catalog) mit der `population` Tabelle aus Cassandra Catalog und filter nach einem bestimmten Hashtag. Tipp: hier wird wieder die `unnest` Funktion für die Hashtags benötigt.
-2. Zeige die Gesamtzahl der Tweets und Retweets für diesen Hashtag, die durchschnittlichen Retweets und den Prozentsatz der jungen Bevölkerung für jedes Land. Zeige nur Daten aus Ländern, in denen die junge Bevölkerung mehr als 20% beträgt
-
-<details>
-<summary>Tipp</summary>
-<p>
-
-```
-
-SELECT
-<country_table>.name as country_name,
-<country_table>.population,
-<country_table>.pct_under_20,
-COUNT(\*) as big_data_tag_count,
-SUM(<twitter_table>.retweet_count) AS total_retweets,
-ROUND(AVG(<twitter_table>.retweet_count)) AS avg_retweets_per_tweet
-FROM <twitter_table>
-cross join unnest(hashtags) AS <twitter_table> (tags)
-JOIN <country_table> ON <twitter_table>.user_location = <country_table>.name
-WHERE
-<twitter_table>.tags LIKE <'hashtag'> AND <country_table>.pct_under_20 > 20
+WHERE a.gdp_per_capita IS NOT NULL AND a.population IS NOT NULL
 GROUP BY
-<country_table>.name, <country_table>.population, <country_table>.pct_under_20
+a.country,
+a.population,
+a.gdp_per_capita
 ORDER BY
-big_data_tag_count DESC;
+a.population
+) f
 
 ```
-
 </details>
 </p>
+
+```

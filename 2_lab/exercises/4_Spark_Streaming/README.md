@@ -22,13 +22,15 @@ Wechsle nun in das Terminal von VSCode und überprüfe mit der s3 CLI ob die Dat
 s3 ls s3://twitter/avro/
 ```
 
-Jetzt die Zelle wieder über das schwarze Viereck stoppen und **GANZ WICHTIG** die Zelle mit `spark.stop()` ausführen um die Spark Session wieder zu beenden und den Stream zu stoppen.
+Jetzt die Zelle wieder über das schwarze Viereck stoppen und dann (**GANZ WICHTIG**) die Spark Session mit ausführen der letzten Zelle mit dem Command `spark.stop()` beenden. Dies ist wichtig um den Stream zu stoppen und die Resourcen (cpu, ram) wieder frei zu geben.
+
+<hr>
 
 ## 2. Spark Streaming via Spark Operator
 
 Als nächstes soll der gleiche Spark Code über den Spark Operator als Kubernetes Deployment gestartet werden.
 
-### Aufgabe 1) Python Code nach s3 kopieren
+### 2.1 Python Code nach s3 kopieren
 
 Validiere zunächst den PySpark Code in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.py`.  
 Finde heraus was die Unterschiede zu dem Code im Jupyter Notebook sind. <br>
@@ -51,7 +53,7 @@ s3 put spark_stream_to_s3.py s3://scripts/
 s3 ls s3://scripts/
 ```
 
-### Aufgabe 2) SparkApp Yaml vervollständigen
+### 2.2 SparkApp Yaml vervollständigen
 
 Prüfe die Spark App Definition in der Datei `exercises/4_Spark_Streaming/spark_stream_to_s3.yaml` und füge an den richtigen Stellen in der YAML folgene Werte ein, wobei die Werte in der spitzen Klammer ersetzt werden müssen.
 
@@ -70,8 +72,8 @@ executor:
     cores: <cores>
 ```
 
-<details>
-<summary>Lösung </summary>
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
 
 ```yaml
 # Pfad zum Python Script in S3
@@ -92,7 +94,7 @@ cores: 1
 
 </details>
 
-### Aufgabe 3) SparkApp starten
+### 2.3 SparkApp starten
 
 Starte anschließend die SparkApp und schau in den Pod Logs ob sie korrekt läuft. <br>
 
@@ -104,7 +106,6 @@ kubectl apply -f spark_stream_to_s3.yaml
 kubectl get sparkapp -n spark
 
 # anzeigen ob der Driver und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
-
 kubectl get po -n spark -w
 
 # anzeigen der Ergebnisse mit Hilfe der logs
@@ -126,8 +127,9 @@ Wenn du möchtest kannst du dir eine AVRO Datei herunterladen und anschauen, bed
 s3 get s3://twitter/avro/part-<individueller-string>.avro .
 ```
 
-### Aufgabe 4) SparkApp im Spark History Server analysieren
+### 2.4 SparkApp im Spark History Server analysieren
 
-Gehe auf die Spark UI (History Server) und finde schaue dir die Metriken unter `Show incomplete applications` an. Insbesondere den Tab für `SQL / Dataframe` und `Structured Streaming`
+Gehe auf die Spark UI (History Server) und finde deine laufende Anwendung unter `Show incomplete applications` an. Schaue dir die Metriken an, insbesondere die im Tab `SQL / Dataframe` und `Structured Streaming`
 
+<hr>
 Super, die Spark Streaming Aufgabe hast du erfolgreich gemeistert.

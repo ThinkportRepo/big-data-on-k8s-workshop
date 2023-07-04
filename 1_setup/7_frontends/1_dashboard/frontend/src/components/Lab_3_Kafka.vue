@@ -11,6 +11,12 @@
       v-else
       :markdown="fileContent.kafka"
       flavor="github"></VueShowdown>
+    <v-btn
+      v-if="showMessage"
+      density="comfortable"
+      v-on:click="show_solution"
+      >{{ solutionShowButtonText }}</v-btn
+    >
   </v-container>
 </template>
 
@@ -25,7 +31,15 @@ export default {
     return {
       fileContent: null,
       serverOutputStatus: true,
+      solutionHiddenState: true,
+      solutionShowButtonText: "Lösungen einblenden",
+      showMessage: false,
     };
+  },
+  created() {
+    setTimeout(() => {
+      this.showMessage = true;
+    }, 10000); // 10 seconds delayed
   },
   mounted() {
     socketio.addEventListener({
@@ -35,6 +49,24 @@ export default {
         this.serverOutputStatus = false;
       },
     });
+  },
+  methods: {
+    show_solution: function () {
+      const details = document.getElementsByClassName("solution");
+      let newSolutionHiddenState = true;
+      if (this.solutionHiddenState == false) {
+        newSolutionHiddenState = true;
+        this.solutionHiddenState = true;
+        this.solutionShowButtonText = "Lösungen einblenden";
+      } else {
+        newSolutionHiddenState = false;
+        this.solutionHiddenState = false;
+        this.solutionShowButtonText = "Lösungen ausblenden";
+      }
+      for (const box of details) {
+        box.hidden = newSolutionHiddenState;
+      }
+    },
   },
 };
 </script>

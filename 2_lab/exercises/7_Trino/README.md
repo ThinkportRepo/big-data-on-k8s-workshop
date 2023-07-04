@@ -607,15 +607,11 @@ SELECT * FROM cassandra.countries.population
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
-<p>
 Es gibt zwei mögliche Join Keys. Entweder twitter.language=population.code oder twitter.country=population.name
-</details>
-</p>
 </details>
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
-<p>
 Es gibt zwei Möglichkeiten wobei die es mehr Matches twitter.country=population.name git
 ```
 SELECT count(*) 
@@ -634,7 +630,6 @@ WHERE c.code IS NOT NULL
 
 ```
 </details>
-</p>
 
 ### 4.4 Populärster Hashtag in Ländern mit junger Bevölkerung (Bonus)
 
@@ -657,19 +652,14 @@ Beispiel Ergebnis:
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
-<p>
 Hier muss wieder die Hashtags Spalte unnesten werden. <br>
 Am besten twitter.country=
 Die Spalte under_20 gibt den Prozentualen Anteil der Bevölkerung unter 20 Jahren wieder.<br>
 Um für jedes dieser Länder den populärsten Hashtag zu finden wird am besten eine Window Function mit rank() oder dens_rank() verwendet (<a href=https://trino.io/docs/current/functions/window.html>https://trino.io/docs/current/functions/window.html</a>)
 </details>
-</p>
-</details>
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
-<p>
-
 ```
 
 SELECT _ FROM
@@ -703,9 +693,8 @@ where rank=1
 order by HashTagCount desc
 
 ```
-
 </details>
-</p>
+
 
 ### 4.5 Korrelation zwischen Anzahl Tweets und Bevökerungs oder Einkommen (Bonus)
 
@@ -713,7 +702,6 @@ Gibt es eine Korreation der Anzahl von Tweets im Bereich BigData zur Bevölkerun
 Dies ist eine schwere Textaufgabe mit mehreren Lösungsmöglichkeiten.
 
 ```
-
 Das Ergebnis der Korrelationsanalyse könnte z.B. so aussehen:
 +---------------+----------------------+-------------------+
 | corrTweetsGDP | corrTweetsPopulation | corrPopulationGDP |
@@ -731,12 +719,10 @@ und die darunter liegende Tabelle:
 +---------+------------+-------+------------+
 | Germany | 83240525 | 35480 | 426 |
 +---------+------------+-------+------------+
-
 ```
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
-<p>
 Hier geht es um die Tweets und nicht die Hashtags, es muss also kein UNNEST verwendet werden <br>
 <b>Vorgehensweise: </b> <br>
 1) Verjoine die Twitter Tabelle mit der Cassandra Tabelle
@@ -745,14 +731,10 @@ Hier geht es um die Tweets und nicht die Hashtags, es muss also kein UNNEST verw
 4) Verwende die Korrelatiuonsfunktion (corr) korrekt um Korrelationen zu bestimmen
  (<a href=https://trino.io/docs/current/functions/aggregate.html>https://trino.io/docs/current/functions/aggregate.html</a>)
 </details>
-</p>
-</details>
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
-<p>
 ```
-
 SELECT
 corr(tweets,gdp) as "corr_tweets_gdp",
 corr(tweets,population) as "corr_tweets_population",
@@ -777,8 +759,3 @@ ORDER BY a.population
 
 ```
 </details>
-</p>
-
-The end
-
-```

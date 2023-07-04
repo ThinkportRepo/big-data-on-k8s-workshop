@@ -632,3 +632,130 @@ WHERE c.code IS NOT NULL
 </details>
 
 ### 4.4 Populärster Hashtag in Ländern mit junger Bevölkerung (Bonus)
+
+Zeige die Anzahl der Hashtags nach Ländern aber nur für Länder in denen der Anteil der jungen Bevölkerung (unter 20 Jahren) mehr als 15% beträgt. Diese Aufgabe ist schwerer.
+
+```
+
+Beispiel Ergebnis:
++---------+---------+--------------+---------+
+| Country | Tags | HashTagCount | Under20 |
++=========+=========+==============+=========+
+| USA | BigData | 990 | 24 |
++---------+---------+--------------+---------+
+| France | BigData | 253 | 23 |
++---------+---------+--------------+---------+
+| India | Cloud | 64 | 34 |
++---------+---------+--------------+---------+
+
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+Hier muss wieder die Hashtags Spalte unnesten werden. <br>
+Am besten twitter.country=
+Die Spalte under_20 gibt den Prozentualen Anteil der Bevölkerung unter 20 Jahren wieder.<br>
+Um für jedes dieser Länder den populärsten Hashtag zu finden wird am besten eine Window Function mit rank() oder dens_rank() verwendet (<a href=https://trino.io/docs/current/functions/window.html>https://trino.io/docs/current/functions/window.html</a>)
+</details>
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+```
+
+SELECT _ FROM
+(
+SELECT
+b.country,
+b.tags,
+b.HashTagCount,
+c.under_20,
+dense_rank() OVER (PARTITION BY b.country ORDER BY b.HashTagCount desc) AS "rank"
+FROM
+(
+SELECT
+a.country,
+tags,
+count(_) as HashTagCount
+FROM
+data.twitter a
+CROSS JOIN UNNEST(hashtags) AS t(tags)
+group by
+a.country,
+tags
+) b
+LEFT JOIN (
+SELECT \* FROM cassandra.countries.population
+) c
+ON b.country=c.name
+WHERE c.under_20 > 20
+) d
+where rank=1
+order by HashTagCount desc
+
+```
+</details>
+
+
+### 4.5 Korrelation zwischen Anzahl Tweets und Bevökerungs oder Einkommen (Bonus)
+
+Gibt es eine Korreation der Anzahl von Tweets im Bereich BigData zur Bevölkerungszahl (`population`) oder zum mittleren pro Kopf Einkommen (`gdp_per_capita`)? Also skaliert die Anzahl der Tweets direkt mit der Bevölkerungszahl oder mit eher mit dem Wohlstand?
+Dies ist eine schwere Textaufgabe mit mehreren Lösungsmöglichkeiten.
+
+```
+Das Ergebnis der Korrelationsanalyse könnte z.B. so aussehen:
++---------------+----------------------+-------------------+
+| corrTweetsGDP | corrTweetsPopulation | corrPopulationGDP |
++===============+======================+===================+
+| 0.75 | 0.89 | 0.97 |
++---------------+----------------------+-------------------+
+
+und die darunter liegende Tabelle:
++---------+------------+-------+------------+
+| Country | Population | GDP | TweetCount |
++=========+============+=======+============+
+| Spain | 47351567 | 23450 | 149 |
++---------+------------+-------+------------+
+| France | 67391582 | 32530 | 179 |
++---------+------------+-------+------------+
+| Germany | 83240525 | 35480 | 426 |
++---------+------------+-------+------------+
+```
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
+Hier geht es um die Tweets und nicht die Hashtags, es muss also kein UNNEST verwendet werden <br>
+<b>Vorgehensweise: </b> <br>
+1) Verjoine die Twitter Tabelle mit der Cassandra Tabelle
+2) Extrahiere die Spalten population und gdp_per_capita
+3) Zähle die Tweets
+4) Verwende die Korrelatiuonsfunktion (corr) korrekt um Korrelationen zu bestimmen
+ (<a href=https://trino.io/docs/current/functions/aggregate.html>https://trino.io/docs/current/functions/aggregate.html</a>)
+</details>
+
+<details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
+<summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+```
+SELECT
+corr(tweets,gdp) as "corr_tweets_gdp",
+corr(tweets,population) as "corr_tweets_population",
+corr(population,gdp) as "corr_population_gdp"
+FROM (
+SELECT
+a.country as "country", a.population, a.gdp_per_capita as "gdp", count(\*) as "tweets"
+FROM
+(
+SELECT d.user, d.date, d.country, d.language, c.population, c.gdp_per_capita
+FROM delta.data.twitter d
+LEFT JOIN (
+SELECT name,code,population,
+json_value(economic_indicators,'lax $.gdp_per_capita.value' RETURNING int) AS gdp_per_capita
+FROM cassandra.countries.population
+) c ON d.country = c.name
+) a
+WHERE a.gdp_per_capita IS NOT NULL AND a.population IS NOT NULL
+GROUP BY a.country, a.population, a.gdp_per_capita
+ORDER BY a.population
+) f
+
+```
+</details>

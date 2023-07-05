@@ -7,7 +7,7 @@ Für diese Aufgabe verwenden wir drei Connectoren
 - Hive Connector: lesen und schreiben von CSV Dateien auf s3
 - Cassandra Connector: verbindung mit der noSQL Datenbank Cassandra
 
-![ScreenShot](/2_lab/exercises/7_Trino/architecture.png)
+![Architektur Bild](/2_lab/exercises/7_Trino/architecture.png)
 
 ---
 

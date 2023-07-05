@@ -7,8 +7,6 @@ Für diese Aufgabe verwenden wir drei Connectoren
 - Hive Connector: lesen und schreiben von CSV Dateien auf s3
 - Cassandra Connector: verbindung mit der noSQL Datenbank Cassandra
 
-![TrinoAufgabe](https://github.com/ThinkportRepo/big-data-on-k8s-workshop/assets/16557412/05a2db36-f70c-4c5e-81ef-a3e42f146468)
-
 ---
 
 ## 1. Delta Connector konfigurieren

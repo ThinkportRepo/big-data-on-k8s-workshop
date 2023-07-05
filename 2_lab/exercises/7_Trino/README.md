@@ -7,7 +7,8 @@ Für diese Aufgabe verwenden wir drei Connectoren
 - Hive Connector: lesen und schreiben von CSV Dateien auf s3
 - Cassandra Connector: verbindung mit der noSQL Datenbank Cassandra
 
-![Architektur Bild](/2_lab/exercises/7_Trino/architecture.png)
+![TrinoAufgabe](https://github.com/ThinkportRepo/big-data-on-k8s-workshop/assets/16557412/ee9c99cf-8d75-4edc-9999-0b854987cf13)
+
 
 ---
 

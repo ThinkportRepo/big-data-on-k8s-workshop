@@ -355,6 +355,14 @@ resource "helm_release" "spark" {
     name = "ingress-url-format"
     value = "spark.${var.ClusterDNS}"
   }
+  set {
+    name = "metrics.enable"
+    value = true
+  }
+  set {
+    name = "podMonitor.enable"
+    value = true
+  }
 }
 
 ##################
@@ -963,7 +971,7 @@ resource "helm_release" "prometheus-resources" {
     "${file("../../11_prometheus_grafana/values.yaml")}"
   ]
   set {
-    name = "alertmanager.ingress.hosts[0]"
+    name = "prometheus.ingress.hosts[0]"
     value = "prometheus.${var.ClusterDNS}"
   }
   set {

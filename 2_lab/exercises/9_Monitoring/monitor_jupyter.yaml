@@ -1,0 +1,33 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jupyter-driver-monitor
+  namespace: frontend
+  labels:
+    spark-role: driver
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: jupyter-driver
+  endpoints:
+    - interval: 1s
+      port: metrics
+      path: /metrics/prometheus/
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: jupyter-executor-monitor
+  namespace: frontend
+  labels:
+    spark-role: driver
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: jupyter-driver
+  endpoints:
+    - interval: 1s
+      port: metrics
+      path: /metrics/executors/prometheus/

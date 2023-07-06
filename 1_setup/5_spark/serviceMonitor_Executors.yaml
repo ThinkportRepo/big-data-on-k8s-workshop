@@ -1,0 +1,16 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: spark-executor-monitor
+  namespace: spark
+  labels:
+    spark-role: driver
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: spark-driver
+  endpoints:
+    - interval: 5s
+      port: metrics
+      path: /metrics/executors/prometheus/

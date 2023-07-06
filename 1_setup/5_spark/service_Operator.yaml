@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # Service to expoce metric port from Spark Operator
+  name: service-monitor-operator
+  labels:
+    app: spark-operator
+  namespace: spark
+spec:
+  ports:
+    - name: metrics
+      port: 8090
+      targetPort: 10254
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: spark-operator

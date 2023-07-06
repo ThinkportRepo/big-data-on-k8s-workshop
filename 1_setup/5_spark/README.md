@@ -35,6 +35,10 @@ helm upgrade spark spark-operator/spark-operator \
   --set image.tag=v1beta2-1.3.3-3.1.1 \
   --set serviceAccounts.spark.name=spark \
   --set ingress-url-format="\{\{$appName\}\}.4c13e49defa742168ff1.northeurope.aksapp.io"
+  # prometheus monitoring
+  --set metrics.enable=true \
+  --set podMonitor.enable=true
+
 ```
 
 ### Test the Spark Operator

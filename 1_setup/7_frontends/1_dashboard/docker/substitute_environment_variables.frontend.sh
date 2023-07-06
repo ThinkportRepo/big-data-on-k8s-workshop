@@ -19,6 +19,15 @@ do
   #sed -i "s|replace_k8s_host|${K8S_HOST}|g" $file;
   echo "done substituteing"ec
 done
+# replace value networkConnection = true;  socketio.js
+echo $LAB_USER
+for file in $ROOT_DIR/js/*.js* $ROOT_DIR/index.html;
+do
+  echo $file
+  sed -i "s|networkConnection = false|networkConnection = true|g" $file;
+  #sed -i "s|replace_k8s_host|${K8S_HOST}|g" $file;
+  echo "done substituteing"ec
+done
 
 # Starting NGINX
 nginx -g 'daemon off;'

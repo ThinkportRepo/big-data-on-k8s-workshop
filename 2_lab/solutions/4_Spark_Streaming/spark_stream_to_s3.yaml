@@ -3,6 +3,8 @@ kind: SparkApplication
 metadata:
   name: stream-to-s3
   namespace: spark
+  labels:
+    app: spark-app
 spec:
   type: Python
   pythonVersion: "3"
@@ -19,6 +21,11 @@ spec:
     "spark.eventLog.dir": "file:/spark-logs"
     "spark.ui.prometheus.enabled": "true"
     "spark.executor.processTreeMetrics.enabled": "true"
+    "spark.metrics.conf.*.sink.prometheusServlet.class": "org.apache.spark.metrics.sink.PrometheusServlet"
+    "spark.metrics.conf.*.sink.prometheusServlet.path": "/metrics/prometheus"
+    "spark.kubernetes.driver.annotation.prometheus.io/scrape": "true"
+    "spark.kubernetes.driver.annotation.prometheus.io/path": "/metrics/executors/prometheus/"
+    "spark.kubernetes.driver.annotation.prometheus.io/port": "4040"
   # s3 connection configuration
   hadoopConf:
     "fs.s3a.endpoint": "minio.minio.svc.cluster.local:9000"
@@ -37,6 +44,7 @@ spec:
     memory: "512m"
     labels:
       version: 3.3.1
+      app: spark-app-driver
     serviceAccount: spark
     env:
       - name: app_name
@@ -59,6 +67,7 @@ spec:
     memory: "512m"
     labels:
       version: 3.3.1
+      app: spark-app-executor
     volumeMounts:
       - name: spark-history-server
         mountPath: /spark-logs

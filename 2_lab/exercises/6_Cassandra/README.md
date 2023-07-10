@@ -1,7 +1,7 @@
 # Cassandra Aufgaben
 
-Diese Aufgaben dienen zum Vertraut werden mit der noSQL Datenbank Cassandra. Das Hauptmerkmal von Cassandra ist seine skalierbarkeit und Geschwindigkeit für sehr große Datenmengen und viele Zugriffe.
-Desweiteren ist Cassandra Schemafrei. Es können alle Datenformen und Typen gespeichert werden.
+Diese Aufgaben dienen zum Vertrautwerden mit der noSQL Datenbank Cassandra. Das Hauptmerkmal von Cassandra ist seine Skalierbarkeit und Geschwindigkeit für sehr große Datenmengen und viele Zugriffe.
+Desweiteren ist Cassandra schemafrei. Es können alle Datenformen und Typen gespeichert werden.
 
 ### 1. Cassandra auf Kubernetes
 
@@ -9,10 +9,10 @@ Der Cassandra Cluster läuft im Namespace `nosql`. Prüfe mit `kubectl` nach mit
 
 ### 2. Cassandra Shell
 
-Cassandra hat eine eigene Abfrage Sprache änlich der SQL Sprache die CQL (Cassadra Query Language).
+Cassandra hat eine eigene Abfragesprache ähnlich der SQL Sprache, die CQL (Cassadra Query Language).
 Mit der CQL-Shell (cqlsh) kann der Cassandra Cluster gemanaged und CQL ausgeführt werden.
 
-Die CQL-Shell aus dem VSCode Terminal direkt gestartet werden über
+Die CQL-Shell kann aus dem VSCode Terminal direkt gestartet werden über
 
 ```
 cqlsh <cassandra-service-name>.<namespace>.svc.cluster.local
@@ -53,8 +53,8 @@ DESCRIBE countries;
 
 Die Warnung `schema version mismatch detected; ` kann hierbei ignoriert werden.
 
-Anders als bei realationalen Datenbanken, ist Cassandra für sehr große Datenmengen und parallisierte Abfragen ausgelegt. Dies wird durch eine Partitionierung der Daten erreicht. Alle Daten die zu einer Partition gehören werden zusamme auf einen Cassandra Knoten abgelegt. Partitionen werden in Cassandra über den `PRIMARY KEY` gesetzt. Dieser besteht aus 2 Teilen. Mindestens einer Spalte nach der Partitioniert werden soll (Partition Key) und optional einem Set aus Clustering Spalten. Die Clustering Spalten definieren zusätzlich die Reihenfolge wie die Daten pro Partition gespeichert sind und ermöglichen so ein schnelleres Abfragen und Sortieren.
-Aus diesem Grund sollten der `PRIMARY KEY` immer so angelegt werden wie am Ende die Daten abgefragt werden, nicht wie sie aus Sicht der Datenstruktur sinnvoll erscheinen. Denn die korrekte Wahl der Partitionen und Clusters hat den größten Einfluss auf die Abrage Performance.
+Anders als bei relationalen Datenbanken, ist Cassandra für sehr große Datenmengen und parallelisierte Abfragen ausgelegt. Dies wird durch eine Partitionierung der Daten erreicht. Alle Daten, die zu einer Partition gehören, werden zusammen auf einen Cassandra Knoten abgelegt. Partitionen werden in Cassandra über den `PRIMARY KEY` gesetzt. Dieser besteht aus 2 Teilen. Mindestens einer Spalte, nach der partitioniert werden soll (Partition Key), und optional einem Set aus Clustering Spalten. Die Clustering Spalten definieren zusätzlich die Reihenfolge wie die Daten pro Partition gespeichert sind und ermöglichen so ein schnelleres Abfragen und Sortieren.
+Aus diesem Grund sollte der `PRIMARY KEY` immer so angelegt werden wie am Ende die Daten abgefragt werden, nicht wie sie aus Sicht der Datenstruktur sinnvoll erscheinen. Denn die korrekte Wahl der Partitionen und Clusters hat den größten Einfluss auf die Abfrage Performance.
 
 Lege eine neue Tabelle **population** mit `name` als Partition und `population` als Cluster Spalte an:
 
@@ -79,11 +79,11 @@ SELECT * FROM countries.population;
 
 ### 3. Stammdaten nach Cassandra laden
 
-Im nächsten Schritt soll diese Tabelle mit einige Stammdaten, welche die Twitter Daten ergänzen nach Cassandra geladen. Diese Daten werden mit Python in einem Jupyter Notebook generiert und nach Cassandra geschrieben.
+Im nächsten Schritt soll diese Tabelle mit einigen Stammdaten, welche die Twitter Daten ergänzen, nach Cassandra geladen werden. Diese Daten werden mit Python in einem Jupyter Notebook generiert und nach Cassandra geschrieben.
 
-Öffne hierzu das Notebook in `git/2_lab/exercises/Insert_Country_Data_Cassandra.ipynb`. Finde und ergänze dort die richtige Kubernetes interne Adresse des Cassandra Clusters (wie das Patern geht wurde bereits in den Kafka Aufgaben viel geübt)
+Öffne hierzu das Notebook in `git/2_lab/exercises/Insert_Country_Data_Cassandra.ipynb`. Finde und ergänze dort die richtige Kubernetes interne Adresse des Cassandra Clusters (wie das Pattern geht, wurde bereits in den Kafka Aufgaben viel geübt).
 
-Führe die Zellen aus und überprüfe mit der CQL-Shell ob die Daten korrekt in die Datenbank geschrieben wurden.
+Führe die Zellen aus und überprüfe mit der CQL-Shell, ob die Daten korrekt in die Datenbank geschrieben wurden.
 
 Die cqlsh kann anschließend verlassen werden mit
 

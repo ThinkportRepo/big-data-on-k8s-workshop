@@ -5,7 +5,7 @@ Für diese Aufgabe verwenden wir drei Connectoren
 
 - Delta Connector: lesen der Delta Dateien auf s3
 - Hive Connector: lesen und schreiben von CSV Dateien auf s3
-- Cassandra Connector: verbindung mit der noSQL Datenbank Cassandra
+- Cassandra Connector: Verbindung mit der noSQL Datenbank Cassandra
 
 <br>
 
@@ -13,7 +13,7 @@ Für diese Aufgabe verwenden wir drei Connectoren
 
 ## 1. Delta Connector konfigurieren
 
-Öffne den SQL Browser SQLPad, logge dich mit dem standard User und Passwort ein und gehe oben Links auf das Dropdown Menu "New connection".
+Öffne den SQL Browser SQLPad, logge dich mit dem standard User und Passwort ein und gehe oben links auf das Dropdown Menü "New connection".
 
 Erstelle eine Connection mit folgenen Parametern:
 
@@ -29,8 +29,8 @@ Schema: data
 
 Teste die neue Connection mit dem Button Test und speichere sie dann ab.
 
-Wenn alles geklappt hatte sollten in der linken Seitenleiste bereits das Schema angezeigt werden.
-Alternativ, bzw um den vollen Überblick über die Cataloge, Schemas und Tabellen zu bekommen folgende Befehle aus: <br>
+Wenn alles geklappt hatte, sollte in der linken Seitenleiste bereits das Schema angezeigt werden.
+Alternativ, bzw um den vollen Überblick über die Cataloge, Schemas und Tabellen zu bekommen, führe folgende Befehle aus: <br>
 
 ```
 # connectoren=cataloge anzeigen
@@ -49,7 +49,7 @@ Nicht wundern, es sollte noch keine Schema für den Catalog Delta existieren
 
 ## 2. Schema im Delta Connector auf Bucket anlegen
 
-Zunächst wird ein Schema angelegt was auf das `twitter` Bucket zeigt.
+Zunächst wird ein Schema angelegt, was auf das `twitter` Bucket zeigt.
 
 Erstelle ein Schema mit folgendem Query:
 
@@ -57,17 +57,17 @@ Erstelle ein Schema mit folgendem Query:
 CREATE SCHEMA IF NOT EXISTS delta.data WITH (location='s3a://twitter/');
 ```
 
-Da alle Schema Information bereits im Delta Log enthalten sind, kann die Tabellen definition von Trino direkt von dort ausgelesen und im Metastore abgelegt werden. Die bestehende Delta Datei (Prefix, Unterordner) wird mit folgendem Befehl im Metastore registriert:
+Da alle Schema Information bereits im Delta Log enthalten sind, kann die Tabellendefinition von Trino direkt von dort ausgelesen und im Metastore abgelegt werden. Die bestehende Delta Datei (Prefix, Unterordner) wird mit folgendem Befehl im Metastore registriert:
 
 ```
 CALL delta.system.register_table(
-  schema_name = > 'data',
-  table_name = > 'twitter',
-  table_location = > 's3a://twitter/delta'
+  schema_name => 'data',
+  table_name => 'twitter',
+  table_location => 's3a://twitter/delta'
 )
 ```
 
-Teste nun ob das Schema, die Tabelle und die Daten verfügbar sind. <br>
+Teste nun, ob das Schema, die Tabelle und die Daten verfügbar sind. <br>
 
 ```
 # Schema anzeigen
@@ -77,42 +77,42 @@ SHOW schemas FROM delta;
 SHOW tables FROM delta.data;
 
 # Inhalt der Tabellen anzeigen
-SELECT * FROM delta.data.twitter
+SELECT * FROM delta.data.twitter;
 ```
 
 ## 3. Metadaten optimieren
 
-Um Queries zu beschleunigen kann Trino die Dateien (Delta Logs und Parquet Dateien) analysieren und damit den Metastore anreichern.
-Außerdem können die Daten automatisch optimiert werden, indem z.b. viele kleine Dateien in weniger aber Dateien idealer Größe zusammengefasst werden.
+Um Queries zu beschleunigen, kann Trino die Dateien (Delta Logs und Parquet Dateien) analysieren und damit den Metastore anreichern.
+Außerdem können die Daten automatisch optimiert werden, indem z.b. viele kleine Dateien in weniger, aber Dateien idealer Größe zusammengefasst werden.
 
 ```
-# Analyse Funktion aufrufen um den Metastore zu befüllen
+# Analyse Funktion aufrufen, um den Metastore zu befüllen
 ANALYZE data.twitter;
 
-Tabellen Optimierung aufrufen um die Datenstruktur zu verbessern
+Tabellen Optimierung aufrufen, um die Datenstruktur zu verbessern
 ALTER TABLE data.twitter EXECUTE optimize;
 
 ```
 
 ## 4. Query Plan analysieren
 
-Der Query Plan eines SQL Statement lässt sich über das Prefix `EXPLAIN` anzeigen. Zur Erstellung wurde noch keine Abfrage auf echte Daten durchgeführt sondern nur der Metastore konsultiert.
+Der Query Plan eines SQL Statements lässt sich über das Prefix `EXPLAIN` anzeigen. Zur Erstellung wurde noch keine Abfrage auf echte Daten durchgeführt, sondern nur der Metastore konsultiert.
 Vergleiche die Query Pläne für folgende Abfragen.
 
 ```
 # alle Daten
 SELECT * FROM data.twitter;
 
-# Filter auf Partitionierte Spalte
-SELECT * FROM data.twitter WHERE language='DE'
+# Filter auf partitionierte Spalte
+SELECT * FROM data.twitter WHERE language='DE';
 
 # Filter auf berechnete Spalte
-SELECT * FROM data.twitter WHERE language='DE' AND contains(hashtags,'AI')=true
+SELECT * FROM data.twitter WHERE language='DE' AND contains(hashtags,'AI')=true;
 ```
 
-Achte insbesondere darauf welche Zeilenanzahl Aufgrund der Metadaten geschätzt wird und wo die Filter in den Query eingehen.
+Achte insbesondere darauf, welche Zeilenanzahl aufgrund der Metadaten geschätzt wird und wo die Filter in den Query eingehen.
 
-Führe die Queries anschließend ohne `EXPLAIN` aber mit einem `SELECT COUNT(*) FROM ...` aus und vergleiche ob die Abschätzung der Zeilen gut war.
+Führe die Queries anschließend ohne `EXPLAIN`, aber mit einem `SELECT COUNT(*) FROM ...` aus und vergleiche, ob die Abschätzung der Zeilen gut war.
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
@@ -122,15 +122,15 @@ Führe die Queries anschließend ohne `EXPLAIN` aber mit einem `SELECT COUNT(*) 
 # alle Daten
 EXPLAIN SELECT * FROM data.twitter;
 
-# Filter auf Partitionierte Spalte
+# Filter auf partitionierte Spalte
 EXPLAIN SELECT * FROM data.twitter WHERE language='DE'
 
 # Filter auf berechnete Spalte
 EXPLAIN SELECT * FROM data.twitter WHERE language='DE' AND contains(hashtags,'AI')=true
 ```
 
-</details>
 </p>
+</details>
 
 ## 5. SQL Analysen auf Dateien
 
@@ -140,9 +140,9 @@ Details zu den SQL Befehlen finden sich in der Trino und Connector Dokumentation
 
 ### 3.1 Daten
 
-Untersuche zunächst den Datensatz um klar zu sein welche Spalten es gibt und welche Datentypen sie haben<br>
+Untersuche zunächst den Datensatz, um klar zu sein, welche Spalten es gibt und welche Datentypen sie haben<br>
 
-Die Datetypen stehen z.B. an linken Seite im Schema Explorer
+Die Datentypen stehen z.B. an linken Seite im Schema Explorer
 
 ```
 
@@ -253,10 +253,10 @@ LIMIT
 
 ### 3.5 Array Zerlegung
 
-Schreibe ein SQL Query um das **Hashtags** Array in einzelne Zeilen zu exploden.
+Schreibe ein SQL Query, um das **Hashtags** Array in einzelne Zeilen zu exploden.
 Für diese Aufgaben wird die `UNNEST` Funktion benötigt (https://trino.io/docs/current/sql/select.html#unnest).
 
-Gebe dabei die Spalten `user`, `tweet_id`, `hashtags` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen und ihne Duplikate aus.
+Gebe dabei die Spalten `user`, `tweet_id`, `hashtags` und die unnested `hashtags`-Spalte mit einem Limit von **20** Zeilen und ohne Duplikate aus.
 
 ```
 Beispiel Ausgabe:
@@ -413,7 +413,7 @@ LIMIT 10;
 
 ### 3.7 Anzahl der Tweets der Top 10 Influencer (Bonus Aufgabe)
 
-Schreibe eine Abfrage, die die **Top 10 Influencer**, die Anzal ihrer Follower und die **Anzahl ihrer Tweets** ausgibt. Außeredem soll das Ergebnis nach Anzahl der Follower sortiert sein.
+Schreibe eine Abfrage, die die **Top 10 Influencer**, die Anzal ihrer Follower und die **Anzahl ihrer Tweets** ausgibt. Außerdem soll das Ergebnis nach Anzahl der Follower sortiert sein.
 
 ```
 Beispiel Ausgabe:
@@ -454,12 +454,12 @@ LIMIT 5;
 
 ## Schreiben mit Trino
 
-Mit Trino können auch Ergebnisse wieder in Datei basierte Tabellen geschrieben werden.
-Im Folgenden soll das Ergebniss einer SQL Abfrage als CSV Datei gespeichert werden.
+Mit Trino können auch Ergebnisse wieder in dateibasierte Tabellen geschrieben werden.
+Im Folgenden soll das Ergebnis einer SQL Abfrage als CSV Datei gespeichert werden.
 
 ### 4. Schema im Hive Connector auf Bucket anlegen
 
-Um CSV Dateien anleigen zu können wird der Hive Connector verwended. Das Schema soll auf das gleiche Bucket `twitter` wie der Delta Connector zeigen. Die Tabelle wird dann in einem anderen Prefix erstellt.
+Um CSV Dateien anlegen zu können, wird der Hive Connector verwendet. Das Schema soll auf das gleiche Bucket `twitter` wie der Delta Connector zeigen. Die Tabelle wird dann in einem anderen Prefix erstellt.
 Erstelle zunächst ein neues Schema für den Hive Connector
 
 ```
@@ -489,10 +489,10 @@ GROUP BY date, hour
 ORDER BY date, hour
 ```
 
-Prüfe ob die Tabelle erstellt und mit Daten gefüllt wurde
+Prüfe, ob die Tabelle erstellt und mit Daten gefüllt wurde
 
 ```
-select * from hive.export.csv
+SELECT * FROM hive.export.csv
 ```
 
 und ob das Prefix jetzt auf s3 existiert (im Terminal)
@@ -501,7 +501,7 @@ und ob das Prefix jetzt auf s3 existiert (im Terminal)
 s3 ls s3://twitter/csv/
 ```
 
-Um weitere Zeilen aus dem gleichen SELECT Statement hinzuzufügen folgendes INSERT Statemnet verwenden.
+Um weitere Zeilen aus dem gleichen SELECT Statement hinzuzufügen, folgendes INSERT Statemnet verwenden.
 
 ```
 
@@ -518,16 +518,16 @@ ORDER BY date, hour
 
 Ergebnisse von Analysen können also wieder in Dateien abgespeichert und zur weiteren Verwendung gesichert werden.
 
-Prinzipiell lassen sich damit auch ganze ETL Strecken schreiben. Allerdings ist dies wesentlich aufwendiger als in Spark. Zum einen können komplexe Pipelines nicht in der Ausführungsabfolge aneinander gehängt werden sondern müssen als genested SQL Queries mit Subqueries geschrieben werden und das automatisierte Shedulen, Monitoren und Überwachen ist wesentlich aufwendiger zu implementieren.
+Prinzipiell lassen sich damit auch ganze ETL Strecken schreiben. Allerdings ist dies wesentlich aufwendiger als in Spark. Zum einen können komplexe Pipelines nicht in der Ausführungsabfolge aneinander gehängt werden, sondern müssen als genested SQL Queries mit Subqueries geschrieben werden und das automatisierte Schedulen, Monitoren und Überwachen ist wesentlich aufwendiger zu implementieren.
 
 ## 4. Cassandra Abfragen
 
-Trino ist eine Multisource Query Engine, die nicht nur auf Datei basierten Daten SQL ausführen kann sondern
-auch Connetoren auf viel andere Systeme wie RDBMS, noSQL, Kafka, ElasticSearch anbietet und deren spezifische Abfragensprache in SQL übersetzt.
+Trino ist eine Multisource Query Engine, die nicht nur auf dateibasierten Daten SQL ausführen kann, sondern
+auch Connectoren auf viel andere Systemen wie RDBMS, noSQL, Kafka, ElasticSearch anbietet und deren spezifische Abfragensprache in SQL übersetzt.
 
 ### 4.1 Cassandra Connector konfigurieren
 
-Um die noSQL Datenbank Cassandra in Trino einzubinden muss wieder der entsprechende Connector konfiguriert werden. Füge über das Dropdown Menu "New connection" eine weitere Verbindung mit folgenden Parametern hinzu.
+Um die noSQL Datenbank Cassandra in Trino einzubinden, muss wieder der entsprechende Connector konfiguriert werden. Füge über das Dropdown Menu "New connection" eine weitere Verbindung mit folgenden Parametern hinzu.
 
 ```
 Name: Cassandra
@@ -548,7 +548,7 @@ Lese die Daten mit dem richtigen Select Statement aus.
 
 ### 4.2 JSON Struktur in Spaltenform bringen
 
-Ziel am Ende ist es den Wert `gdp_per_capita` soweit verfügbar aus der JSON Spalte `economic_indicators` and die Twitter Daten zu joinen. Hierfür muss zunächst der korrekte Wert aus der JSON Struktur extrahiert werden. Trino bietet hierzu einige Funktionen an. Verwende die Funktion `json_value` (Doku: https://trino.io/docs/current/functions/json.html#json-value) um den Wert als `int` in einer Spalte anzuzeigen.
+Ziel am Ende ist es den Wert `gdp_per_capita` soweit verfügbar aus der JSON Spalte `economic_indicators` and die Twitter Daten zu joinen. Hierfür muss zunächst der korrekte Wert aus der JSON Struktur extrahiert werden. Trino bietet hierzu einige Funktionen an. Verwende die Funktion `json_value` (Doku: https://trino.io/docs/current/functions/json.html#json-value), um den Wert als `int` in einer Spalte anzuzeigen.
 
 ```
 # Ergänze die Funktion korrekt
@@ -612,7 +612,8 @@ Es gibt zwei mögliche Join Keys. Entweder twitter.language=population.code oder
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
-Es gibt zwei Möglichkeiten wobei die es mehr Matches twitter.country=population.name git
+Es gibt zwei Möglichkeiten, wobei die mit twitter.country=population.name mehr Matches gibt.
+
 ```
 SELECT count(*) 
 FROM delta.data.twitter d
@@ -620,7 +621,9 @@ LEFT JOIN cassandra.countries.population c
 ON d.country=c.name
 WHERE c.name IS NOT NULL
 ```
+
 oder
+
 ```
 SELECT count(\*)
 FROM delta.data.twitter d
@@ -660,9 +663,9 @@ Um für jedes dieser Länder den populärsten Hashtag zu finden wird am besten e
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
-```
 
-SELECT _ FROM
+```
+SELECT * FROM
 (
 SELECT
 b.country,
@@ -675,16 +678,16 @@ FROM
 SELECT
 a.country,
 tags,
-count(_) as HashTagCount
+count(*) as HashTagCount
 FROM
-data.twitter a
+delta.data.twitter a
 CROSS JOIN UNNEST(hashtags) AS t(tags)
 group by
 a.country,
 tags
 ) b
 LEFT JOIN (
-SELECT \* FROM cassandra.countries.population
+SELECT * FROM cassandra.countries.population
 ) c
 ON b.country=c.name
 WHERE c.under_20 > 20
@@ -698,7 +701,7 @@ order by HashTagCount desc
 
 ### 4.5 Korrelation zwischen Anzahl Tweets und Bevökerungs oder Einkommen (Bonus)
 
-Gibt es eine Korreation der Anzahl von Tweets im Bereich BigData zur Bevölkerungszahl (`population`) oder zum mittleren pro Kopf Einkommen (`gdp_per_capita`)? Also skaliert die Anzahl der Tweets direkt mit der Bevölkerungszahl oder mit eher mit dem Wohlstand?
+Gibt es eine Korrelation der Anzahl von Tweets im Bereich BigData zur Bevölkerungszahl (`population`) oder zum mittleren pro Kopf Einkommen (`gdp_per_capita`)? Also skaliert die Anzahl der Tweets direkt mit der Bevölkerungszahl oder mit eher mit dem Wohlstand?
 Dies ist eine schwere Textaufgabe mit mehreren Lösungsmöglichkeiten.
 
 ```
@@ -725,15 +728,16 @@ und die darunter liegende Tabelle:
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
 Hier geht es um die Tweets und nicht die Hashtags, es muss also kein UNNEST verwendet werden <br>
 <b>Vorgehensweise: </b> <br>
-1) Verjoine die Twitter Tabelle mit der Cassandra Tabelle
-2) Extrahiere die Spalten population und gdp_per_capita
-3) Zähle die Tweets
-4) Verwende die Korrelatiuonsfunktion (corr) korrekt um Korrelationen zu bestimmen
+1) Verjoine die Twitter Tabelle mit der Cassandra Tabelle<br>
+2) Extrahiere die Spalten population und gdp_per_capita<br>
+3) Zähle die Tweets<br>
+4) Verwende die Korrelatiuonsfunktion (corr) korrekt, um Korrelationen zu bestimmen
  (<a href=https://trino.io/docs/current/functions/aggregate.html>https://trino.io/docs/current/functions/aggregate.html</a>)
 </details>
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
+
 ```
 SELECT
 corr(tweets,gdp) as "corr_tweets_gdp",
@@ -741,10 +745,10 @@ corr(tweets,population) as "corr_tweets_population",
 corr(population,gdp) as "corr_population_gdp"
 FROM (
 SELECT
-a.country as "country", a.population, a.gdp_per_capita as "gdp", count(\*) as "tweets"
+a.country as "country", a.population, a.gdp_per_capita as "gdp", count(*) as "tweets"
 FROM
 (
-SELECT d.user, d.date, d.country, d.language, c.population, c.gdp_per_capita
+SELECT d.user, d.created_at, d.country, d.language, c.population, c.gdp_per_capita
 FROM delta.data.twitter d
 LEFT JOIN (
 SELECT name,code,population,

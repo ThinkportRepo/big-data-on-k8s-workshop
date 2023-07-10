@@ -44,9 +44,9 @@ spec:
           fieldRef:
             fieldPath: metadata.name
       - name: KAFKA_SERVER
-          value: "<service>.<namespace>.svc.cluster.local:9092"
+        value: "<service>.<namespace>.svc.cluster.local:9092"
       - name: KAFKA_TOPIC
-          value: "<topic>"
+        value: "<topic>"
     volumeMounts:
       - name: spark-history-server
         mountPath: /spark-logs
@@ -54,7 +54,7 @@ spec:
   # executor pod configuration
   ##############################################################
   executor:
-    cores: <CORES>
+    cores: <cores>
     instances: 1
     memory: "512m"
     labels:

@@ -1,6 +1,6 @@
 # Spark SQL Aufgaben
 
-Die Aufgaben mit Spark sind in verschiedenen Themen unterteilt. Die Aufgaben werden alle in Jupyter Notebooks ausgeführt in denen diese auch im Detail beschriebens sind.
+Die Aufgaben mit Spark sind in verschiedenen Themen unterteilt. Die Aufgaben werden alle in Jupyter Notebooks ausgeführt, in denen diese auch im Detail beschrieben sind.
 Folge die Anleitung im Notebook.
 
 ### Big Data Dateiformate

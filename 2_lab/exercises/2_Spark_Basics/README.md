@@ -51,7 +51,7 @@ dfFromRDD1.show()
 
 ### 1.2 Jupyter (Python/Pyspark)
 
-Wesentlich eleganter ist das explorative Programmieren in einem Notebook. Für die nächsten Aufgaben öffen über die WebUI Jupyter und wähle dort das Notebook unter dem Pfad `2_Spark_Basisc/Spark-Interactive/pyspark_interactive.ipynb`. Führe dort alle Boxen nacheinander aus (`shift`+`enter`) und versuche zu verstehen was der Code macht.
+Wesentlich eleganter ist das explorative Programmieren in einem Notebook. Für die nächsten Aufgaben öffen über die WebUI Jupyter und wähle dort das Notebook unter dem Pfad `2_Spark_Basisc/Spark-Interactive/pyspark_interactive.ipynb`. Führe dort alle Code Zellen nacheinander aus (`shift`+`enter`) und versuche zu verstehen was der Code macht.
 Schau dir insbesondere an wie die Sparkapp am Anfang konfiguriert wird.
 
 ---

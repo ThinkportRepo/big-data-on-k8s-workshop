@@ -3,6 +3,8 @@ Ingress für SparkUI von Jupyter
 Service and ServiceMonitor für Juypter
 
 
+kube_pod_info{namespace="spark"} * on (namespace, pod) group_left() kube_pod_labels
+
 
 nRow = 4
 nCol = 4

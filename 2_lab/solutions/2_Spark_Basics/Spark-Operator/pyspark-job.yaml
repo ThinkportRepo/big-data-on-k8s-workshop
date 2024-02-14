@@ -12,9 +12,14 @@ spec:
   # Python Script/Java Jar that should be submitted
   mainApplicationFile: "s3a://scripts/pyspark-app.py"
   sparkVersion: "3.3.1"
+  deps:
+    packages:
+      - io.dataflint:spark_2.12:0.1.2
   # extra Spark configurations
   sparkConf:
     "spark.serializer": "org.apache.spark.serializer.KryoSerializer"
+    "spark.plugins": "io.dataflint.spark.SparkDataflintPlugin"
+    "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
   # s3 connection configuration
   hadoopConf:
     "fs.s3a.endpoint": "minio.minio.svc.cluster.local:9000"

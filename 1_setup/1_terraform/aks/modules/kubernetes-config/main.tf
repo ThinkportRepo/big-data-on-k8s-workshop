@@ -1,8 +1,25 @@
+terraform {
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0.3"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.1.0"
+    }
+    kubectl = {
+      source  = "alekc/kubectl"
+      version = ">=2.0"
+    }
+  }
+}
+
 ############################
 ####Namespaces & Secrets####
 ############################
 locals {
-  namespaces = toset([ "default", "minio", "hive", "kafka", "spark", "trino", "frontend", "ingress", "nosql", "monitoring", "sheduling" ])
+  namespaces = toset(["default", "minio", "hive", "kafka", "spark", "trino", "frontend", "ingress", "nosql", "monitoring", "scheduling"])
 }
 resource "kubernetes_namespace" "ns" {
   for_each = setsubtract(local.namespaces, ["default"])
@@ -10,11 +27,11 @@ resource "kubernetes_namespace" "ns" {
     name = each.value
   }
 }
-#Image Pull Secrets 
+#Image Pull Secrets
 resource "kubernetes_secret" "dockerhub" {
-  for_each = local.namespaces 
+  for_each = local.namespaces
   metadata {
-    name = "dockerhub-cfg"
+    name      = "dockerhub-cfg"
     namespace = each.key != "default" ? kubernetes_namespace.ns[each.value].metadata.0.name : "default"
   }
 
@@ -34,11 +51,11 @@ resource "kubernetes_secret" "dockerhub" {
 }
 
 resource "kubernetes_secret" "kubeconfig" {
-  metadata{
-    name = "kubeconfig"
+  metadata {
+    name      = "kubeconfig"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  }  
-  
+  }
+
   data = {
     "kubeconfig" = var.kubeconfig
   }
@@ -95,27 +112,27 @@ resource "kubernetes_default_service_account" "default" {
   image_pull_secret {
     name = kubernetes_secret.dockerhub[each.key].metadata.0.name
   }
- #GitHub Container Registry
- # image_pull_secret {
- #   name = kubernetes_secret.github[each.key].metadata.0.name
- # }
+  #GitHub Container Registry
+  # image_pull_secret {
+  #   name = kubernetes_secret.github[each.key].metadata.0.name
+  # }
 }
 
 # #TLS # Can be used if valid certificates are available
- resource "kubernetes_secret" "tls_cert" {
-   depends_on = [
-       kubernetes_namespace.ns["ingress"]
-   ]
-     metadata {
-       name = "tls-cert"
-       namespace = "ingress"
-     }
-     data = {
-         "tls.crt" = var.TlsCertificate
-         "tls.key" = var.TlsKey
-     }
-     type = "kubernetes.io/tls"
- }
+resource "kubernetes_secret" "tls_cert" {
+  depends_on = [
+    kubernetes_namespace.ns["ingress"]
+  ]
+  metadata {
+    name      = "tls-cert"
+    namespace = "ingress"
+  }
+  data = {
+    "tls.crt" = var.TlsCertificate
+    "tls.key" = var.TlsKey
+  }
+  type = "kubernetes.io/tls"
+}
 
 #Example for a pvc
 # #Persistent Volume Claim
@@ -143,99 +160,102 @@ resource "kubernetes_default_service_account" "default" {
 ############################
 #########TLS & DNS##########
 ############################
-resource "kubernetes_config_map" "nginx" {
+resource "kubernetes_config_map_v1_data" "nginx" {
   metadata {
-    name = "nginx-ingress-controller"
+    name      = "nginx-ingress-controller"
     namespace = kubernetes_namespace.ns["ingress"].metadata.0.name
   }
   data = {
-    force-ssl-redirect: "true"
+    force-ssl-redirect : "true"
   }
+  depends_on = [
+    helm_release.nginx_ingress
+  ]
 }
 #Deploys Ingress Controller (non-azure)
- resource "helm_release" "nginx_ingress" {
-   depends_on = [
-       kubernetes_namespace.ns["ingress"],
-       kubernetes_secret.tls_cert
-   ]
-   name       = "nginx-ingress-controller"
-   repository = "https://charts.bitnami.com/bitnami"
-   chart      = "nginx-ingress-controller"
-   namespace = "ingress"
-   set {
-     name  = "service.type"
-     value = "LoadBalancer"
-   }
-   set {
-     name = "ingressClassResource.default"
-     value = true
-   }
-   set {
-     name = "publishService.enabled"
-     value = true
-   }
-   set {
-     name = "extraArgs.default-ssl-certificate"
-     value = "${kubernetes_secret.tls_cert.metadata.0.namespace}/${kubernetes_secret.tls_cert.metadata.0.name}"
-   }
-   set {
-     name = "configMapNamespace"
-     value = kubernetes_namespace.ns["ingress"].metadata.0.name
-   }
- }
+resource "helm_release" "nginx_ingress" {
+  depends_on = [
+    kubernetes_namespace.ns["ingress"],
+    kubernetes_secret.tls_cert
+  ]
+  name       = "nginx-ingress-controller"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "nginx-ingress-controller"
+  namespace  = "ingress"
+  set {
+    name  = "service.type"
+    value = "LoadBalancer"
+  }
+  set {
+    name  = "ingressClassResource.default"
+    value = true
+  }
+  set {
+    name  = "publishService.enabled"
+    value = true
+  }
+  set {
+    name  = "extraArgs.default-ssl-certificate"
+    value = "${kubernetes_secret.tls_cert.metadata.0.namespace}/${kubernetes_secret.tls_cert.metadata.0.name}"
+  }
+  set {
+    name  = "configMapNamespace"
+    value = kubernetes_namespace.ns["ingress"].metadata.0.name
+  }
+}
 
 #External DNS Controller (non-azure Domains)
- resource "helm_release" "external_dns" {
-   depends_on = [
-       kubernetes_namespace.ns["ingress"]
-   ]
-   name       = "external-dns"
-   repository = "https://charts.bitnami.com/bitnami"
-   chart      = "external-dns"
-   namespace = "ingress"
- 
-   set {
-     name  = "sources[0]"
-     value = "ingress"
-   }
-   set {
-     name  = "provider"
-     value = "azure"
-   }
-   set {
-     name  = "azure.cloud"
-     value = var.AZ_Environment
-   }
-   set {
-     name = "azure.resourceGroup"
-     value = var.AZ_RG_Name
-   }
-   set {
-     name = "azure.tenantId"
-     value = var.AZ_Tenant_ID
-   }
-    set {
-     name = "azure.subscriptionId"
-     value = var.AZ_Subscription_ID
-   }
-   set {
-     name = "azure.aadClientId"
-     value = var.AZ_Client_ID
-   }
-   set {
-     name = "azure.aadClientSecret"
-     value = var.AZ_Client_Secret
-   }
+resource "helm_release" "external_dns" {
+  depends_on = [
+    kubernetes_namespace.ns["ingress"]
+  ]
+  name       = "external-dns"
+  repository = "https://charts.bitnami.com/bitnami"
+  chart      = "external-dns"
+  namespace  = "ingress"
+
   set {
-    name = "policy"
+    name  = "sources[0]"
+    value = "ingress"
+  }
+  set {
+    name  = "provider"
+    value = "azure"
+  }
+  set {
+    name  = "azure.cloud"
+    value = var.AZ_Environment
+  }
+  set {
+    name  = "azure.resourceGroup"
+    value = var.AZ_RG_Name
+  }
+  set {
+    name  = "azure.tenantId"
+    value = var.AZ_Tenant_ID
+  }
+  set {
+    name  = "azure.subscriptionId"
+    value = var.AZ_Subscription_ID
+  }
+  set {
+    name  = "azure.aadClientId"
+    value = var.AZ_Client_ID
+  }
+  set {
+    name  = "azure.aadClientSecret"
+    value = var.AZ_Client_Secret
+  }
+  set {
+    name  = "policy"
     value = "sync"
   }
-    set {
-    name = "txtOwnerId"
+  set {
+    name  = "txtOwnerId"
     value = var.ClusterDNS
   }
- }
- 
+}
+
 ##################
 #### Minio S3  ###
 ##################
@@ -245,16 +265,16 @@ resource "helm_release" "minio" {
     kubernetes_default_service_account.default["minio"],
     helm_release.nginx_ingress
   ]
-  name = "minio"
+  name       = "minio"
   repository = "https://charts.min.io/"
-  chart = "minio"
-  version = "5.0.7"
-  namespace = kubernetes_namespace.ns["minio"].metadata.0.name
+  chart      = "minio"
+  version    = "5.0.7"
+  namespace  = kubernetes_namespace.ns["minio"].metadata.0.name
   values = [
     "${file("../../2_minio/values.yaml")}"
   ]
   set {
-    name = "consoleIngress.hosts[0]"
+    name  = "consoleIngress.hosts[0]"
     value = "minio.${var.ClusterDNS}"
   }
   timeout = 1600
@@ -268,16 +288,16 @@ resource "helm_release" "hive" {
     helm_release.minio
   ]
   namespace = kubernetes_namespace.ns["hive"].metadata.0.name
-  chart = "../../3_hive/"
-  name = "hive-metastore"
-    values = [
+  chart     = "../../3_hive/"
+  name      = "hive-metastore"
+  values = [
     "${file("../../3_hive/values.yaml")}"
   ]
   set {
-    name = "schemainit"
+    name  = "schemainit"
     value = true
   }
-    timeout = 600
+  timeout = 600
 }
 
 
@@ -288,9 +308,9 @@ resource "helm_release" "kafka-operator" {
   #depends_on = [
   #  helm_release.hive
   #]
-  name = "kafka-operator"
-  namespace = kubernetes_namespace.ns["kafka"].metadata.0.name
-  chart = "confluent-for-kubernetes"
+  name       = "kafka-operator"
+  namespace  = kubernetes_namespace.ns["kafka"].metadata.0.name
+  chart      = "confluent-for-kubernetes"
   repository = "https://packages.confluent.io/helm"
   #values = [
   #  "${file("../../4_kafka/values.yaml")}"
@@ -302,15 +322,15 @@ resource "helm_release" "kafka-resources" {
   depends_on = [
     helm_release.kafka-operator
   ]
-  name = "kafka-resources"
+  name      = "kafka-resources"
   namespace = kubernetes_namespace.ns["kafka"].metadata.0.name
-  chart = "../../4_kafka/chart/"
+  chart     = "../../4_kafka/chart/"
   values = [
     "${file("../../4_kafka/chart/values.yaml")}"
   ]
   set {
-    name = "ingress.host"
-    value = "${var.ClusterDNS}"
+    name  = "ingress.host"
+    value = var.ClusterDNS
   }
   timeout = 600
 }
@@ -331,36 +351,36 @@ resource "helm_release" "spark" {
   depends_on = [
     helm_release.minio,
   ]
-  name = "spark"
-  namespace = kubernetes_namespace.ns["spark"].metadata.0.name
-  chart = "spark-operator"
-  repository = "https://googlecloudplatform.github.io/spark-on-k8s-operator"
+  name       = "spark"
+  namespace  = kubernetes_namespace.ns["spark"].metadata.0.name
+  chart      = "spark-operator"
+  repository = "https://kubeflow.github.io/spark-operator"
   set {
-    name = "webhook.enable"
+    name  = "webhook.enable"
     value = true
   }
   set {
-    name = "sparkJobNamespace"
+    name  = "sparkJobNamespace"
     value = "spark"
   }
   set {
-    name = "image.tag"
+    name  = "image.tag"
     value = "v1beta2-1.3.3-3.1.1"
   }
   set {
-    name = "serviceAccounts.spark.name"
+    name  = "serviceAccounts.spark.name"
     value = "spark"
   }
   set {
-    name = "ingress-url-format"
+    name  = "ingress-url-format"
     value = "spark.${var.ClusterDNS}"
   }
   set {
-    name = "metrics.enable"
+    name  = "metrics.enable"
     value = true
   }
   set {
-    name = "podMonitor.enable"
+    name  = "podMonitor.enable"
     value = true
   }
 }
@@ -373,7 +393,7 @@ resource "helm_release" "trino" {
     helm_release.minio,
     helm_release.hive
   ]
-  name = "trino"
+  name      = "trino"
   namespace = kubernetes_namespace.ns["trino"].metadata.0.name
   #chart = "trino"
   #repository = "https://trinodb.github.io/charts/"
@@ -382,7 +402,7 @@ resource "helm_release" "trino" {
     "${file("../../6_trino/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "trino.${var.ClusterDNS}"
   }
   timeout = 600
@@ -395,10 +415,10 @@ resource "helm_release" "cassandra" {
   depends_on = [
     helm_release.nginx_ingress
   ]
-  name = "cassandra"
+  name       = "cassandra"
   repository = "https://charts.bitnami.com/bitnami"
-  chart = "cassandra"
-  namespace = kubernetes_namespace.ns["nosql"].metadata.0.name
+  chart      = "cassandra"
+  namespace  = kubernetes_namespace.ns["nosql"].metadata.0.name
   values = [
     "${file("../../9_cassandra/values.yaml")}"
   ]
@@ -425,7 +445,7 @@ resource "kubernetes_storage_class" "sc-spark-history-server" {
 #Persistent Volume Claim
 resource "kubernetes_persistent_volume_claim" "workshop" {
   metadata {
-    name = "workshop"
+    name      = "workshop"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   spec {
@@ -442,7 +462,7 @@ resource "kubernetes_persistent_volume_claim" "workshop" {
 
 resource "kubernetes_persistent_volume_claim" "spark" {
   metadata {
-    name = "spark-history-server"
+    name      = "spark-history-server"
     namespace = kubernetes_namespace.ns["spark"].metadata.0.name
   }
   spec {
@@ -457,18 +477,18 @@ resource "kubernetes_persistent_volume_claim" "spark" {
 }
 
 resource "kubernetes_secret" "github" {
-  metadata{
-    name = "github"
+  metadata {
+    name      = "github"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   data = {
     git_token = var.GitHubRepoToken
-    git_user = var.GitHubUsername
+    git_user  = var.GitHubUsername
   }
 }
 resource "kubernetes_service_account" "kubectl" {
   metadata {
-    name = "kubectl"
+    name      = "kubectl"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   image_pull_secret {
@@ -482,19 +502,19 @@ resource "kubernetes_cluster_role_binding" "kubectl" {
   }
   role_ref {
     api_group = "rbac.authorization.k8s.io"
-    kind = "ClusterRole"
-    name = "cluster-admin"
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
   }
   subject {
-    kind = "ServiceAccount"
-    name = "kubectl"
+    kind      = "ServiceAccount"
+    name      = "kubectl"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
 }
 
 resource "kubernetes_config_map" "bashrc" {
   metadata {
-    name = "bashrc"
+    name      = "bashrc"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   data = {
@@ -526,18 +546,18 @@ resource "kubernetes_config_map" "bashrc" {
 }
 resource "kubernetes_config_map" "s3cmd" {
   metadata {
-    name = "s3cmd"
+    name      = "s3cmd"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   data = {
     ".s3cfg" = "${file("../../7_frontends/0_initialisation/.s3cfg")}"
   }
-  
+
 }
 
 resource "kubernetes_config_map" "vscode-settings" {
   metadata {
-    name = "vscode"
+    name      = "vscode"
     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
   }
   data = {
@@ -549,7 +569,7 @@ resource "kubernetes_config_map" "vscode-settings" {
     "terminal.integrated.copyOnSelection": true
     }
     EOT
-  } 
+  }
 }
 
 
@@ -559,7 +579,7 @@ resource "kubernetes_config_map" "vscode-settings" {
 #   metadata {
 #     name = "admin"
 #     namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-#   }  
+#   }
 #   spec {
 #     container {
 #       name = "main"
@@ -573,22 +593,22 @@ resource "kubernetes_job" "gitcloner" {
     kubernetes_secret.github,
   ]
   metadata {
-      name = "gitcloner"
-      namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-    }
+    name      = "gitcloner"
+    namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+  }
   spec {
     template {
       metadata {
-        
+
       }
       spec {
         service_account_name = kubernetes_service_account.kubectl.metadata.0.name
-        restart_policy = "Never"
+        restart_policy       = "Never"
         container {
-            name = "git"
-            image = "alpine:3.17" 
-            command = ["sh", "-c", 
-              join("\n", ["apk add --no-cache git;",
+          name  = "git"
+          image = "alpine:3.17"
+          command = ["sh", "-c",
+            join("\n", ["apk add --no-cache git;",
               "echo \"### Environment Variables\";",
               "echo $GITHUB_USER;",
               "echo $GITHUB_TOKEN;",
@@ -605,41 +625,41 @@ resource "kubernetes_job" "gitcloner" {
               #"ln -s /workshop/git/2_lab/solutions /workshop;"
               # local: ln -s /home/coder/git/2_lab/exercises/ /home/coder/
               # local: ln -s /home/coder/git/2_lab/solutions/ /home/coder/
-              ])
-            ]
-              env {
-                name = "GITHUB_REPOSITORY"
-                value = "ThinkportRepo/big-data-on-k8s-workshop.git"
-                #value = "ThinkportRepo/k8s-lab.git"
+            ])
+          ]
+          env {
+            name  = "GITHUB_REPOSITORY"
+            value = "ThinkportRepo/big-data-on-k8s-workshop.git"
+            #value = "ThinkportRepo/k8s-lab.git"
+          }
+          env {
+            name = "GITHUB_TOKEN"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.github.metadata.0.name
+                key  = "git_token"
               }
-              env {
-                name = "GITHUB_TOKEN"
-                value_from {
-                  secret_key_ref {
-                    name = kubernetes_secret.github.metadata.0.name
-                    key = "git_token"
-                  } 
-                }
+            }
+          }
+          env {
+            name = "GITHUB_USER"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.github.metadata.0.name
+                key  = "git_user"
               }
-              env {
-                name = "GITHUB_USER"
-                value_from {
-                  secret_key_ref {
-                    name = kubernetes_secret.github.metadata.0.name
-                    key = "git_user"
-                  } 
-                }
-              }
-              volume_mount {
-                mount_path = "/workshop"
-                name = "workshop"
-              }
+            }
+          }
+          volume_mount {
+            mount_path = "/workshop"
+            name       = "workshop"
+          }
         }
         volume {
           name = "workshop"
           persistent_volume_claim {
             claim_name = "workshop"
-          } 
+          }
         }
       }
     }
@@ -658,110 +678,110 @@ resource "kubernetes_job" "init" {
     kubernetes_config_map.bashrc,
     kubernetes_service_account.kubectl,
     helm_release.minio
-    ]
+  ]
   metadata {
-      name = "init"
-      namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-    }
+    name      = "init"
+    namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+  }
   spec {
     template {
       metadata {
-        
+
       }
       spec {
         service_account_name = kubernetes_service_account.kubectl.metadata.0.name
-        restart_policy = "Never"
+        restart_policy       = "Never"
         container {
-            name = "vscode"
-            image = "thinkportgmbh/workshops:vscode" 
-            command = ["sh", "-c", 
-              join("\n", ["echo \"start init ...\"",
-                "echo \"################## Init Summary ############\";",
-                "echo Github User: $GITHUB_USER;",
-                "echo Github User: $GITHUB_REPOSITORY;",
-                "echo ls /workshop/;",
-                "ls /workshop/;",
-                "echo kubectl get po;",
-                "kubectl get po;",
-                "echo \"############################################\";",
-                "echo copy data to s3://data;",
-                "s3cmd mb s3://data;",
-                "s3cmd ls;",
-                "s3cmd put /workshop/git/2_lab/data/ s3://data/ -r;",
-                "s3cmd ls s3://data;",
-                "echo \"############################################\";",
-                "echo copy config into place;",
-                "mkdir /workshop/.kube;",
-                "cp /config/kubeconfig /workshop/.kube/kubeconfig;",
-                "echo \"############################################\";"]
-                )
-            ]
-              env {
-                name = "GITHUB_REPOSITORY"
-                value = "ThinkportRepo/big-data-on-k8s-workshop.git"
-                #value = "ThinkportRepo/k8s-lab.git"
+          name  = "vscode"
+          image = "thinkportgmbh/workshops:vscode"
+          command = ["sh", "-c",
+            join("\n", ["echo \"start init ...\"",
+              "echo \"################## Init Summary ############\";",
+              "echo Github User: $GITHUB_USER;",
+              "echo Github User: $GITHUB_REPOSITORY;",
+              "echo ls /workshop/;",
+              "ls /workshop/;",
+              "echo kubectl get po;",
+              "kubectl get po;",
+              "echo \"############################################\";",
+              "echo copy data to s3://data;",
+              "s3cmd mb s3://data;",
+              "s3cmd ls;",
+              "s3cmd put /workshop/git/2_lab/data/ s3://data/ -r;",
+              "s3cmd ls s3://data;",
+              "echo \"############################################\";",
+              "echo copy config into place;",
+              "mkdir /workshop/.kube;",
+              "cp /config/kubeconfig /workshop/.kube/kubeconfig;",
+              "echo \"############################################\";"]
+            )
+          ]
+          env {
+            name  = "GITHUB_REPOSITORY"
+            value = "ThinkportRepo/big-data-on-k8s-workshop.git"
+            #value = "ThinkportRepo/k8s-lab.git"
+          }
+          env {
+            name = "GITHUB_TOKEN"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.github.metadata.0.name
+                key  = "git_token"
               }
-              env {
-                name = "GITHUB_TOKEN"
-                value_from {
-                  secret_key_ref {
-                    name = kubernetes_secret.github.metadata.0.name
-                    key = "git_token"
-                  } 
-                }
+            }
+          }
+          env {
+            name = "GITHUB_USER"
+            value_from {
+              secret_key_ref {
+                name = kubernetes_secret.github.metadata.0.name
+                key  = "git_user"
               }
-              env {
-                name = "GITHUB_USER"
-                value_from {
-                  secret_key_ref {
-                    name = kubernetes_secret.github.metadata.0.name
-                    key = "git_user"
-                  } 
-                }
-              }
-              volume_mount {
-                mount_path = "/workshop"
-                name = "workshop"
-              }
-              volume_mount {
-                mount_path = "/config/kubeconfig"
-                name = "kubeconfig"
-                sub_path = "kubeconfig"
-              }
-              volume_mount {
-                mount_path = "/config/.s3cfg"
-                name = "s3cmd"
-                sub_path = ".s3cfg"
-              }
-              volume_mount {
-                mount_path = "/config/bashrc"
-                name = "bashrc"
-                sub_path = "bashrc"
-              }
+            }
+          }
+          volume_mount {
+            mount_path = "/workshop"
+            name       = "workshop"
+          }
+          volume_mount {
+            mount_path = "/config/kubeconfig"
+            name       = "kubeconfig"
+            sub_path   = "kubeconfig"
+          }
+          volume_mount {
+            mount_path = "/config/.s3cfg"
+            name       = "s3cmd"
+            sub_path   = ".s3cfg"
+          }
+          volume_mount {
+            mount_path = "/config/bashrc"
+            name       = "bashrc"
+            sub_path   = "bashrc"
+          }
         }
         volume {
           name = "workshop"
           persistent_volume_claim {
             claim_name = "workshop"
-          } 
+          }
         }
         volume {
           name = "s3cmd"
           config_map {
             name = "s3cmd"
-          } 
+          }
         }
         volume {
           name = "bashrc"
           config_map {
             name = "bashrc"
-          } 
+          }
         }
         volume {
           name = "kubeconfig"
           secret {
             secret_name = kubernetes_secret.kubeconfig.metadata.0.name
-            optional = false
+            optional    = false
           }
         }
       }
@@ -780,25 +800,25 @@ resource "helm_release" "dashboard" {
     helm_release.nginx_ingress
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/1_dashboard/chart"
-  name = "dashboard"
-    values = [
+  chart     = "../../7_frontends/1_dashboard/chart"
+  name      = "dashboard"
+  values = [
     "${file("../../7_frontends/1_dashboard/chart/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "dashboard.${var.ClusterDNS}"
   }
   set {
-    name = "k8shost"
+    name  = "k8shost"
     value = var.ClusterDNS
   }
   set {
-    name = "lab_user"
+    name  = "lab_user"
     value = var.UserName
   }
   set {
-    name = "hosts[0]"
+    name  = "hosts[0]"
     value = "kube.${var.ClusterDNS}"
   }
   timeout = 600
@@ -811,13 +831,13 @@ resource "helm_release" "terminal" {
     kubernetes_service_account.kubectl
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/2_terminal/chart"
-  name = "terminal"
-    values = [
+  chart     = "../../7_frontends/2_terminal/chart"
+  name      = "terminal"
+  values = [
     "${file("../../7_frontends/2_terminal/chart/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "terminal.${var.ClusterDNS}"
   }
   timeout = 600
@@ -829,15 +849,15 @@ resource "helm_release" "vscode" {
     kubernetes_config_map.bashrc,
     kubernetes_service_account.kubectl,
     kubernetes_secret.kubeconfig
-    ]
+  ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/3_vscode/chart"
-  name = "vscode"
-    values = [
+  chart     = "../../7_frontends/3_vscode/chart"
+  name      = "vscode"
+  values = [
     "${file("../../7_frontends/3_vscode/chart/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "vscode.${var.ClusterDNS}"
   }
   timeout = 600
@@ -849,17 +869,17 @@ resource "helm_release" "jupyter" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/4_jupyter/chart"
-  name = "jupyter"
-    values = [
+  chart     = "../../7_frontends/4_jupyter/chart"
+  name      = "jupyter"
+  values = [
     "${file("../../7_frontends/4_jupyter/chart/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "jupyter.${var.ClusterDNS}"
   }
   set {
-    name = "jupyter.persistence.enabled"
+    name  = "jupyter.persistence.enabled"
     value = false
   }
   timeout = 600
@@ -872,13 +892,13 @@ resource "helm_release" "sqlpad" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/5_sqlpad/chart"
-  name = "sqlpad"
-    values = [
+  chart     = "../../7_frontends/5_sqlpad/chart"
+  name      = "sqlpad"
+  values = [
     "${file("../../7_frontends/5_sqlpad/chart/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "sqlpad.${var.ClusterDNS}"
   }
   timeout = 600
@@ -891,13 +911,13 @@ resource "helm_release" "metabase" {
     #helm_release.vscode
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/6_metabase"
-  name = "metabase"
-    values = [
+  chart     = "../../7_frontends/6_metabase"
+  name      = "metabase"
+  values = [
     "${file("../../7_frontends/6_metabase/values.yaml")}"
   ]
   set {
-    name = "ingress.host"
+    name  = "ingress.host"
     value = "metabase.${var.ClusterDNS}"
   }
   timeout = 600
@@ -910,13 +930,13 @@ resource "helm_release" "history" {
     kubernetes_persistent_volume_claim.spark
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/7_history_server/chart"
-  name = "history"
-    values = [
+  chart     = "../../7_frontends/7_history_server/chart"
+  name      = "history"
+  values = [
     "${file("../../7_frontends/7_history_server/chart/values.yaml")}"
   ]
   set {
-    name = "ingress.host"
+    name  = "ingress.host"
     value = "spark.${var.ClusterDNS}"
   }
   timeout = 600
@@ -927,13 +947,13 @@ resource "helm_release" "headlamp" {
     kubernetes_job.init
   ]
   namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
-  chart = "../../7_frontends/9_headlamp"
-  name = "headlamp"
-    values = [
+  chart     = "../../7_frontends/9_headlamp"
+  name      = "headlamp"
+  values = [
     "${file("../../7_frontends/9_headlamp/values.yaml")}"
   ]
   set {
-    name = "host"
+    name  = "host"
     value = "headlamp.${var.ClusterDNS}"
   }
   timeout = 600
@@ -956,35 +976,43 @@ resource "helm_release" "headlamp" {
 #}
 
 ################################
-#### Promotheus and Grafana  ###
+#### Prometheus and Grafana  ###
 ################################
 
 resource "helm_release" "prometheus-resources" {
   depends_on = [
-       kubernetes_namespace.ns["monitoring"]
+    kubernetes_namespace.ns["monitoring"]
   ]
-  name = "prometheus-stack"
-  namespace = kubernetes_namespace.ns["monitoring"].metadata.0.name
+  name       = "prometheus-stack"
+  namespace  = kubernetes_namespace.ns["monitoring"].metadata.0.name
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
   values = [
     "${file("../../11_prometheus_grafana/values.yaml")}"
   ]
   set {
-    name = "prometheus.ingress.hosts[0]"
+    name  = "prometheus.ingress.hosts[0]"
     value = "prometheus.${var.ClusterDNS}"
   }
   set {
-    name = "grafana.ingress.hosts[0]"
+    name  = "grafana.ingress.hosts[0]"
     value = "grafana.${var.ClusterDNS}"
   }
   set {
-    name = "grafana.adminUser"
+    name  = "grafana.adminUser"
     value = "trainadm"
   }
   set {
-    name = "grafana.adminPassword"
+    name  = "grafana.adminPassword"
     value = "train@thinkport"
   }
   timeout = 600
+}
+
+resource "kubectl_manifest" "prometheus_spark" {
+  depends_on = [
+    helm_release.prometheus-resources
+  ]
+  for_each  = fileset("../../5_spark", "service*.yaml")
+  yaml_body = file("../../5_spark/${each.value}")
 }

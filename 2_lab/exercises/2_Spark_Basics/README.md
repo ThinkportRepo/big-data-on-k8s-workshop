@@ -1,6 +1,6 @@
 # Einführung Spark auf Kubernetes
 
-Es gibt verschiedene Möglichkeiten Spark Applikationen auf Kubneretes
+Es gibt verschiedene Möglichkeiten Spark Applikationen auf Kubernetes
 zu starten und verteilen.
 
 1. **Jupyter/Zeppelin:** Starte eine Interaktive Spark Session für ad Hoc Analysen.
@@ -12,7 +12,7 @@ zu starten und verteilen.
 
 ## 1. Interaktives Spark
 
-Für eine Interactive Spark Session wird eine Spark Session geöffnet in der alle Commands nacheinander abgesetzt werden können
+Für eine Interactive Spark Session wird eine Spark Session geöffnet, in der alle Commands nacheinander abgesetzt werden können.
 
 ### 1.1 Spark-Shell (Scala)
 
@@ -25,7 +25,7 @@ spark-shell
 ./opt/spark/bin/spark-shell.sh
 ```
 
-Sobald die Scala Console geladen ist erzeuge mit folgendem Code (jede Zeile nacheinander ausführen) ein Dataframe
+Sobald die Scala Console geladen ist, erzeuge mit folgendem Code (jede Zeile nacheinander ausführen) ein Dataframe
 
 ```
 val data = Seq(("Java", "20000"), ("Python", "100000"), ("Scala", "3000"))
@@ -36,7 +36,7 @@ val rdd = spark.sparkContext.parallelize(data)
 # Schaue den Inhalt des RDD an
 rdd.collect()
 
-# Erzeuge daraus ein Dataframe mit Spalten namen
+# Erzeuge daraus ein Dataframe mit Spaltennamen
 val dfFromRDD1 = rdd.toDF("language","users_count")
 
 # Schaue das Schema an
@@ -51,17 +51,17 @@ dfFromRDD1.show()
 
 ### 1.2 Jupyter (Python/Pyspark)
 
-Wesentlich eleganter ist das explorative Programmieren in einem Notebook. Für die nächsten Aufgaben öffen über die WebUI Jupyter und wähle dort das Notebook unter dem Pfad `2_Spark_Basisc/Spark-Interactive/pyspark_interactive.ipynb`. Führe dort alle Code Zellen nacheinander aus (`shift`+`enter`) und versuche zu verstehen was der Code macht.
+Wesentlich eleganter ist das explorative Programmieren in einem Notebook. Für die nächsten Aufgaben öffne über die WebUI Jupyter und wähle dort das Notebook unter dem Pfad `2_Spark_Basics/Spark-Interactive/pyspark_interactive.ipynb`. Führe dort alle Boxen nacheinander aus (`shift`+`enter`) und versuche zu verstehen was der Code macht.
 Schau dir insbesondere an wie die Sparkapp am Anfang konfiguriert wird.
 
 ---
 
 ## 2. Spark-Submit
 
-Mit dem Spark-Submit Programm kann ein Spark Job von einem Client an eine Spark Cluster zur Ausführung übermittelt werden.<br>
+Mit dem Spark-Submit Programm kann ein Spark Job von einem Client an einen Spark Cluster zur Ausführung übermittelt werden.<br>
 Wir verwenden Kubernetes als Cluster Manager und der Spark Job muss damit an den Kubernetes Cluster geschickt werden.<br>
 Die Spark Anwendung ist typischerweise komplett fertig als ein (Docker) Image gebaut oder der auszuführende Code wird dynamisch von s3 gelesen. <br>
-Für diese Aufgabe starten wir eine App die bereits auf dem Image vorhanden.<br>
+Für diese Aufgabe starten wir eine App, die bereits auf dem Image vorhanden.<br>
 Führe zunächst folgenden Befehl aus:
 
 ```
@@ -83,7 +83,7 @@ spark-submit \
 local:///opt/spark/examples/src/main/python/pi.py
 ```
 
-Checke ob im Namespace `spark` Pods für den Spark Driver und den Executor erstellt wurde.
+Checke, ob im Namespace `spark` Pods für den Spark Driver und den Executor erstellt wurde.
 <br>
 
 ```
@@ -102,7 +102,7 @@ Der Spark Operator ermöglicht es eine Spark Applikation als Custom Kubernetes R
 
 ### 3.1 Spark Pods und Sparkapplication
 
-Zuerst schauen wir mal ob aktuell irgendwelche Pods und Sparkapps im Namespace `spark` laufen.
+Zuerst schauen wir mal, ob aktuell irgendwelche Pods und Sparkapps im Namespace `spark` laufen.
 
 ```
 # laufende pods anzeigen
@@ -117,7 +117,7 @@ Als nächstes konfigurieren wir die YAML Datei für unsere Sparkapp.
 ### 3.2 Python Datei nach s3 laden
 
 In der Sparkapp soll der gleiche Code ausgeführt werden, den wir bereits in Jupyter gesehen habe. <br>
-Öffne die Datei `exercises/Spark-Operator/pyspark-app.py` und verstehe den Code, insbesondere was der Unterschied zum Jupyter Code ist.
+Öffne die Datei `exercises/2_Spark_Basics/Spark-Operator/pyspark-app.py` und verstehe den Code, insbesondere was der Unterschied zum Jupyter Code ist.
 
 Der Spark Pod kann den Python Code entweder intern aus dem Image oder dynamisch aus s3 einlesen. In dieser Aufgabe verwenden wir s3. Hierzu werden die Daten mit folgenden Befehlen nach s3 geladen.
 
@@ -143,7 +143,7 @@ Editiere hierzu die Datei `pyspark-job.yaml`.
 mainApplicationFile: s3a://<bucket>/<python-script>.py
 ```
 
-#### 3.3.2 Finde den richtigen s3 Endpunkt und Port sowie User und Passwort ein.
+#### 3.3.2 Finde den richtigen s3 Endpunkt und Port, sowie User und Passwort.
 
 Der s3 service befindet sich im namespace `minio`.
 
@@ -173,7 +173,7 @@ Schreibe die Parameter an die richtige Stelle in der Yaml Datei.
 
 #### 3.3.4 Erhöhe die Anzahl der Executoren auf 2 (executor instances).
 
-#### 3.3.5 Starte die Anwendung und prüfe ob sie mit zwei Executoren läuft und ob die Ergebnisse richtig sind.
+#### 3.3.5 Starte die Anwendung und prüfe, ob sie mit zwei Executoren läuft und ob die Ergebnisse richtig sind.
 
 ```
 #  verwenden der manifest yaml (im Ordner in dem die Datei liegt)
@@ -183,7 +183,7 @@ kubectl apply -f pyspark-job.yaml
 kubectl get sparkapp -n spark
 kubectl describe sparkapp simple-app -n spark
 
-# Anzeigen ob der Treiber und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
+# Anzeigen, ob der Treiber und Executor pod läuft (-w ist die Abkürzung für --watch und zeigt immer wieder STATUS Veränderungen eines Pods an, beenden mit STRG+C)
 kubectl get po -n spark -w
 
 # anzeigen der Ergebnisse mit Hilfe der logs

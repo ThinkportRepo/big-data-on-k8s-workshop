@@ -1,7 +1,7 @@
 # Kafka Aufgaben
 
 * Diese Aufgaben werden alle im Texteditor oder Terminal von VSCode bearbeitet.  
-* VSCode über den Dashboard Link im linken Menu unter Apps öffnen.
+* VSCode über den Dashboard Link im linken Menü unter Apps öffnen.
 
 ## Architektur
 
@@ -9,19 +9,19 @@
 
 ## 1. Kafka Topics
 
-In den Kafka Topics werden die einzelnen Streaming Nachrichten hineingeschrieben, gespeichert und wieder ausgelesen. Die Topics können via CLI, grafischer Oberfläche oder mit Kubernetes Resource Definitionen verwaltet werden.
+In den Kafka Topics werden die einzelnen Streaming Nachrichten hineingeschrieben, gespeichert und wieder ausgelesen. Die Topics können via CLI, graphischer Oberfläche oder mit Kubernetes Resource Definitionen verwaltet werden.
 
 ### 1.1 Erstelle ein Topic über die graphische Oberfläche
 
 Es gibt mehrere graphische Oberflächen um Kafka zu konfigurieren. Wir verwenden hier die [UI von Confluent, dem Anbieter der Kafka Enterprise Version](https://docs.confluent.io/platform/current/control-center/index.html).
 
-Gehe über das Dashboard auf die Kafka UI und suche dort den Punkt um ein Topic zu erstellen. Erstelle dann ein Topic mit dem Namen `test`, publiziere dort eine Nachricht, z.B. `"Hallo nach Kafka"` und verifizieren, dass diese Nachricht auch angekommen ist.
+Gehe über das Dashboard auf die Kafka UI und suche dort den Punkt um ein Topic zu erstellen. Erstelle dann ein Topic mit dem Namen `test`, publiziere dort eine Nachricht, z.B. `"Hallo nach Kafka"` und verifiziere, dass diese Nachricht auch angekommen ist.
 
-### 1.2 Verwende die Kakfa CLI zum managen, senden und empfangen von Nachrichten
+### 1.2 Verwende die Kakfa CLI zum Managen, Senden und Empfangen von Nachrichten
 
-Kafka kann auch über eigene CLI Tools bedient werden. Neben dem anzeigen und erstellen von Topics können dort auch Daten nach Kafka geschrieben und gelesen werden. Die CLI eignet sich vor allem bei der Fehlersuche und beim Automatisieren.
+Kafka kann auch über eigene CLI Tools bedient werden. Neben dem Anzeigen und Erstellen von Topics können dort auch Daten nach Kafka geschrieben und gelesen werden. Die CLI eignet sich vor allem bei der Fehlersuche und beim Automatisieren.
 
-Um die CLI verwenden zu können muss die Kubernetes interne Adresse des Kafka Clusters angegebgen werden (`bootstrap-server`). Suche diese zunächst in den Servicen des Kafka Namespaces
+Um die CLI verwenden zu können, muss die Kubernetes interne Adresse des Kafka Clusters angegegeben werden (`bootstrap-server`). Suche diese zunächst in den Servicen des Kafka Namespaces
 
 ```
 kubectl get services -n kafka
@@ -40,18 +40,18 @@ Nachrichten können nun mit einem Producer Script direkt in das Topic geschriebe
 Verwende folgenden Befehl um eine weitere Nachricht in das Topic `test` zu schreiben.
 
 ```
-kafka-console-producer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic test
+kafka-console-producer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name>
 ```
 
 Das Consumer Programm kann über `strg+c` gestoppt werden.
 
-Lausche anschließend auf das Topic mit der Flag alle Nachrichten seit Beginn anzuzeigen um zu sehen ob die Nachricht ankam. Verifizieren die Nachricht ebenfalls in der UI
+Lausche anschließend auf das Topic mit der Flag alle Nachrichten seit Beginn anzuzeigen um zu sehen ob die Nachricht ankam. Verifiziere die Nachricht ebenfalls in der UI
 
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
 ```
 
-mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit der Flag `--max-messages 5` kann die Ausgaben der Nachrichten limitiert werden. Das Consumer Programm kann über `strg+c` gestoppt werden.
+Mit der Flag `--from-beginning` werden alle Nachrichten aus dem Topic gelesen, auch die, die bereits in der Vergangenheit liegen, mit der Flag `--max-messages 5` kann die Ausgaben der Nachrichten limitiert werden. Das Consumer Programm kann über `strg+c` gestoppt werden.
 
 Lösche das Topic nun und überprüfe mit dem `list` Befehl op es auch tatsächlich entfernt wurde.
 
@@ -62,7 +62,7 @@ kafka-topics.sh --delete --bootstrap-server <service-name>.<namespace>.svc.clust
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0;">
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Hinweis</summary>
 Der korrekte Service für die Kafka Broker (den Boostrapserver) ist `kafka`
-Damit lautet die volle Kubernetes interne DNS-Adresse des Bootstrap servers
+Damit lautet die volle Kubernetes interne DNS-Adresse des Bootstrap Servers
   
 ```shell
 kafka.kafka.svc.cluster.local:9092
@@ -90,7 +90,7 @@ kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 -
 
 ### 1.3 Erstelle ein Topic für die Twitter Daten mit einer Kubernetes Custom Resource Definition
 
-Der Kafka Operator ermöglicht es ein Kafka Topic als Kubernetes Resource, also mit einer Yaml Konfiguration zu managen. Dass hat den großen Vorteil, dass sämtliche Topics und ihre Konfiguration als versionierbarer Code gespeichert und jederzeit wieder reproduziert werden können sowie keine langen CLI Befehle zum Topic management verwendet werden müssen.
+Der Kafka Operator ermöglicht es ein Kafka Topic als Kubernetes Resource, also mit einer Yaml Konfiguration zu managen. Das hat den großen Vorteil, dass sämtliche Topics und ihre Konfiguration als versionierbarer Code gespeichert und jederzeit wieder reproduziert werden können sowie keine langen CLI Befehle zum Topic management verwendet werden müssen.
 
 Im Ordner `/3_Kafka/Producer/` befindet sich die Datei `TOPIC_twitter-raw.yaml`.
 Öffne diese Datei und füge den Topic Namen `twitter-raw` ein.
@@ -182,9 +182,9 @@ kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 
 
 ## 3. Stream Processing
 
-Sobald die Daten in einem Topic sind sollen sie üblicherweise transformiert werden und verschiedenen Systemen wieder in weiteren Topics zu Verfügung gestellt werden. Dies nennt man Stream Processing. Eine typische Architektur ist es dafür Container basierte Mikroservices zu verwenden. Diese laufen evenfalls auf Kubernetes und können bei hoher Last einfach horizontal skalliert werden. Da nicht alle Daten aus dem Twitter Stream benötigt werden, wird jetzt eine Streaming App gestartet, die die Daten reduziert und nur einige Attribute in das nächste Topic weiter reicht.
+Sobald die Daten in einem Topic sind, sollen sie üblicherweise transformiert werden und verschiedenen Systemen wieder in weiteren Topics zu Verfügung gestellt werden. Dies nennt man Stream Processing. Eine typische Architektur ist es dafür Container basierte Mikroservices zu verwenden. Diese laufen evenfalls auf Kubernetes und können bei hoher Last einfach horizontal skaliert werden. Da nicht alle Daten aus dem Twitter Stream benötigt werden, wird jetzt eine Streaming App gestartet, die die Daten reduziert und nur einige Attribute in das nächste Topic weiter reicht.
 
-### 3.1 erstelle ein neues Topic für die reduzierten Daten
+### 3.1 Erstelle ein neues Topic für die reduzierten Daten
 
 Erstelle zunächst ein neues Topic via Custom Resource Definition mit folgenden Parametern:
 
@@ -197,10 +197,10 @@ Erstelle zunächst ein neues Topic via Custom Resource Definition mit folgenden 
 
 Erstelle hierfür eine neue Yaml Datei in `3_Kafka/2_Converter/TOPIC_twitter-table.yaml` mit den passenden Parametern. Verwende als Vorlage die Yaml Datei für das `twitter-raw` Topic (`3_Kafka/1_Producer/TOPIC_twitter-raw.yaml`)
 
-Prüfe ob das Topic richtig erstellt wurde.<br>
+Prüfe, ob das Topic richtig erstellt wurde.<br>
 
 ```
-kubectl get topics
+kubectl get topic -n kafka
 
 # und/oder via cli
 kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port>
@@ -209,13 +209,13 @@ kafka-topics.sh --list --bootstrap-server <service-name>.<namespace>.svc.cluster
 kafka-topics.sh --describe --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name>
 ```
 
-Falls das Topic fehlerhaft erstellt wurde gibt es die Möglichkeit es zu löschen.
+Falls das Topic fehlerhaft erstellt wurde, gibt es die Möglichkeit es zu löschen.
 
 ```
-kafka-topics.sh --delete --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-table
+kafka-topics.sh --delete --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name>
 ```
 
-und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.
+Und starte eine containerisierten Python/Java Mikroservice in einem Kubernetes Pod, der die Daten aus dem ersten Topic ausliest, reduziert und wieder in das zweite Topic rausschreibt.
 
 <details style="border: 1px solid #aaa; border-radius: 4px; padding: 0.5em 0.5em 0; background-color: #00BCD4" class="solution" hidden>
 <summary style="margin: -0.5em -0.5em 0; padding: 0.5em;">Lösung</summary>
@@ -245,9 +245,9 @@ spec:
 
 </details>
 
-### 3.2 starte eine containerisierte Streaming App (Mikroservice in Python/Java)
+### 3.2 Starte eine containerisierte Streaming App (Microservice in Python/Java)
 
-Der Microservice für das Stream Processing, also die Anwendung welche die Daten aus dem `twitter-raw` Topic ausliest, vereinfacht und weiter nach `twitter-table` schreibt, ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/2_Converter/twitter_data_converter.py` zu finden. Die Pod Definition zum starten dieses Scriptes findet sich in `exercices/3_Kafka/2_Converter/pod_twitter_data_converter.yaml`.
+Der Microservice für das Stream Processing, also die Anwendung, welche die Daten aus dem `twitter-raw` Topic ausliest, vereinfacht und weiter nach `twitter-table` schreibt, ist bereits vorprogrammiert und in ein Container Image gepackt. Schaue dir zum besseren Verständnisses trotzdem den Quellcode des Programmes an. Er ist in VSCode unter `exercices/3_Kafka/2_Converter/twitter_data_converter.py` zu finden. Die Pod Definition zum Starten dieses Scriptes findet sich in `exercices/3_Kafka/2_Converter/pod_twitter_data_converter.yaml`.
 
 Ersetzte hier zunächst die `XXXXXXXX` mit den korrekten Werten und starte den Pod in Kubernetes.
 
@@ -257,7 +257,7 @@ Erzeuge und starte den Pod mit dem Kubernetes Command (dazu im Terminal zuerst i
 kubectl apply -f POD_twitter_data_converter.yaml
 ```
 
-Anschlißend überprüfe ob der Pod erfolgreich gestartartet ist und Twitterdaten verarbeitet.
+Anschließend überprüfe, ob der Pod erfolgreich gestartet ist und Twitterdaten verarbeitet.
 
 ```
 kubectl get pod -n <namespace>
@@ -268,7 +268,7 @@ kubectl logs <pod-name> -n <namespace> -f
 
 Die Flag `-f` gibt fortlaufend die logs aus. Beende die _Float_ Ansicht auf die Logs mit `strg+c`
 
-Prüfe anschließend ob die reduzierten Daten auch im neuen Kafka Topic ankommen
+Prüfe anschließend, ob die reduzierten Daten auch im neuen Kafka Topic ankommen.
 
 ```
 kafka-console-consumer.sh --bootstrap-server <service-name>.<namespace>.svc.cluster.local:<port> --topic <topic-name> --from-beginning
@@ -309,7 +309,7 @@ spec:
 ```
 
 ```
-kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-raw
+kafka-console-consumer.sh --bootstrap-server kafka.kafka.svc.cluster.local:9092 --topic twitter-table
 ```
 
 </details>

@@ -11,7 +11,7 @@ Die Spark Streaming Aufgaben werden zunächst in einem Jupyter Notebook ausgefü
 Starte Jupyter über den Link im Menu unter Apps.
 
 Öffne dort das Notebook aus dem Verzeichnis `exercises/4_Spark_Streaming/notebook_stream_app.ipynb` und führe die einzelnen Code Blöcke nacheinander aus.  
-Führe die Zelle **For Debugging: write stream to console** aus um zu sehen was wieder in das nächste Topic geschrieben werden würde.  
+Führe die Zelle **For Debugging: write stream to console** aus, um zu sehen was wieder in das nächste Topic geschrieben werden würde.  
 Die Ausführung der Zelle mit Klicken auf das schwarze Viereck in der Menüleiste abbrechen.
 
 Anschließend die Zelle **Write Stream to Avro** ausführen. Jetzt werden die Daten in ein s3 Bucket geschrieben. <br>
@@ -22,7 +22,7 @@ Wechsle nun in das Terminal von VSCode und überprüfe mit der s3 CLI ob die Dat
 s3 ls s3://twitter/avro/
 ```
 
-Jetzt die Zelle wieder über das schwarze Viereck stoppen und dann (**GANZ WICHTIG**) die Spark Session mit ausführen der letzten Zelle mit dem Command `spark.stop()` beenden. Dies ist wichtig um den Stream zu stoppen und die Resourcen (cpu, ram) wieder frei zu geben.
+Jetzt die Zelle wieder über das schwarze Viereck stoppen und dann (**GANZ WICHTIG**) die Spark Session mit ausführen der letzten Zelle mit dem Command `spark.stop()` beenden. Dies ist wichtig, um den Stream zu stoppen und die Resourcen (cpu, ram) wieder frei zu geben.
 
 <hr>
 
@@ -40,7 +40,7 @@ Der Spark Operator kann dieses Python Script nur von s3 lesen, nicht von lokal. 
 Gehe hierzu im VSCode Terminal in das Verzeichnis `exercises/4_Spark_Streaming/` und lade die Datei folgendermaßen hoch:
 
 ```bash
-# überprüfen ob es schon ein Bucket scripts gibt
+# überprüfen, ob es schon ein Bucket scripts gibt
 s3 ls
 
 # Bucket erstellen, falls es noch nicht existiert
@@ -49,7 +49,7 @@ s3 mb s3://scripts
 # Datei nach s3 kopieren
 s3 put spark_stream_to_s3.py s3://scripts/
 
-# überprüfen ob die Datei angekommen ist
+# überprüfen, ob die Datei angekommen ist
 s3 ls s3://scripts/
 ```
 
@@ -67,7 +67,7 @@ mainApplicationFile: s3a://<bucket>/<python-script>.py
       - name: KAFKA_TOPIC
           value: "<Topic mit reduzierten Daten>"
 
-# cpu des executors auf 1 setzten
+# cpu des executors auf 1 setzen
 executor:
     cores: <cores>
 ```
@@ -96,7 +96,7 @@ cores: 1
 
 ### 2.3 SparkApp starten
 
-Starte anschließend die SparkApp und schau in den Pod Logs ob sie korrekt läuft. <br>
+Starte anschließend die SparkApp und schau in den Pod Logs, ob sie korrekt läuft. <br>
 
 ```bash
 # anwenden der manifest yaml (aus dem Verzeichnis in welchem die Datei liegt)
@@ -115,7 +115,7 @@ kubectl logs stream-to-s3-driver -n spark
 kubectl logs stream-to-s3-driver -f -n spark
 ```
 
-Überprüfe ob weitere Dateien nach s3 geschrieben werden.
+Überprüfe, ob weitere Dateien nach s3 geschrieben werden.
 
 ```
 s3 ls s3://twitter/avro/

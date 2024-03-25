@@ -88,7 +88,7 @@ if __name__ == "__main__":
     result.show(truncate=False)
 
     print("################################################")
-    print("++ read singel file from s3 (city_value_histogram)")
+    print("++ read single file from s3 (city_value_histogram)")
     # read simple csv
     df=(spark
         .read

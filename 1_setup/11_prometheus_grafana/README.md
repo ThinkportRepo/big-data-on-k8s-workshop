@@ -37,7 +37,7 @@ Der Service muss einen Selektor auf den Spark, Spark Operator Pod haben und auf 
 apiVersion: v1
 kind: Service
 metadata:
-  # Service to expoce metric port from Spark Operator
+  # Service to expose metric port from Spark Operator
   name: service-monitor-operator
   labels:
     app: spark-operator

@@ -1,6 +1,6 @@
 # Kubernetes Aufgaben
 
-In diesem Lab erkunden wird den Kubernetes Cluster und seine Ressourcen.
+In diesem Lab wird der Kubernetes Cluster und seine Ressourcen erkundet.
 Öffne die App VSCode und dort das Terminal für die folgenden Aufgaben.
 
 ## 1. Nodes
@@ -30,7 +30,7 @@ Die Anwendungen in diesem Lab sind in verschiedenen Namespaces gruppiert.<br>
 Verschaffe dir mit folgenden Befehlen einen Überblick über die Namespaces und welche Pods darin laufen.
 Insbesondere über die Namespaces:
 
-- mino
+- minio
 - kafka
 - spark
 - hive
@@ -55,7 +55,7 @@ kn default
 
 ## 3. Ingress Routes
 
-Erkunde die DNS Adressen, die auf die verschiedenen Service und Pods mappen. <br>
+Erkunde die DNS Adressen, die auf die verschiedenen Services und Pods mappen. <br>
 Verschaffe dir mit folgenden Befehlen einen Überblick über die Routen im Namespace frontend.
 
 ```
@@ -77,7 +77,7 @@ Erkunde mit dem gleichen Prinzip weitere Resourcen im Namespace frontend. <br>
 kubectl get svc -n frontend
 kubectl get services -n frontend
 
-# Storage (Persistent Volume Claims, Reservierter Festplattenspeicher der in einen Pod gemounted werden kann | pvc ist die Abkürzung für persistenvolumeclaim)
+# Storage (Persistent Volume Claims, Reservierter Festplattenspeicher der in einen Pod gemounted werden kann | pvc ist die Abkürzung für persistentvolumeclaim)
 kubectl get pvc -n frontend
 
 # Deployments (Definieren Replikas von Pods | deploy ist die Abkürzung von deployment)
@@ -120,7 +120,7 @@ kubectl get po  -o custom-columns=POD:.metadata.name,VOLUMES:.spec.containers[*]
 
 ## 6. Erstellen eines Pods
 
-Ein Pod entspricht einer Anwendungen die auf Kubernetes läuft. <br>
+Ein Pod entspricht einer Anwendung, die auf Kubernetes läuft. <br>
 Pods können entweder direkt oder über Deployments erstellt werden. <br>
 Deployments managen Replikationen und Ausfallsicherheit. Erstelle hierzu eine neue Datei mypod.yaml in VSCode mit folgendem Inhalt.
 
@@ -169,8 +169,8 @@ kubectl delete pod mypod
 
 ## 7. Deployment erstellen und skalieren
 
-Um einen Pod zu replizieren und immer eine vorgegebene Anzahl von Pods am laufen zu haben wird die Resource Deployment erstellt. <br>
-Im folgenden erstellen wir ein Deployment und skalieren dies. <br>
+Um einen Pod zu replizieren und immer eine vorgegebene Anzahl von Pods am laufen zu haben, wird die Resource Deployment erstellt. <br>
+Im Folgenden erstellen wir ein Deployment und skalieren dies. <br>
 Erstelle hierzu eine neue Datei mydeploy.yaml in VSCode mit folgendem Inhalt.
 
 ```
@@ -199,7 +199,7 @@ spec:
             - "-c"
             - |
               apk add --no-cache curl;
-              echo "Schaun wir mal ob wir den Service auf die Dashboard Website erreichen?";
+              echo "Schauen wir mal ob wir den Service auf die Dashboard Website erreichen?";
               echo "##############################################";
               curl http://dashboard.frontend.svc.cluster.local:8081;
               echo "";
@@ -219,12 +219,12 @@ kubectl get deploy
 kubectl get pod
 
 # Pod Logs checken
-kubectl logs <mypod-xxxx>
+kubectl logs <mydeploy-xxxx>
 
-# Deployment neu skallieren
+# Deployment neu skalieren
 kubectl scale deploy mydeploy --replicas=1
 
-# Und prüfen ob die Pods auch heruntergefahren werden
+# Und prüfen, ob die Pods auch heruntergefahren werden
 kubectl get pod
 
 # Am Ende das Deployment wieder löschen

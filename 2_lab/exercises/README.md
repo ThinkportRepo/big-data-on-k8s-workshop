@@ -1,6 +1,6 @@
 # Praxis Lab
 
-Dieses Verzeichnis enthällt alle Übungsaufgaben für den Workshop.
+Dieses Verzeichnis enthält alle Übungsaufgaben für den Workshop.
 
 ## Business Case
 
@@ -34,8 +34,8 @@ Um Zeilen in das Terminal einzufügen muss immer `Strg`+`Shift`+`v` gedrückt we
 
 ### Tips und Lösungen
 
-Es gibt in vielen Übungen Tipps und Lösungen die ausklappbar sind. Falls du nicht weiter weiß, versuche es bitte erstmal mit dem Tipp. Benutze bitte nur in Situationen wo du wirklich nicht mehr weiter kommst oder deine Lösungen überprüfen willst die ausklappbare Lösung.
+Es gibt in vielen Übungen Tipps und Lösungen, die ausklappbar sind. Falls du nicht weiter weiß, versuche es bitte erstmal mit dem Tipp. Benutze bitte nur in Situationen, wo du wirklich nicht mehr weiter kommst oder deine Lösungen überprüfen willst, die ausklappbare Lösung.
 
-### Wenn du Hilfe brauchst oder Fehler in den Aufgaben bemerkst melde dich einfach.
+### Wenn du Hilfe brauchst oder Fehler in den Aufgaben bemerkst, melde dich einfach.
 
 ## Viel Spaß!

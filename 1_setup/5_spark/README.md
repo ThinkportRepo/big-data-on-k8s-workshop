@@ -87,3 +87,32 @@ spec:
     labels:
       version: 3.3.1
 ```
+
+## Spark History Server
+
+Folgendes hinzufügen zur `sparkConf`:
+
+```
+    "spark.eventLog.enabled": "true"
+    "spark.eventLog.dir": "file:/tmp/spark-events"
+```
+
+Zur `spec` muss das hinzugefügt werden:
+
+```
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: spark-history-server
+```
+
+Und zu `driver` und `executor`:
+
+```
+    volumeMounts:
+      - name: data
+        # default path the spark history server looks for logs
+        mountPath: /tmp/spark-events
+```
+
+Siehe [pi_example.yaml](../../2_lab/exercises/9_Monitoring/pi_example.yaml) als Beispiel.

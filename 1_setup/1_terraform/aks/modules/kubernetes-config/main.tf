@@ -365,7 +365,7 @@ resource "helm_release" "spark" {
   }
   set {
     name  = "image.tag"
-    value = "v1beta2-1.3.3-3.1.1"
+    value = "v1beta2-1.4.5-3.5.0"
   }
   set {
     name  = "serviceAccounts.spark.name"
@@ -382,6 +382,11 @@ resource "helm_release" "spark" {
   set {
     name  = "podMonitor.enable"
     value = true
+  }
+
+  set_list {
+    name  = "sparkJobNamespaces"
+    value = [""]
   }
 }
 
@@ -929,7 +934,7 @@ resource "helm_release" "history" {
     helm_release.spark,
     kubernetes_persistent_volume_claim.spark
   ]
-  namespace = kubernetes_namespace.ns["frontend"].metadata.0.name
+  namespace = kubernetes_namespace.ns["spark"].metadata.0.name
   chart     = "../../7_frontends/7_history_server/chart"
   name      = "history"
   values = [

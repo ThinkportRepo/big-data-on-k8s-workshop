@@ -25,7 +25,7 @@ Jetzt den Helm Chart installieren
 helm upgrade --install -f values.yaml  history-server -n spark .
 ```
 
-Der Helm Chart erzeugt folgende Maninfeste
+Der Helm Chart erzeugt folgende Manifeste
 
 #### Deployment
 

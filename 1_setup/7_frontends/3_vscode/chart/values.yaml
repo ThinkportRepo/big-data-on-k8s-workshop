@@ -3,8 +3,8 @@
 # Kubernetes namespace
 namespace: "frontend"
 
-# Image
-image: "thinkportgmbh/workshops:vscode2"
+# Image // 13.5. changed from vscode2 to vscode4.89
+image: "thinkportgmbh/workshops:vscode4.89"
 
 # Basic Authentication Username
 user: "trainadm"
@@ -15,4 +15,4 @@ password: "train@thinkport"
 loadBalancerSourceRanges: []
 
 # Ingress Hostname
-host: vscode.4c13e49defa742168ff1.northeurope.aksapp.io
+host: vscode.student7.lab.bigdata.workshop.thinkport.cloud

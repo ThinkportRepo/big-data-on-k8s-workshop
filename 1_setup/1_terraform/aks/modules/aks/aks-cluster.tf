@@ -27,6 +27,10 @@ resource "azurerm_kubernetes_cluster" "aks"{
     os_disk_type = "Managed"
     kubelet_disk_type = "OS"
     os_sku = "Ubuntu"
+    #Upgrade settings should be ignored in the lifecycle
+    upgrade_settings {
+              max_surge = "10%"
+            }
   }
 
   identity {

@@ -355,6 +355,7 @@ resource "helm_release" "spark" {
   namespace  = kubernetes_namespace.ns["spark"].metadata.0.name
   chart      = "spark-operator"
   repository = "https://kubeflow.github.io/spark-operator"
+  version = "1.4.3"
   set {
     name  = "webhook.enable"
     value = true
@@ -365,7 +366,7 @@ resource "helm_release" "spark" {
   }
   set {
     name  = "image.tag"
-    value = "v1beta2-1.4.5-3.5.0"
+    value = "v1beta2-1.6.1-3.5.0" #"v1beta2-1.4.5-3.5.0" 
   }
   set {
     name  = "serviceAccounts.spark.name"

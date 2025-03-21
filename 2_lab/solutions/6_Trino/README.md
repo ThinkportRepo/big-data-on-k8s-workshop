@@ -696,3 +696,16 @@ ORDER BY
 
 </details>
 </p>
+
+Unnest Jos
+SELECT
+code,
+population,
+CAST(json_value(
+economic_indicators,
+'lax $.gdp_per_capita.value'
+) AS gdp_per_capita
+AS JSON)
+economic_indicators
+FROM
+cassandra.countries.population

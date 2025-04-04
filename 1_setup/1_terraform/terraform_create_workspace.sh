@@ -19,7 +19,7 @@ then
       create_rg=$new_rg
     fi
 
-    az group create --location westeurope --resource-group $create_rg --tags 'created-by=Alex Ortner' 'owner-email=aorter@thinkport.digital' delete-after='20.12.2024' 'project=Big Data Workshop'
+    az group create --location westeurope --resource-group $create_rg --tags 'owner=Alex Ortner' 'owner-email=aorter@thinkport.digital'  delete-after='30.04.2025' 'project=Big Data Workshop'
 else
     echo "++ Skip "
 fi

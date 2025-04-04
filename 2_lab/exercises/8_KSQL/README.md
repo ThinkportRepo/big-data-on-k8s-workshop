@@ -108,3 +108,5 @@ SELECT * FROM twitter_country emit changes;
 Probiere die Tabelle zu sortieren, geht das überhaubt bei einme Stream, wenn ja wie würde das aussehen?
 
 https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-reference/quick-reference
+
+Erweitern um zweites Topic und Join damit

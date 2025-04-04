@@ -179,7 +179,7 @@ resource "helm_release" "nginx_ingress" {
     kubernetes_secret.tls_cert
   ]
   name       = "nginx-ingress-controller"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "nginx-ingress-controller"
   namespace  = "ingress"
   set {
@@ -210,7 +210,7 @@ resource "helm_release" "external_dns" {
     kubernetes_namespace.ns["ingress"]
   ]
   name       = "external-dns"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "external-dns"
   namespace  = "ingress"
 
@@ -422,7 +422,7 @@ resource "helm_release" "cassandra" {
     helm_release.nginx_ingress
   ]
   name       = "cassandra"
-  repository = "https://charts.bitnami.com/bitnami"
+  repository = "oci://registry-1.docker.io/bitnamicharts"
   chart      = "cassandra"
   namespace  = kubernetes_namespace.ns["nosql"].metadata.0.name
   values = [

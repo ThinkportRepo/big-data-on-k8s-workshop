@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug
+  namespace: nosql
+spec:
+  containers:
+    - name: debug
+      image: busybox:1.35
+      command: ["sleep", "3600"]
+      volumeMounts:
+        - mountPath: /bitnami/cassandra
+          name: data
+        - mountPath: /opt/bitnami/cassandra/logs
+          name: empty-dir
+          subPath: app-logs-dir
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: data-cassandra-0
+    - name: empty-dir
+      emptyDir: {}

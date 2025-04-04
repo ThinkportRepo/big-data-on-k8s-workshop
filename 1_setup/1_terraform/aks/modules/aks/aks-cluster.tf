@@ -41,7 +41,11 @@ resource "azurerm_kubernetes_cluster" "aks"{
  #   client_secret = var.password
  # }
 
-#  tags = {
-#    environment = "Demo"
-#  }
+ tags = {
+    owner = "Alex Ortner"
+    owner-email = "aorter@thinkport.digital"
+    ttl = "2025-04-309"
+    delete-after = "30.04.2025"
+    project =" Big Data Workshop"
+  }
 }

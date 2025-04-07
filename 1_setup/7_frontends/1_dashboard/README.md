@@ -25,6 +25,10 @@ docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/w
 
 docker buildx build --push --platform linux/amd64,linux/arm64 -t thinkportgmbh/workshops:kubeproxy -f docker/Dockerfile.sidecar .
 
+# wenn für network, als k8s gebaut wird muss die Flag in
+frontend/src/plugins/socketio.js const networkConnection = true; werden
+bei lokaler verwendung auf false. Ein build kann deswegen nicht auf beiden Umgebungen verwendet werden
+
 # testen auf docker
 # docker run --mount source=[volume_name],destination=[path_in_container] [docker_image]
 docker run   -e K8S_HOST=k8s-cluster.io -p 8081:80 thinkportgmbh/workshops:dashboard

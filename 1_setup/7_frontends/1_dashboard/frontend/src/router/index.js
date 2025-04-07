@@ -11,6 +11,7 @@ import Lab_4_SparkStreaming from "@/components/Lab_4_SparkStreaming.vue";
 import Lab_5_SparkSQL from "@/components/Lab_5_SparkSQL.vue";
 import Lab_6_Cassandra from "@/components/Lab_6_Cassandra.vue";
 import Lab_7_Trino from "@/components/Lab_7_Trino.vue";
+import Lab_8_KSQL from "@/components/Lab_8_KSQL.vue";
 
 Vue.use(VueRouter);
 
@@ -84,6 +85,14 @@ const routes = [
     name: "Lab_7_Trino",
     components: {
       default: Lab_7_Trino,
+      navigation: Navbar,
+    },
+  },
+  {
+    path: "/lab-ksql",
+    name: "Lab_8_KSQL",
+    components: {
+      default: Lab_8_KSQL,
       navigation: Navbar,
     },
   },

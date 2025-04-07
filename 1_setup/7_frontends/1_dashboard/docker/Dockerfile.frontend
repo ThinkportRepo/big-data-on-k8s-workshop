@@ -1,6 +1,6 @@
 FROM node:14 as build-stage
 RUN apt-get update && apt-get install git
-RUN git clone https://alexortner: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@github.com/ThinkportRepo/big-data-on-k8s-workshop.git
+RUN git clone https://alexortner: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@github.com/ThinkportRepo/big-data-on-k8s-workshop.git
 WORKDIR /app
 COPY frontend/package*.json ./
 RUN npm install

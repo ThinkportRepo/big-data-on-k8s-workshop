@@ -17,6 +17,8 @@ connect:
 ksql:
   create: true
   replicas: 1
+  configurationOverrides:
+    KSQL_KSQL_SCHEMA_REGISTRY_URL: "http://schemaregistry-0-internal.kafka.svc.cluster.local:8081"
 
 controlcenter:
   create: true

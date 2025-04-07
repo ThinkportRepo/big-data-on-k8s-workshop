@@ -572,7 +572,8 @@ resource "kubernetes_config_map" "vscode-settings" {
     "files.exclude": {
         "**/.*": true
     },
-    "terminal.integrated.copyOnSelection": true
+    "terminal.integrated.copyOnSelection": true,
+    "workbench.colorTheme": "Default Dark Modern"
     }
     EOT
   }

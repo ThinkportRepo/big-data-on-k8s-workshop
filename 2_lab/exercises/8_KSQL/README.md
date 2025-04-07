@@ -6,8 +6,8 @@ In diesen Aufgaben wirst du mit Kafka Streams und KSQL arbeiten, um Daten zu ana
 
 #### Wichtige Konzepte:
 
-    •	Stream: Ein unbegrenzter Strom von Ereignissen (unbounded stream), der kontinuierlich neue Daten empfängt.
-    •	Tabelle: Eine materialisierte Ansicht von Ereignissen, die für jeden Schlüssel den letzten Wert speichert (Stateful).
+• Stream: Ein unbegrenzter Strom von Ereignissen (unbounded stream), der kontinuierlich neue Daten empfängt.
+• Tabelle: Eine materialisierte Ansicht von Ereignissen, die für jeden Schlüssel den letzten Wert speichert (Stateful).
 
 ⸻
 
@@ -60,7 +60,7 @@ CREATE STREAM twitter
 WITH (kafka_topic='twitter-table', value_format='json', partitions=2);
 ```
 
-Nun kannst du SQL-Abfragen und Aggregationen auf diesem Stream vornehmen. Beachte, dass bei Verwendung von emit changes die Abfrage kontinuierlich aktualisiert wird, während ohne dieses Flag nur die aktuellen Daten angezeigt werden.
+Jetzt können auf den Stream SQL Abfragen und Aggregation gemacht werden. Dabei gibt es zwei Modi. Ein einfaches SELECT gibt die Daten die im Aktuellen Fenster vom Stream sind wieder. Da wir zu Begin den Offset auf `earliest` gesetzt haben, werden alle Daten von Anfang bis jetzt im Stream einmal ausgegeben, wie in einer statischen Tabelle. Fügt man am Ende ein `emit changes` an bleibt die Abfrage offen und wird bei jedem neuen Event aktualisisert. Einige SQL Befehle funktionieren nur mit der Flag `emit changes`.
 
 ## 2. Abfragen und Aggregationen
 
@@ -70,10 +70,15 @@ Probiere folgende Beispiele
 
 Zeige den Namen des Nutzers, das Land und die Hashtags der Tweets an, einmal als statische Ansicht und einmal in Echtzeit. Mit dem Prefix `EMIT CHANGES` wird eine Echtzeitansicht auf den Stream geöfnet. Diese Ansicht kann mit `strg + c` wieder verlassen werden
 
+<details>
+<summary>Lösung</summary>
+<p>
 ```
 select user_name, user_location, hashtags from twitter;
 select user_name, user_location, hashtags from twitter emit changes;
 ```
+</details>
+</p>
 
 #### Aufgabe 3: Aggregation der Tweets pro Land
 
@@ -92,6 +97,18 @@ FROM twitter
 GROUP BY language
 EMIT CHANGES;
 ```
+
+Query die Tabelle
+
+<details>
+<summary>Lösung</summary>
+<p>
+```
+select * from tweets_per_country;
+select * from tweets_per_country emit changes;
+```
+</details>
+</p>
 
 ## 3. Joins zwischen Topics
 
@@ -135,16 +152,22 @@ LEFT JOIN country_details c
 EMIT CHANGES;
 ```
 
-Jetzt einmal alles anschauen über
+Prüfe jetzt welche topics, streams und tabellen erstellt wurden und ob die der join korrekt funktioniert
 
+<details>
+<summary>Lösung</summary>
+<p>
 ```
 show streams;
 show tables:
 show topics;
 
-select * from country_details
-select * from enriched_tweets
+select _ from country_details
+select _ from enriched_tweets
+
 ```
+</details>
+</p>
 
 ## 6. Komplexers Stream Processing
 
@@ -156,35 +179,41 @@ Erzeuge eine Tabelle, die immer die prozentuale Verteilung der Anzahl der Tweets
 **Schritt 1: Helfer-Stream tweet_counter erstellen:**
 
 ```
+
 CREATE STREAM tweet_counter AS
 SELECT 'all' total_key, 1 dummy_value
 FROM enriched_tweets
 EMIT CHANGES;
+
 ```
 
 **Schritt 2: Aggregierte Tabelle total_tweet_count erstellen:**
 
 ```
+
 CREATE TABLE total_tweet_count AS
-SELECT total_key, COUNT(*) AS total_tweets
+SELECT total_key, COUNT(\*) AS total_tweets
 FROM tweet_counter
 GROUP BY total_key
 EMIT CHANGES;
+
 ```
 
 **Schritt 3: Berechnung der Tweet-Prozentsätze pro Land:**
 
 ```
+
 SELECT
-  a.country,
-  a.tweet_count,
-  b.total_tweets,
-  (a.tweet_count * 100.0) / b.total_tweets AS tweet_percentage
+a.country,
+a.tweet_count,
+b.total_tweets,
+(a.tweet_count \* 100.0) / b.total_tweets AS tweet_percentage
 FROM tweets_per_country a
 LEFT JOIN total_tweet_count b
-  ON a.TOTAL_KEY = b.TOTAL_KEY
+ON a.TOTAL_KEY = b.TOTAL_KEY
 WHERE COUNTRY = 'Germany'
 EMIT CHANGES;
+
 ```
 
 ## 7. Aggregationen über ein Zeitfenster
@@ -194,11 +223,13 @@ EMIT CHANGES;
 Erstelle eine Aggregation, die nicht über den gesamten Stream läuft, sondern nur über ein 30-Sekunden-Zeitfenster. Dies hilft, die Verarbeitung von Events innerhalb eines bestimmten Zeitrahmens zu simulieren.
 
 ```
-SELECT language, count(*) as total
+
+SELECT language, count(\*) as total
 FROM twitter
 WINDOW TUMBLING (size 30 SECOND)
 GROUP BY language
 EMIT CHANGES;
+
 ```
 
 In diesem Beispiel wird die Anzahl der Tweets pro Land alle 30 Sekunden neu berechnet.
@@ -209,9 +240,26 @@ Verwende die folgenden Befehle, um Streams und Tabellen zu analysieren. Hier kö
 **Streams und Tabellen beschreiben:**
 
 ```
-DESCRIBE TABLE <table_name> EXTENDED;
+
 DESCRIBE STREAM <stream_name> EXTENDED;
+DESCRIBE TABLE <table_name> EXTENDED;
+
 ```
+
+<details>
+<summary>Lösung</summary>
+<p>
+```
+
+DESCRIBE STREAM twitter EXTENDED;
+DESCRIBE STREAM enriched_tweets EXTENDED;
+
+DESCRIBE TABLE tweets_per_country EXTENDED;
+DESCRIBE TABLE total_tweet_count EXTENDED;
+
+```
+</details>
+</p>
 
 #### Stream Processing Anwendungen = SHOW QUERIES
 
@@ -237,3 +285,4 @@ Erklärung von weitere Funktionen:
 
 - `LATEST_BY_OFFSET`: Diese Funktion ist besonders wichtig, um bei einer Aggregation den letzten bekannten Wert eines Feldes zu erhalten, z. B. die aktuelle Bevölkerungszahl eines Landes. Andernfalls kann dieser Wert nicht in einer SELECT-Liste verwendet werden, wenn er nicht aggregiert oder gruppiert wird.
 - `REQUEST-PIPELINING ON`: Wenn bei einem langen Vorgang, z. B. beim Löschen eines Topics, Probleme auftreten, kannst du mit diesem Befehl die Ausführungsreihenfolge optimieren und Fehler vermeiden.
+```

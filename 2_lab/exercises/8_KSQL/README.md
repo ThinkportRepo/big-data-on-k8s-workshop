@@ -1,5 +1,7 @@
 # Kafka SQL (KSQL) Aufgaben
 
+Entweder als Demo oder Bonusaufgabe wenn Zeit
+
 In diesen Aufgaben wirst du mit Kafka Streams und KSQL arbeiten, um Daten zu analysieren, zu aggregieren und miteinander zu verknüpfen. KSQL ermöglicht es, Echtzeit-Datenströme zu verarbeiten, ohne den gesamten Datenbestand abfragen zu müssen, und ist perfekt für Event-Driven-Architekturen geeignet.
 
 #### Wichtige Konzepte:

@@ -395,7 +395,7 @@ export default {
     show_exercise_5_spark_sql: true,
     show_exercise_6_cassandra: true,
     show_exercise_7_trino: true,
-    show_exercise_8_ksql: false,
+    show_exercise_8_ksql: true,
     show_exercise_9_monitoring: false,
     show_exercise_10_sheduling: false,
   }),

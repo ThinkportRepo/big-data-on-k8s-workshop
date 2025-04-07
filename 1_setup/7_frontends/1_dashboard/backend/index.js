@@ -664,6 +664,10 @@ socketio.on("connection", (socket) => {
           basePath + "2_lab/exercises/7_Trino/README.md",
           "utf8"
         );
+        markdown.ksql = await read(
+          basePath + "2_lab/exercises/8_KSQL/README.md",
+          "utf8"
+        );
         socket.emit("lab", markdown);
       });
     //let kubernetesMD = read_markdown();

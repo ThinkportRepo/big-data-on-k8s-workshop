@@ -15,6 +15,18 @@ Um mit KSQL zu arbeiten, verwenden wir die ksql-cli. Um KSQL im Terminal zu star
 
 ```
 kubectl exec -it ksqldb-0 -c ksqldb -n kafka -- ksql
+
+===========================================
+=       _              _ ____  ____       =
+=      | | _____  __ _| |  _ \| __ )      =
+=      | |/ / __|/ _` | | | | |  _ \      =
+=      |   <\__ \ (_| | | |_| | |_) |     =
+=      |_|\_\___/\__, |_|____/|____/      =
+=                   |_|                   =
+=        The Database purpose-built       =
+=        for stream processing apps       =
+===========================================
+
 ```
 
 Sobald du in der KSQL-Shell bist, kannst du mit folgenden Befehlen die Themen und Streams inspizieren:

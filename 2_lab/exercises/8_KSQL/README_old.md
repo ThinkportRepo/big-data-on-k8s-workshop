@@ -268,7 +268,7 @@ Dies geht über
 DROP STREAM <stream_name> DELETE TOPIC;
 DROP TABLE <stream_name> DELETE TOPIC;
 ```
-
+Wenn man nur den SELECT abschickt wird nur kurz ein SQL Prozes laufen gelassen und kein Topic erzeugt, dies nennt man auch non-persistent Queries. Sobald auf einem SQL aber einen Stream oder eine Tabelle erzeugt wird daraus ein persistent Querie mit einem Topic darunter
 
 
 ## Erläuterungern

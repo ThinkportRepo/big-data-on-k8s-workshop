@@ -87,20 +87,6 @@ if __name__ == "__main__":
     )
     result.show(truncate=False)
 
-    print("################################################")
-    print("++ read singel file from s3 (city_value_histogram)")
-    # read simple csv
-    df=(spark
-        .read
-        .option("delimiter",";")
-        .csv("s3a://data/simple/city_value_histogram.csv",inferSchema=True,header=True)
-        )
-    df.show()
-
-    print("################################################")
-    print("Write csv file to s3")
-    result.write.mode("overwrite").format("csv").save("s3a://data/tmp/salery_by_department")
-
     print("-----------------------------------------------------")
     print("Spark App completed")
     print("-----------------------------------------------------")

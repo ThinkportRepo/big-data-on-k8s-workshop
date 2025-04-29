@@ -87,6 +87,10 @@ if __name__ == "__main__":
     )
     result.show(truncate=False)
 
+    print("################################################")
+    print("Write csv file to s3")
+    result.write.mode("overwrite").format("csv").save("s3a://test-alex/salery_by_department")
+
     print("-----------------------------------------------------")
     print("Spark App completed")
     print("-----------------------------------------------------")
